@@ -170,25 +170,28 @@ button {
 
 
 .theme-button {
+    position: fixed;
+    top: 20px;
+    right: 20px;
 
-    width: 44px;
+    width: 45px;
+    height: 45px;
 
-    height: 44px;
-
+    border: none;
     border-radius: 50%;
 
-    background: var(--surface-secondary);
+    background: #ffffff;
+    cursor: pointer;
 
-    color: var(--text);
-
-    font-size: 18px;
+    font-size: 20px;
 
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+    z-index: 1000;
 }
 
 
