@@ -1,1325 +1,182 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
 
     <meta charset="UTF-8">
-
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0">
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>GrowSync - Mis invernaderos</title>
 
-
-    <style>
-
-        :root {
-
-            --primary: #39a96b;
-            --primary-dark: #2d8b57;
-            --primary-light: #e9f8ef;
-
-            --background: #f5f7f6;
-            --surface: #ffffff;
-
-            --text: #17231c;
-            --text-secondary: #68736d;
-
-            --border: #e4e9e6;
-
-            --danger: #e05252;
-
-            --shadow:
-                0 10px 30px rgba(28,45,35,.08);
-        }
-
-
-        * {
-
-            box-sizing: border-box;
-
-            margin: 0;
-
-            padding: 0;
-        }
-
-
-        body {
-
-            min-height: 100vh;
-
-            font-family:
-                Inter,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                sans-serif;
-
-            background: var(--background);
-
-            color: var(--text);
-        }
-
-
-        /* =========================
-           HEADER
-        ========================= */
-
-        .topbar {
-
-            height: 72px;
-
-            background: var(--surface);
-
-            border-bottom:
-                1px solid var(--border);
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            padding: 0 32px;
-
-            position: sticky;
-
-            top: 0;
-
-            z-index: 10;
-        }
-
-
-        .brand {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 10px;
-
-            font-size: 21px;
-
-            font-weight: 800;
-        }
-
-
-        .brand span {
-
-            font-size: 25px;
-        }
-
-
-        .topbar-right {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 12px;
-        }
-
-
-        .icon-button {
-
-            width: 40px;
-
-            height: 40px;
-
-            border-radius: 10px;
-
-            border:
-                1px solid var(--border);
-
-            background: var(--surface);
-
-            cursor: pointer;
-
-            font-size: 17px;
-        }
-
-
-        .user {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 9px;
-
-            padding-left: 12px;
-
-            border-left:
-                1px solid var(--border);
-        }
-
-
-        .avatar {
-
-            width: 36px;
-
-            height: 36px;
-
-            border-radius: 50%;
-
-            background: var(--primary-light);
-
-            color: var(--primary-dark);
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            font-weight: 800;
-        }
-
-
-        .user-name {
-
-            font-size: 13px;
-
-            font-weight: 700;
-        }
-
-
-        /* =========================
-           CONTENT
-        ========================= */
-
-        .container {
-
-            max-width: 1250px;
-
-            margin: auto;
-
-            padding: 45px 32px;
-        }
-
-
-        .header {
-
-            display: flex;
-
-            align-items: flex-end;
-
-            justify-content: space-between;
-
-            margin-bottom: 30px;
-        }
-
-
-        .header h1 {
-
-            font-size: 31px;
-
-            letter-spacing: -.7px;
-        }
-
-
-        .header p {
-
-            margin-top: 7px;
-
-            color: var(--text-secondary);
-
-            font-size: 14px;
-        }
-
-
-        .add-button {
-
-            height: 45px;
-
-            padding: 0 18px;
-
-            border: none;
-
-            border-radius: 10px;
-
-            background: var(--primary);
-
-            color: white;
-
-            font-weight: 700;
-
-            cursor: pointer;
-        }
-
-
-        .add-button:hover {
-
-            background: var(--primary-dark);
-        }
-
-
-        /* =========================
-           GRID
-        ========================= */
-
-        .grid {
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(2, minmax(0, 1fr));
-
-            gap: 20px;
-        }
-
-
-        .card {
-
-            background: var(--surface);
-
-            border:
-                1px solid var(--border);
-
-            border-radius: 18px;
-
-            padding: 24px;
-
-            box-shadow:
-                0 5px 18px rgba(30,45,35,.04);
-
-            transition: .2s;
-        }
-
-
-        .card:hover {
-
-            transform: translateY(-2px);
-
-            box-shadow: var(--shadow);
-        }
-
-
-        .card-top {
-
-            display: flex;
-
-            align-items: flex-start;
-
-            justify-content: space-between;
-
-            margin-bottom: 22px;
-        }
-
-
-        .plant {
-
-            width: 50px;
-
-            height: 50px;
-
-            border-radius: 14px;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            background: var(--primary-light);
-
-            font-size: 25px;
-        }
-
-
-        .online {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 6px;
-
-            padding: 6px 10px;
-
-            border-radius: 20px;
-
-            background: var(--primary-light);
-
-            color: var(--primary-dark);
-
-            font-size: 11px;
-
-            font-weight: 700;
-        }
-
-
-        .dot {
-
-            width: 7px;
-
-            height: 7px;
-
-            background: var(--primary);
-
-            border-radius: 50%;
-        }
-
-
-        .name {
-
-            font-size: 19px;
-
-            font-weight: 750;
-        }
-
-
-        .location {
-
-            color: var(--text-secondary);
-
-            font-size: 12px;
-
-            margin-top: 5px;
-        }
-
-
-        .values {
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(2, 1fr);
-
-            gap: 12px;
-
-            margin-top: 22px;
-
-            margin-bottom: 20px;
-        }
-
-
-        .value {
-
-            padding: 13px;
-
-            border-radius: 11px;
-
-            background: var(--background);
-        }
-
-
-        .value span {
-
-            display: block;
-
-            color: var(--text-secondary);
-
-            font-size: 11px;
-
-            margin-bottom: 4px;
-        }
-
-
-        .value strong {
-
-            font-size: 17px;
-        }
-
-
-        .footer {
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            padding-top: 16px;
-
-            border-top:
-                1px solid var(--border);
-        }
-
-
-        .code {
-
-            font-family: monospace;
-
-            color: var(--text-secondary);
-
-            font-size: 11px;
-        }
-
-
-        .open {
-
-            border: none;
-
-            background: none;
-
-            color: var(--primary);
-
-            font-weight: 700;
-
-            cursor: pointer;
-        }
-
-
-        /* =========================
-           ADD CARD
-        ========================= */
-
-        .add-card {
-
-            min-height: 270px;
-
-            border:
-                1.5px dashed var(--border);
-
-            border-radius: 18px;
-
-            display: flex;
-
-            flex-direction: column;
-
-            align-items: center;
-
-            justify-content: center;
-
-            text-align: center;
-
-            cursor: pointer;
-        }
-
-
-        .add-card:hover {
-
-            background: var(--primary-light);
-
-            border-color: var(--primary);
-        }
-
-
-        .add-icon {
-
-            width: 52px;
-
-            height: 52px;
-
-            border-radius: 50%;
-
-            background: var(--primary-light);
-
-            color: var(--primary);
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            font-size: 26px;
-
-            margin-bottom: 13px;
-        }
-
-
-        .add-card h3 {
-
-            font-size: 15px;
-        }
-
-
-        .add-card p {
-
-            margin-top: 5px;
-
-            margin-bottom: 15px;
-
-            color: var(--text-secondary);
-
-            font-size: 12px;
-        }
-
-
-        /* =========================
-           MODAL
-        ========================= */
-
-        .modal {
-
-            display: none;
-
-            position: fixed;
-
-            inset: 0;
-
-            background:
-                rgba(0,0,0,.45);
-
-            align-items: center;
-
-            justify-content: center;
-
-            padding: 20px;
-
-            z-index: 100;
-        }
-
-
-        .modal.active {
-
-            display: flex;
-        }
-
-
-        .modal-box {
-
-            width: 100%;
-
-            max-width: 460px;
-
-            background: var(--surface);
-
-            border-radius: 20px;
-
-            padding: 30px;
-
-            box-shadow: var(--shadow);
-        }
-
-
-        .modal-header {
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            margin-bottom: 20px;
-        }
-
-
-        .modal-header h2 {
-
-            font-size: 21px;
-        }
-
-
-        .close {
-
-            width: 34px;
-
-            height: 34px;
-
-            border: none;
-
-            border-radius: 9px;
-
-            background: var(--background);
-
-            cursor: pointer;
-
-            font-size: 18px;
-        }
-
-
-        .option {
-
-            width: 100%;
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 14px;
-
-            padding: 17px;
-
-            margin-bottom: 11px;
-
-            border:
-                1px solid var(--border);
-
-            border-radius: 14px;
-
-            background: var(--surface);
-
-            cursor: pointer;
-
-            text-align: left;
-        }
-
-
-        .option:hover {
-
-            border-color: var(--primary);
-
-            background: var(--primary-light);
-        }
-
-
-        .option-icon {
-
-            width: 45px;
-
-            height: 45px;
-
-            border-radius: 12px;
-
-            background: var(--primary-light);
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            font-size: 21px;
-        }
-
-
-        .option h3 {
-
-            font-size: 14px;
-
-            margin-bottom: 3px;
-        }
-
-
-        .option p {
-
-            color: var(--text-secondary);
-
-            font-size: 11px;
-        }
-
-
-        .form-group {
-
-            margin-bottom: 17px;
-        }
-
-
-        label {
-
-            display: block;
-
-            font-size: 13px;
-
-            font-weight: 600;
-
-            margin-bottom: 7px;
-        }
-
-
-        input {
-
-            width: 100%;
-
-            height: 47px;
-
-            border:
-                1px solid var(--border);
-
-            border-radius: 10px;
-
-            padding: 0 13px;
-
-            background: var(--background);
-
-            color: var(--text);
-
-            outline: none;
-        }
-
-
-        .primary {
-
-            width: 100%;
-
-            height: 46px;
-
-            border: none;
-
-            border-radius: 10px;
-
-            background: var(--primary);
-
-            color: white;
-
-            font-weight: 700;
-
-            cursor: pointer;
-        }
-
-
-        .generated-code {
-
-            text-align: center;
-
-            background: var(--primary-light);
-
-            padding: 22px;
-
-            border-radius: 14px;
-
-            margin-bottom: 20px;
-        }
-
-
-        .generated-code span {
-
-            display: block;
-
-            color: var(--text-secondary);
-
-            font-size: 11px;
-
-            margin-bottom: 8px;
-        }
-
-
-        .generated-code strong {
-
-            font-family: monospace;
-
-            color: var(--primary-dark);
-
-            font-size: 25px;
-
-            letter-spacing: 2px;
-        }
-
-
-        @media(max-width:800px) {
-
-            .grid {
-
-                grid-template-columns: 1fr;
-            }
-
-            .header {
-
-                flex-direction: column;
-
-                align-items: stretch;
-
-                gap: 18px;
-            }
-
-            .add-button {
-
-                width: 100%;
-            }
-
-        }
-
-
-        @media(max-width:600px) {
-
-            .topbar {
-
-                padding: 0 18px;
-            }
-
-            .container {
-
-                padding:
-                    30px 18px;
-            }
-
-            .user-name {
-
-                display: none;
-            }
-
-        }
-
-    </style>
+    <link rel="stylesheet" href="css/growsync.css">
 
 </head>
 
 
 <body>
 
+    <header class="topbar">
 
-<header class="topbar">
-
-
-    <div class="brand">
-
-        <span>🌱</span>
-
-        GrowSync
-
-    </div>
-
-
-    <div class="topbar-right">
-
-        <button
-            class="icon-button"
-            onclick="toggleTheme()">
-
-            ☾
-
-        </button>
-
-
-        <div class="user">
-
-            <div class="avatar">
-
-                P
-
-            </div>
-
-            <span class="user-name">
-
-                Pablo
-
-            </span>
-
-        </div>
-
-    </div>
-
-</header>
-
-
-<main class="container">
-
-
-    <div class="header">
-
-        <div>
-
-            <h1>
-
-                Mis invernaderos
-
-            </h1>
-
-            <p>
-
-                Gestiona todos tus invernaderos
-                desde un único lugar.
-
-            </p>
-
+        <div class="brand">
+            <span class="brand-icon">🌱</span>
+            <span>GrowSync</span>
         </div>
 
 
-        <button
-            class="add-button"
-            onclick="openAdd()">
-
-            ＋ Añadir invernadero
-
-        </button>
-
-    </div>
-
-
-    <div class="grid">
-
-
-        <!-- INVERNADERO -->
-
-        <div class="card">
-
-            <div class="card-top">
-
-                <div class="plant">
-
-                    🌱
-
-                </div>
-
-                <div class="online">
-
-                    <span class="dot"></span>
-
-                    Online
-
-                </div>
-
-            </div>
-
-
-            <div class="name">
-
-                Invernadero terraza
-
-            </div>
-
-
-            <div class="location">
-
-                📍 Zaragoza
-
-            </div>
-
-
-            <div class="values">
-
-                <div class="value">
-
-                    <span>
-
-                        Temperatura
-
-                    </span>
-
-                    <strong>
-
-                        24,6 °C
-
-                    </strong>
-
-                </div>
-
-
-                <div class="value">
-
-                    <span>
-
-                        Humedad
-
-                    </span>
-
-                    <strong>
-
-                        63 %
-
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <div class="footer">
-
-                <span class="code">
-
-                    GS-7K4P-92XM
-
-                </span>
-
-
-                <button
-                    class="open"
-                    onclick="openGreenhouse('GS-7K4P-92XM')">
-
-                    Abrir →
-
-                </button>
-
-            </div>
-
-        </div>
-
-
-
-        <!-- SEGUNDO -->
-
-        <div class="card">
-
-            <div class="card-top">
-
-                <div class="plant">
-
-                    🌱
-
-                </div>
-
-                <div class="online">
-
-                    <span class="dot"></span>
-
-                    Online
-
-                </div>
-
-            </div>
-
-
-            <div class="name">
-
-                Invernadero huerto
-
-            </div>
-
-
-            <div class="location">
-
-                📍 Zaragoza
-
-            </div>
-
-
-            <div class="values">
-
-                <div class="value">
-
-                    <span>
-
-                        Temperatura
-
-                    </span>
-
-                    <strong>
-
-                        21,8 °C
-
-                    </strong>
-
-                </div>
-
-
-                <div class="value">
-
-                    <span>
-
-                        Humedad
-
-                    </span>
-
-                    <strong>
-
-                        71 %
-
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <div class="footer">
-
-                <span class="code">
-
-                    GS-91LM-3KQP
-
-                </span>
-
-
-                <button
-                    class="open"
-                    onclick="openGreenhouse('GS-91LM-3KQP')">
-
-                    Abrir →
-
-                </button>
-
-            </div>
-
-        </div>
-
-
-
-        <!-- AÑADIR -->
-
-        <div
-            class="add-card"
-            onclick="openAdd()">
-
-            <div class="add-icon">
-
-                ＋
-
-            </div>
-
-            <h3>
-
-                Añadir otro invernadero
-
-            </h3>
-
-            <p>
-
-                Crea uno nuevo o únete
-                mediante un código.
-
-            </p>
-
-        </div>
-
-
-    </div>
-
-</main>
-
-
-<!-- MODAL -->
-
-<div
-    class="modal"
-    id="addModal">
-
-    <div class="modal-box">
-
-        <div class="modal-header">
-
-            <h2>
-
-                Añadir invernadero
-
-            </h2>
+        <div class="topbar-actions">
 
             <button
-                class="close"
-                onclick="closeModal()">
-
-                ×
-
+                class="theme-button small"
+                id="themeButton"
+            >
+                🌙
             </button>
+
+            <div class="user-avatar" id="userAvatar">
+                U
+            </div>
 
         </div>
 
+    </header>
 
-        <button
-            class="option"
-            onclick="createGreenhouse()">
 
-            <div class="option-icon">
+    <main class="greenhouses-page">
 
+        <section class="page-header">
+
+            <div>
+
+                <span class="page-label">
+                    MI CUENTA
+                </span>
+
+                <h1>
+                    Mis invernaderos
+                </h1>
+
+                <p>
+                    Gestiona todos tus invernaderos desde un único lugar.
+                </p>
+
+            </div>
+
+
+            <button
+                class="primary-button"
+                id="addGreenhouseButton"
+            >
+                + Añadir invernadero
+            </button>
+
+        </section>
+
+
+        <section
+            class="greenhouses-grid"
+            id="greenhousesContainer"
+        >
+
+            <!-- Los invernaderos se cargarán mediante JavaScript -->
+
+        </section>
+
+    </main>
+
+
+    <!-- MODAL -->
+
+    <div
+        class="modal-overlay"
+        id="greenhouseModal"
+    >
+
+        <div class="modal">
+
+            <button
+                class="modal-close"
+                id="closeModal"
+            >
+                ×
+            </button>
+
+
+            <div class="modal-icon">
                 🌱
+            </div>
+
+            <h2>
+                Añadir invernadero
+            </h2>
+
+            <p>
+                Elige cómo quieres añadir tu invernadero.
+            </p>
+
+
+            <div class="modal-options">
+
+                <button
+                    class="modal-option"
+                    id="createGreenhouse"
+                >
+
+                    <span class="option-icon">
+                        ➕
+                    </span>
+
+                    <div>
+                        <strong>
+                            Crear un invernadero
+                        </strong>
+
+                        <small>
+                            Crea un nuevo sistema GrowSync
+                        </small>
+                    </div>
+
+                </button>
+
+
+                <button
+                    class="modal-option"
+                    id="joinGreenhouse"
+                >
+
+                    <span class="option-icon">
+                        🔗
+                    </span>
+
+                    <div>
+                        <strong>
+                            Unirme a un invernadero
+                        </strong>
+
+                        <small>
+                            Introduce el código de otro invernadero
+                        </small>
+                    </div>
+
+                </button>
 
             </div>
 
-            <div>
-
-                <h3>
-
-                    Crear un invernadero
-
-                </h3>
-
-                <p>
-
-                    Crea una nueva instalación
-                    GrowSync.
-
-                </p>
-
-            </div>
-
-        </button>
-
-
-        <button
-            class="option"
-            onclick="joinGreenhouse()">
-
-            <div class="option-icon">
-
-                🔗
-
-            </div>
-
-            <div>
-
-                <h3>
-
-                    Unirme a un invernadero
-
-                </h3>
-
-                <p>
-
-                    Introduce el código de otro usuario.
-
-                </p>
-
-            </div>
-
-        </button>
+        </div>
 
     </div>
 
-</div>
 
+    <script
+        src="js/firebase.js"
+        type="module"
+    ></script>
 
-<script>
-
-
-function openAdd() {
-
-    document
-        .getElementById("addModal")
-        .classList.add("active");
-}
-
-
-function closeModal() {
-
-    document
-        .getElementById("addModal")
-        .classList.remove("active");
-}
-
-
-function createGreenhouse() {
-
-    closeModal();
-
-    alert(
-        "Aquí crearemos el nuevo invernadero."
-    );
-}
-
-
-function joinGreenhouse() {
-
-    closeModal();
-
-    const code =
-        prompt(
-            "Introduce el código del invernadero:"
-        );
-
-
-    if (!code) return;
-
-
-    alert(
-        "Solicitud enviada para " +
-        code.toUpperCase()
-    );
-}
-
-
-function openGreenhouse(code) {
-
-    /*
-        Guardamos temporalmente qué invernadero
-        ha seleccionado el usuario.
-
-        Después esto vendrá de Firebase.
-    */
-
-    localStorage.setItem(
-        "selectedGreenhouse",
-        code
-    );
-
-
-    window.location.href =
-        "dashboard.html";
-}
-
-
-function toggleTheme() {
-
-    document.body.classList.toggle("dark");
-
-}
-
-</script>
-
+    <script
+        src="js/invernaderos.js"
+        type="module"
+    ></script>
 
 </body>
-
 </html>
