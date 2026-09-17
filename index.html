@@ -1,42 +1,182 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
 <meta charset="utf-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>GrowSync</title>
 
-<style>
-  * {
-    box-sizing: border-box;
-  }
 
-  :root {
-    --bg: #101914;
-    --sidebar: #142019;
-    --card: #17241C;
-    --card-hover: #1c2b22;
-    --border: #2A3A2F;
-    --text: #E6EFE7;
-    --text-secondary: #8FA697;
-    --green: #8BE000;
-    --green-dark: #1d351f;
-    --danger: #ffb000;
-    --shadow: rgba(0, 0, 0, 0.25);
-  }
- /* La planta funciona como botón */
+<style>
+
+/* =====================================================
+   CONFIGURACIÓN GENERAL
+===================================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+
+  --bg: #0b1118;
+
+  --sidebar: #101923;
+
+  --card: #172235;
+
+  --card-hover: #1d2a3d;
+
+  --border: #25344a;
+
+  --text: #edf2f7;
+
+  --text-secondary: #71829a;
+
+  --green: #8be000;
+
+  --green-dark: #24351e;
+
+  --cyan: #00b8d9;
+
+  --blue: #4b8cff;
+
+  --orange: #ffad00;
+
+  --red: #ff5c5c;
+
+  --success: #00d99b;
+
+  --shadow: rgba(0,0,0,.25);
+
+}
+
+
+/* =====================================================
+   MODO CLARO
+===================================================== */
+
+body.light {
+
+  --bg: #f2f5f3;
+
+  --sidebar: #ffffff;
+
+  --card: #ffffff;
+
+  --card-hover: #f4f7f5;
+
+  --border: #dce5df;
+
+  --text: #17241c;
+
+  --text-secondary: #65756b;
+
+  --green: #5e9f00;
+
+  --green-dark: #edf6df;
+
+  --shadow: rgba(0,0,0,.08);
+
+}
+
+
+/* =====================================================
+   BODY
+===================================================== */
+
+body {
+
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
+
+  background: var(--bg);
+
+  color: var(--text);
+
+  margin: 0;
+
+  min-height: 100vh;
+
+  transition:
+    background .25s ease,
+    color .25s ease;
+
+}
+
+
+/* =====================================================
+   CABECERA
+===================================================== */
+
+.topbar {
+
+  position: fixed;
+
+  top: 0;
+  left: 0;
+  right: 0;
+
+  height: 72px;
+
+  background: var(--sidebar);
+
+  border-bottom:
+    1px solid var(--border);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  padding: 0 28px;
+
+  z-index: 100;
+
+}
+
+
+/* =====================================================
+   LOGO
+===================================================== */
+
+.brand {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+}
+
+
 .brand-icon {
+
   width: 38px;
   height: 38px;
 
+  padding: 0;
+
   display: flex;
+
   align-items: center;
+
   justify-content: center;
 
   border-radius: 10px;
 
   background: var(--green-dark);
-  border: 1px solid var(--green);
+
+  border:
+    1px solid var(--green);
 
   color: var(--green);
 
@@ -44,473 +184,912 @@
 
   cursor: pointer;
 
-  transition: 0.2s;
+  transition: .2s;
+
 }
+
 
 .brand-icon:hover {
+
   transform: scale(1.05);
+
   background: var(--card-hover);
+
 }
 
 
-/* PANEL CERRADO */
+.brand-text h1 {
+
+  font-size: 16px;
+
+  margin: 0;
+
+  font-weight: 700;
+
+  letter-spacing: .04em;
+
+}
+
+
+.brand-text p {
+
+  font-size: 11px;
+
+  margin: 2px 0 0;
+
+  color: var(--text-secondary);
+
+  letter-spacing: .08em;
+
+  text-transform: uppercase;
+
+}
+
+
+/* =====================================================
+   BOTÓN TEMA
+===================================================== */
+
+.theme-button {
+
+  border:
+    1px solid var(--border);
+
+  background: var(--card);
+
+  color: var(--text);
+
+  border-radius: 10px;
+
+  height: 40px;
+
+  padding: 0 14px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  cursor: pointer;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+}
+
+
+.theme-button:hover {
+
+  background: var(--card-hover);
+
+  border-color: var(--green);
+
+}
+
+
+/* =====================================================
+   BARRA LATERAL
+===================================================== */
 
 .sidebar {
-  transform: translateX(-100%);
+
+  position: fixed;
+
+  left: 0;
+
+  top: 72px;
+
+  bottom: 0;
+
+  width: 245px;
+
+  background: var(--sidebar);
+
+  border-right:
+    1px solid var(--border);
+
+  padding: 22px 14px;
+
+  z-index: 90;
+
+  transform:
+    translateX(-100%);
+
+  transition:
+    transform .25s ease;
+
 }
 
-
-/* PANEL ABIERTO */
 
 .sidebar.open {
-  transform: translateX(0);
+
+  transform:
+    translateX(0);
+
 }
 
 
-/* El contenido ocupa toda la pantalla cuando el panel está cerrado */
+.sidebar-title {
+
+  font-size: 10px;
+
+  color: var(--text-secondary);
+
+  text-transform: uppercase;
+
+  letter-spacing: .15em;
+
+  padding: 0 12px;
+
+  margin-bottom: 10px;
+
+}
+
+
+.menu {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+
+}
+
+
+.menu-button {
+
+  width: 100%;
+
+  border:
+    1px solid transparent;
+
+  background: transparent;
+
+  color: var(--text-secondary);
+
+  border-radius: 10px;
+
+  padding: 11px 12px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  cursor: pointer;
+
+  text-align: left;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+}
+
+
+.menu-button:hover {
+
+  background: var(--card-hover);
+
+  color: var(--text);
+
+}
+
+
+.menu-button.active {
+
+  background: var(--green-dark);
+
+  border-color:
+    rgba(139,224,0,.25);
+
+  color: var(--green);
+
+}
+
+
+.menu-icon {
+
+  width: 20px;
+
+  text-align: center;
+
+  font-size: 16px;
+
+}
+
+
+/* =====================================================
+   CONTENIDO PRINCIPAL
+===================================================== */
 
 .main {
+
   margin-left: 0;
-  padding: 100px 30px 40px;
+
+  padding:
+    100px 30px 40px;
 
   min-height: 100vh;
 
-  transition: margin-left 0.25s ease;
+  transition:
+    margin-left .25s ease;
+
 }
 
-
-/* Cuando el panel está abierto */
 
 body.sidebar-open .main {
+
   margin-left: 245px;
+
 }
 
-  /* =========================
-     MODO CLARO
-  ========================= */
 
-  body.light {
-    --bg: #f2f5f3;
-    --sidebar: #ffffff;
-    --card: #ffffff;
-    --card-hover: #f4f7f5;
-    --border: #dce5df;
-    --text: #17241C;
-    --text-secondary: #65756b;
-    --green: #5e9f00;
-    --green-dark: #edf6df;
-    --danger: #c98200;
-    --shadow: rgba(0, 0, 0, 0.08);
+/* =====================================================
+   CABECERA DEL DASHBOARD
+===================================================== */
+
+.page-header {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: flex-end;
+
+  margin-bottom: 28px;
+
+}
+
+
+.page-header h2 {
+
+  margin: 0;
+
+  font-size: 26px;
+
+  letter-spacing: -.02em;
+
+}
+
+
+.page-header p {
+
+  margin: 5px 0 0;
+
+  color: var(--text-secondary);
+
+  font-size: 13px;
+
+}
+
+
+/* =====================================================
+   ESTADO DEL SISTEMA
+===================================================== */
+
+.connection-status {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  color: var(--success);
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+}
+
+
+.connection-dot {
+
+  width: 7px;
+
+  height: 7px;
+
+  background: var(--success);
+
+  border-radius: 50%;
+
+}
+
+
+/* =====================================================
+   GRID DE PANELES
+===================================================== */
+
+.dashboard-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(300px, 1fr));
+
+  gap: 18px;
+
+}
+
+
+/* =====================================================
+   PANEL
+===================================================== */
+
+.sensor-card {
+
+  background: var(--card);
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 16px;
+
+  padding: 22px;
+
+  min-height: 245px;
+
+  box-shadow:
+    0 10px 30px var(--shadow);
+
+  transition:
+    background .25s ease,
+    border-color .25s ease,
+    transform .2s ease;
+
+}
+
+
+.sensor-card:hover {
+
+  transform:
+    translateY(-2px);
+
+  border-color:
+    rgba(139,224,0,.25);
+
+}
+
+
+/* =====================================================
+   CABECERA DEL PANEL
+===================================================== */
+
+.sensor-header {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+}
+
+
+/* =====================================================
+   ICONO DEL SENSOR
+===================================================== */
+
+.sensor-icon {
+
+  width: 36px;
+
+  height: 36px;
+
+  border-radius: 9px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 18px;
+
+  border: 1px solid;
+
+}
+
+
+/* Colores de los iconos */
+
+.icon-temperature {
+
+  color: var(--green);
+
+  border-color:
+    rgba(139,224,0,.3);
+
+  background:
+    rgba(139,224,0,.08);
+
+}
+
+
+.icon-humidity {
+
+  color: var(--cyan);
+
+  border-color:
+    rgba(0,184,217,.3);
+
+  background:
+    rgba(0,184,217,.08);
+
+}
+
+
+.icon-soil {
+
+  color: #00d99b;
+
+  border-color:
+    rgba(0,217,155,.3);
+
+  background:
+    rgba(0,217,155,.08);
+
+}
+
+
+.icon-light {
+
+  color: var(--orange);
+
+  border-color:
+    rgba(255,173,0,.3);
+
+  background:
+    rgba(255,173,0,.08);
+
+}
+
+
+.icon-water {
+
+  color: var(--blue);
+
+  border-color:
+    rgba(75,140,255,.3);
+
+  background:
+    rgba(75,140,255,.08);
+
+}
+
+
+.icon-battery {
+
+  color: var(--green);
+
+  border-color:
+    rgba(139,224,0,.3);
+
+  background:
+    rgba(139,224,0,.08);
+
+}
+
+
+.icon-solar {
+
+  color: var(--orange);
+
+  border-color:
+    rgba(255,173,0,.3);
+
+  background:
+    rgba(255,173,0,.08);
+
+}
+
+
+/* =====================================================
+   TÍTULO DEL SENSOR
+===================================================== */
+
+.sensor-title {
+
+  display: flex;
+
+  flex-direction: column;
+
+}
+
+
+.sensor-title h3 {
+
+  margin: 0;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  letter-spacing: .05em;
+
+}
+
+
+.sensor-id {
+
+  margin-top: 3px;
+
+  font-size: 10px;
+
+  color: var(--text-secondary);
+
+  letter-spacing: .1em;
+
+}
+
+
+/* =====================================================
+   ESTADO
+===================================================== */
+
+.sensor-status {
+
+  margin-left: auto;
+
+  padding:
+    5px 9px;
+
+  border-radius: 20px;
+
+  background:
+    rgba(139,224,0,.08);
+
+  color: var(--green);
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  letter-spacing: .05em;
+
+}
+
+
+.sensor-status::before {
+
+  content: "●";
+
+  margin-right: 5px;
+
+  font-size: 8px;
+
+}
+
+
+/* =====================================================
+   VALOR
+===================================================== */
+
+.sensor-value-row {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-top: 28px;
+
+}
+
+
+.sensor-value {
+
+  font-size: 40px;
+
+  line-height: 1;
+
+  font-weight: 800;
+
+  letter-spacing: -.03em;
+
+}
+
+
+.sensor-unit {
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  color: var(--text-secondary);
+
+  margin-left: 5px;
+
+}
+
+
+/* =====================================================
+   MINI GRÁFICA
+===================================================== */
+
+.mini-chart {
+
+  width: 80px;
+
+  height: 45px;
+
+  position: relative;
+
+  overflow: hidden;
+
+}
+
+
+.mini-chart svg {
+
+  width: 100%;
+
+  height: 100%;
+
+}
+
+
+/* =====================================================
+   ZONA ÓPTIMA
+===================================================== */
+
+.optimal-row {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-top: 27px;
+
+}
+
+
+.optimal-title {
+
+  font-size: 10px;
+
+  color: var(--text-secondary);
+
+  letter-spacing: .12em;
+
+  text-transform: uppercase;
+
+}
+
+
+.optimal-range {
+
+  font-size: 11px;
+
+  color: var(--text-secondary);
+
+  font-weight: 600;
+
+}
+
+
+/* =====================================================
+   BARRA DE ZONA ÓPTIMA
+===================================================== */
+
+.progress-container {
+
+  width: 100%;
+
+  height: 5px;
+
+  background:
+    rgba(255,255,255,.04);
+
+  border-radius: 10px;
+
+  margin-top: 9px;
+
+  overflow: hidden;
+
+}
+
+
+.progress {
+
+  height: 100%;
+
+  border-radius: 10px;
+
+  background: var(--green);
+
+}
+
+
+.progress-cyan {
+
+  background: var(--cyan);
+
+}
+
+
+.progress-blue {
+
+  background: var(--blue);
+
+}
+
+
+.progress-orange {
+
+  background: var(--orange);
+
+}
+
+
+/* =====================================================
+   PIE DEL PANEL
+===================================================== */
+
+.sensor-footer {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-top: 16px;
+
+}
+
+
+.online {
+
+  color: var(--success);
+
+  font-size: 11px;
+
+  font-weight: 600;
+
+}
+
+
+.online::before {
+
+  content: "〽";
+
+  margin-right: 5px;
+
+}
+
+
+.change {
+
+  color: var(--orange);
+
+  font-size: 10px;
+
+  font-weight: 600;
+
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 900px) {
+
+  body.sidebar-open .main {
+
+    margin-left: 0;
+
   }
-
-  body {
-    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    margin: 0;
-    min-height: 100vh;
-    transition: background 0.25s ease, color 0.25s ease;
-  }
-
-  /* =========================
-     CABECERA SUPERIOR
-  ========================= */
-
-  .topbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-
-    height: 72px;
-
-    background: var(--sidebar);
-    border-bottom: 1px solid var(--border);
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    padding: 0 28px;
-
-    z-index: 100;
-
-    transition: background 0.25s ease;
-  }
-
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .brand-icon {
-    width: 38px;
-    height: 38px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 10px;
-
-    background: var(--green-dark);
-    border: 1px solid var(--green);
-
-    color: var(--green);
-
-    font-size: 20px;
-  }
-
-  .brand-text h1 {
-    font-size: 16px;
-    margin: 0;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-  }
-
-  .brand-text p {
-    font-size: 11px;
-    margin: 2px 0 0;
-    color: var(--text-secondary);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  /* =========================
-     BOTÓN TEMA
-  ========================= */
-
-  .theme-button {
-    border: 1px solid var(--border);
-    background: var(--card);
-
-    color: var(--text);
-
-    border-radius: 10px;
-
-    height: 40px;
-    padding: 0 14px;
-
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    cursor: pointer;
-
-    font-size: 13px;
-    font-weight: 600;
-
-    transition: 0.2s;
-  }
-
-  .theme-button:hover {
-    background: var(--card-hover);
-    border-color: var(--green);
-  }
-
-  /* =========================
-     BARRA LATERAL
-  ========================= */
-
-  .sidebar {
-    position: fixed;
-
-    left: 0;
-    top: 72px;
-    bottom: 0;
-
-    width: 245px;
-
-    background: var(--sidebar);
-    border-right: 1px solid var(--border);
-
-    padding: 22px 14px;
-
-    z-index: 90;
-
-    transition:
-      width 0.25s ease,
-      transform 0.25s ease,
-      background 0.25s ease;
-  }
-
-  .sidebar-title {
-    font-size: 10px;
-    color: var(--text-secondary);
-
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-
-    padding: 0 12px;
-    margin-bottom: 10px;
-  }
-
-  .menu {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-
-  .menu-button {
-    width: 100%;
-
-    border: 1px solid transparent;
-
-    background: transparent;
-    color: var(--text-secondary);
-
-    border-radius: 10px;
-
-    padding: 11px 12px;
-
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    cursor: pointer;
-
-    text-align: left;
-
-    font-size: 13px;
-    font-weight: 600;
-
-    transition: 0.2s;
-  }
-
-  .menu-button:hover {
-    background: var(--card-hover);
-    color: var(--text);
-  }
-
-  .menu-button.active {
-    background: var(--green-dark);
-    border-color: rgba(139, 224, 0, 0.25);
-    color: var(--green);
-  }
-
-  .menu-icon {
-    width: 20px;
-    text-align: center;
-    font-size: 16px;
-  }
-
-  /* =========================
-     CONTENIDO
-  ========================= */
-
-  .main {
-    margin-left: 245px;
-
-    padding: 100px 30px 40px;
-
-    min-height: 100vh;
-
-    transition: margin-left 0.25s ease;
-  }
-
-  .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-
-    margin-bottom: 28px;
-  }
-
-  .page-header h2 {
-    margin: 0;
-
-    font-size: 26px;
-    letter-spacing: -0.02em;
-  }
-
-  .page-header p {
-    margin: 5px 0 0;
-
-    color: var(--text-secondary);
-
-    font-size: 13px;
-  }
-
-  .connection-status {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-
-    color: #00d99b;
-
-    font-size: 12px;
-    font-weight: 600;
-  }
-
-  .connection-dot {
-    width: 7px;
-    height: 7px;
-
-    background: #00d99b;
-
-    border-radius: 50%;
-  }
-
-  /* =========================
-     TARJETA TEMPERATURA
-  ========================= */
-
-  .card {
-    background: var(--card);
-
-    border: 1px solid var(--border);
-
-    border-radius: 16px;
-
-    padding: 40px 56px;
-
-    text-align: center;
-
-    max-width: 600px;
-
-    box-shadow: 0 10px 30px var(--shadow);
-
-    transition:
-      background 0.25s ease,
-      border 0.25s ease;
-  }
-
-  .card h3 {
-    font-size: 14px;
-    font-weight: 500;
-
-    color: var(--text-secondary);
-
-    margin: 0 0 12px;
-
-    letter-spacing: 0.01em;
-  }
-
-  .temp {
-    font-size: min(72px, 14vw);
-
-    font-weight: 800;
-
-    margin: 0;
-
-    line-height: 1;
-
-    letter-spacing: -0.02em;
-  }
-
-  .temp span {
-    font-size: 0.4em;
-
-    font-weight: 600;
-
-    color: var(--text-secondary);
-
-    margin-left: 2px;
-  }
-
-  .status {
-    margin-top: 14px;
-
-    font-size: 13px;
-
-    color: var(--text-secondary);
-  }
-
-  /* =========================
-     FUTURAS TARJETAS
-  ========================= */
 
   .dashboard-grid {
-    display: grid;
 
-    grid-template-columns: repeat(2, minmax(250px, 1fr));
+    grid-template-columns: 1fr;
 
-    gap: 18px;
-
-    margin-top: 20px;
   }
 
-  .placeholder {
-    min-height: 150px;
+}
 
-    background: var(--card);
 
-    border: 1px solid var(--border);
+@media (max-width: 650px) {
 
-    border-radius: 16px;
+  .topbar {
 
-    display: flex;
+    padding:
+      0 16px;
 
-    align-items: center;
+  }
+
+
+  .brand-text p {
+
+    display: none;
+
+  }
+
+
+  .brand-text h1 {
+
+    font-size: 15px;
+
+  }
+
+
+  .theme-button {
+
+    width: 40px;
+
+    padding: 0;
+
     justify-content: center;
 
-    color: var(--text-secondary);
-
-    font-size: 13px;
   }
 
-  /* =========================
-     RESPONSIVE
-  ========================= */
 
-  @media (max-width: 800px) {
+  .theme-button span:last-child {
 
-    .sidebar {
-      width: 210px;
-    }
-
-    .main {
-      margin-left: 210px;
-      padding-left: 20px;
-      padding-right: 20px;
-    }
-
-    .dashboard-grid {
-      grid-template-columns: 1fr;
-    }
+    display: none;
 
   }
 
-  @media (max-width: 650px) {
 
-    .sidebar {
-      transform: translateX(-100%);
-    }
+  .main {
 
-    .sidebar.open {
-      transform: translateX(0);
-    }
-
-    .main {
-      margin-left: 0;
-      padding: 95px 16px 30px;
-    }
-
-    .topbar {
-      padding: 0 16px;
-    }
-
-    .brand-text p {
-      display: none;
-    }
-
-    .page-header {
-      align-items: flex-start;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .card {
-      padding: 35px 20px;
-    }
+    padding:
+      95px 16px 30px;
 
   }
+
+
+  .page-header {
+
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+  }
+
+
+  .dashboard-grid {
+
+    grid-template-columns: 1fr;
+
+  }
+
+
+  .sensor-card {
+
+    padding: 18px;
+
+  }
+
+
+  .sensor-value {
+
+    font-size: 34px;
+
+  }
+
+}
 
 </style>
+
 </head>
 
+
 <body>
+
 
 <!-- =====================================================
      CABECERA
@@ -518,74 +1097,127 @@ body.sidebar-open .main {
 
 <header class="topbar">
 
+
   <div class="brand">
 
-   <button class="brand-icon" id="menuToggle" onclick="toggleSidebar()">
-   🌱
-   </button>
+
+    <!-- BOTÓN MENÚ -->
+
+    <button
+      class="brand-icon"
+      id="menuToggle"
+      onclick="toggleSidebar()"
+      aria-label="Abrir menú">
+
+      🌱
+
+    </button>
+
 
     <div class="brand-text">
-      <h1>GrowSync</h1>
-      <p>Smart Greenhouse</p>
+
+      <h1>
+        GrowSync
+      </h1>
+
+      <p>
+        Smart Greenhouse
+      </p>
+
     </div>
 
   </div>
 
 
-  <!-- BOTÓN CLARO / OSCURO -->
+  <!-- MODO CLARO / OSCURO -->
 
   <button
     class="theme-button"
-    id="themeButton"
     onclick="cambiarTema()">
 
-    <span id="themeIcon">☀️</span>
+    <span id="themeIcon">
+      ☀️
+    </span>
 
-    <span id="themeText">Modo claro</span>
+    <span id="themeText">
+      Modo claro
+    </span>
 
   </button>
 
+
 </header>
+
 
 
 <!-- =====================================================
      BARRA LATERAL
 ===================================================== -->
 
-<aside class="sidebar" id="sidebar">
+<aside
+  class="sidebar"
+  id="sidebar">
+
 
   <div class="sidebar-title">
     Navegación
   </div>
 
+
   <nav class="menu">
 
-  <button class="menu-button active">
-    <span class="menu-icon">▦</span>
-    <span>Dashboard</span>
-  </button>
 
-  <button class="menu-button">
-    <span class="menu-icon">⚙</span>
-    <span>Configuración</span>
-  </button>
+    <button
+      class="menu-button active">
 
-</nav>
+      <span class="menu-icon">
+        ▦
+      </span>
+
+      <span>
+        Dashboard
+      </span>
+
+    </button>
+
+
+    <button
+      class="menu-button">
+
+      <span class="menu-icon">
+        ⚙
+      </span>
+
+      <span>
+        Configuración
+      </span>
+
+    </button>
+
+
+  </nav>
 
 </aside>
 
 
+
 <!-- =====================================================
-     CONTENIDO PRINCIPAL
+     CONTENIDO
 ===================================================== -->
 
 <main class="main">
 
+
+  <!-- CABECERA -->
+
   <div class="page-header">
+
 
     <div>
 
-      <h2>Dashboard</h2>
+      <h2>
+        Dashboard
+      </h2>
 
       <p>
         Monitorización del invernadero en tiempo real
@@ -602,77 +1234,858 @@ body.sidebar-open .main {
 
     </div>
 
-  </div>
-
-
-  <!-- =================================================
-       TEMPERATURA
-  ================================================== -->
-
-  <div class="card">
-
-    <h3>
-      Temperatura del invernadero
-    </h3>
-
-    <p class="temp" id="temp">
-      --<span>°C</span>
-    </p>
-
-    <p class="status" id="status">
-      Conectando…
-    </p>
 
   </div>
 
 
+
   <!-- =================================================
-       ESPACIO PARA LAS FUTURAS TARJETAS
+       PANELES DE SENSORES
   ================================================== -->
 
   <div class="dashboard-grid">
 
-    <div class="placeholder">
-      Humedad ambiental
+
+
+    <!-- =================================================
+         TEMPERATURA
+    ================================================== -->
+
+    <div class="sensor-card">
+
+
+      <div class="sensor-header">
+
+
+        <div class="sensor-icon icon-temperature">
+
+          🌡️
+
+        </div>
+
+
+        <div class="sensor-title">
+
+          <h3>
+            TEMPERATURA AMBIENTAL
+          </h3>
+
+          <span class="sensor-id">
+            ID · TEMPERATURE
+          </span>
+
+        </div>
+
+
+        <div class="sensor-status">
+          ÓPTIMO
+        </div>
+
+
+      </div>
+
+
+      <div class="sensor-value-row">
+
+
+        <div>
+
+          <span
+            class="sensor-value"
+            id="temp">
+
+            ---
+
+          </span>
+
+          <span class="sensor-unit">
+            °C
+          </span>
+
+        </div>
+
+
+        <div class="mini-chart">
+
+          <svg
+            viewBox="0 0 100 50"
+            preserveAspectRatio="none">
+
+            <polyline
+              points="0,32 20,32 40,29 60,25 80,27 100,23"
+              fill="none"
+              stroke="#8BE000"
+              stroke-width="2"/>
+
+          </svg>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="optimal-row">
+
+        <span class="optimal-title">
+          Zona óptima
+        </span>
+
+        <span class="optimal-range">
+          18 — 26 °C
+        </span>
+
+      </div>
+
+
+      <div class="progress-container">
+
+        <div
+          class="progress"
+          id="temperatureProgress"
+          style="width: 65%;">
+
+        </div>
+
+      </div>
+
+
+      <div class="sensor-footer">
+
+        <span
+          class="online"
+          id="status">
+
+          EN LÍNEA
+
+        </span>
+
+        <span class="change">
+          ↓ 1.5 VS ANTERIOR
+        </span>
+
+      </div>
+
+
     </div>
 
-    <div class="placeholder">
-      Humedad del suelo
+
+
+    <!-- =================================================
+         HUMEDAD AMBIENTAL
+    ================================================== -->
+
+    <div class="sensor-card">
+
+
+      <div class="sensor-header">
+
+
+        <div class="sensor-icon icon-humidity">
+
+          💧
+
+        </div>
+
+
+        <div class="sensor-title">
+
+          <h3>
+            HUMEDAD RELATIVA
+          </h3>
+
+          <span class="sensor-id">
+            ID · HUMIDITY_ENV
+          </span>
+
+        </div>
+
+
+        <div class="sensor-status">
+          ÓPTIMO
+        </div>
+
+
+      </div>
+
+
+      <div class="sensor-value-row">
+
+
+        <div>
+
+          <span class="sensor-value">
+            61.7
+          </span>
+
+          <span class="sensor-unit">
+            %
+          </span>
+
+        </div>
+
+
+        <div class="mini-chart">
+
+          <svg
+            viewBox="0 0 100 50"
+            preserveAspectRatio="none">
+
+            <polyline
+              points="0,20 20,21 40,25 60,29 80,27 100,30"
+              fill="none"
+              stroke="#00B8D9"
+              stroke-width="2"/>
+
+          </svg>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="optimal-row">
+
+        <span class="optimal-title">
+          Zona óptima
+        </span>
+
+        <span class="optimal-range">
+          50 — 75 %
+        </span>
+
+      </div>
+
+
+      <div class="progress-container">
+
+        <div
+          class="progress progress-cyan"
+          style="width: 58%;">
+
+        </div>
+
+      </div>
+
+
+      <div class="sensor-footer">
+
+        <span class="online">
+          EN LÍNEA
+        </span>
+
+        <span class="change">
+          ↑ 4.4 VS ANTERIOR
+        </span>
+
+      </div>
+
+
     </div>
 
-    <div class="placeholder">
-      Luminosidad
+
+
+    <!-- =================================================
+         HUMEDAD DEL SUELO
+    ================================================== -->
+
+    <div class="sensor-card">
+
+
+      <div class="sensor-header">
+
+
+        <div class="sensor-icon icon-soil">
+
+          🌱
+
+        </div>
+
+
+        <div class="sensor-title">
+
+          <h3>
+            HUMEDAD DEL SUELO
+          </h3>
+
+          <span class="sensor-id">
+            ID · SOIL_MOISTURE
+          </span>
+
+        </div>
+
+
+        <div class="sensor-status">
+          ÓPTIMO
+        </div>
+
+
+      </div>
+
+
+      <div class="sensor-value-row">
+
+
+        <div>
+
+          <span class="sensor-value">
+            55.4
+          </span>
+
+          <span class="sensor-unit">
+            %
+          </span>
+
+        </div>
+
+
+        <div class="mini-chart">
+
+          <svg
+            viewBox="0 0 100 50"
+            preserveAspectRatio="none">
+
+            <polyline
+              points="0,24 20,22 40,21 60,23 80,21 100,24"
+              fill="none"
+              stroke="#00D99B"
+              stroke-width="2"/>
+
+          </svg>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="optimal-row">
+
+        <span class="optimal-title">
+          Zona óptima
+        </span>
+
+        <span class="optimal-range">
+          40 — 70 %
+        </span>
+
+      </div>
+
+
+      <div class="progress-container">
+
+        <div
+          class="progress"
+          style="width: 52%;">
+
+        </div>
+
+      </div>
+
+
+      <div class="sensor-footer">
+
+        <span class="online">
+          EN LÍNEA
+        </span>
+
+        <span class="change">
+          ↓ 2.7 VS ANTERIOR
+        </span>
+
+      </div>
+
+
     </div>
 
-    <div class="placeholder">
-      Nivel del tanque
+
+
+    <!-- =================================================
+         LUMINOSIDAD
+    ================================================== -->
+
+    <div class="sensor-card">
+
+
+      <div class="sensor-header">
+
+
+        <div class="sensor-icon icon-light">
+
+          ☀️
+
+        </div>
+
+
+        <div class="sensor-title">
+
+          <h3>
+            LUMINOSIDAD
+          </h3>
+
+          <span class="sensor-id">
+            ID · LUMINOSITY
+          </span>
+
+        </div>
+
+
+        <div
+          class="sensor-status"
+          style="
+            color:var(--orange);
+            background:rgba(255,173,0,.08);
+          ">
+
+          REVISAR
+
+        </div>
+
+
+      </div>
+
+
+      <div class="sensor-value-row">
+
+
+        <div>
+
+          <span class="sensor-value">
+            9612
+          </span>
+
+          <span class="sensor-unit">
+            Lux
+          </span>
+
+        </div>
+
+
+        <div class="mini-chart">
+
+          <svg
+            viewBox="0 0 100 50"
+            preserveAspectRatio="none">
+
+            <polyline
+              points="0,20 20,15 40,13 60,17 80,25 100,40"
+              fill="none"
+              stroke="#FFAD00"
+              stroke-width="2"/>
+
+          </svg>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="optimal-row">
+
+        <span class="optimal-title">
+          Zona óptima
+        </span>
+
+        <span class="optimal-range">
+          15.000 — 45.000 Lux
+        </span>
+
+      </div>
+
+
+      <div class="progress-container">
+
+        <div
+          class="progress progress-orange"
+          style="width: 4%;">
+
+        </div>
+
+      </div>
+
+
+      <div class="sensor-footer">
+
+        <span class="online">
+          EN LÍNEA
+        </span>
+
+        <span class="change">
+          ↓ 7838.0 VS ANTERIOR
+        </span>
+
+      </div>
+
+
     </div>
 
-    <div class="placeholder">
-      Carga de batería
+
+
+    <!-- =================================================
+         NIVEL DEL TANQUE
+    ================================================== -->
+
+    <div class="sensor-card">
+
+
+      <div class="sensor-header">
+
+
+        <div class="sensor-icon icon-water">
+
+          ≋
+
+        </div>
+
+
+        <div class="sensor-title">
+
+          <h3>
+            NIVEL DEL TANQUE
+          </h3>
+
+          <span class="sensor-id">
+            ID · WATER_LEVEL
+          </span>
+
+        </div>
+
+
+        <div class="sensor-status">
+          ÓPTIMO
+        </div>
+
+
+      </div>
+
+
+      <div class="sensor-value-row">
+
+
+        <div>
+
+          <span class="sensor-value">
+            75.4
+          </span>
+
+          <span class="sensor-unit">
+            %
+          </span>
+
+        </div>
+
+
+        <div class="mini-chart">
+
+          <svg
+            viewBox="0 0 100 50"
+            preserveAspectRatio="none">
+
+            <polyline
+              points="0,28 20,25 40,26 60,25 80,26 100,26"
+              fill="none"
+              stroke="#4B8CFF"
+              stroke-width="2"/>
+
+          </svg>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="optimal-row">
+
+        <span class="optimal-title">
+          Zona óptima
+        </span>
+
+        <span class="optimal-range">
+          20 — 100 %
+        </span>
+
+      </div>
+
+
+      <div class="progress-container">
+
+        <div
+          class="progress progress-blue"
+          style="width: 75%;">
+
+        </div>
+
+      </div>
+
+
+      <div class="sensor-footer">
+
+        <span class="online">
+          EN LÍNEA
+        </span>
+
+        <span class="change">
+          ↓ 0.5 VS ANTERIOR
+        </span>
+
+      </div>
+
+
     </div>
 
-    <div class="placeholder">
-      Generación solar
+
+
+    <!-- =================================================
+         BATERÍA
+    ================================================== -->
+
+    <div class="sensor-card">
+
+
+      <div class="sensor-header">
+
+
+        <div class="sensor-icon icon-battery">
+
+          🔋
+
+        </div>
+
+
+        <div class="sensor-title">
+
+          <h3>
+            CARGA DE BATERÍA
+          </h3>
+
+          <span class="sensor-id">
+            ID · BATTERY_STATUS
+          </span>
+
+        </div>
+
+
+        <div class="sensor-status">
+          ÓPTIMO
+        </div>
+
+
+      </div>
+
+
+      <div class="sensor-value-row">
+
+
+        <div>
+
+          <span class="sensor-value">
+            82.8
+          </span>
+
+          <span class="sensor-unit">
+            %
+          </span>
+
+        </div>
+
+
+        <div class="mini-chart">
+
+          <svg
+            viewBox="0 0 100 50"
+            preserveAspectRatio="none">
+
+            <polyline
+              points="0,20 20,20 40,20 60,21 80,21 100,21"
+              fill="none"
+              stroke="#8BE000"
+              stroke-width="2"/>
+
+          </svg>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="optimal-row">
+
+        <span class="optimal-title">
+          Zona óptima
+        </span>
+
+        <span class="optimal-range">
+          30 — 100 %
+        </span>
+
+      </div>
+
+
+      <div class="progress-container">
+
+        <div
+          class="progress"
+          style="width: 83%;">
+
+        </div>
+
+      </div>
+
+
+      <div class="sensor-footer">
+
+        <span class="online">
+          EN LÍNEA
+        </span>
+
+        <span class="change">
+          ↓ 0.2 VS ANTERIOR
+        </span>
+
+      </div>
+
+
     </div>
+
+
+
+    <!-- =================================================
+         GENERACIÓN SOLAR
+    ================================================== -->
+
+    <div class="sensor-card">
+
+
+      <div class="sensor-header">
+
+
+        <div class="sensor-icon icon-solar">
+
+          ⚡
+
+        </div>
+
+
+        <div class="sensor-title">
+
+          <h3>
+            GENERACIÓN SOLAR
+          </h3>
+
+          <span class="sensor-id">
+            ID · SOLAR_PRODUCTION
+          </span>
+
+        </div>
+
+
+        <div class="sensor-status">
+          ÓPTIMO
+        </div>
+
+
+      </div>
+
+
+      <div class="sensor-value-row">
+
+
+        <div>
+
+          <span class="sensor-value">
+            184
+          </span>
+
+          <span class="sensor-unit">
+            W
+          </span>
+
+        </div>
+
+
+        <div class="mini-chart">
+
+          <svg
+            viewBox="0 0 100 50"
+            preserveAspectRatio="none">
+
+            <polyline
+              points="0,42 20,35 40,25 60,20 80,24 100,17"
+              fill="none"
+              stroke="#FFAD00"
+              stroke-width="2"/>
+
+          </svg>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="optimal-row">
+
+        <span class="optimal-title">
+          Producción actual
+        </span>
+
+        <span class="optimal-range">
+          0 — 200 W
+        </span>
+
+      </div>
+
+
+      <div class="progress-container">
+
+        <div
+          class="progress progress-orange"
+          style="width: 92%;">
+
+        </div>
+
+      </div>
+
+
+      <div class="sensor-footer">
+
+        <span class="online">
+          EN LÍNEA
+        </span>
+
+        <span class="change">
+          ↑ 12.4 VS ANTERIOR
+        </span>
+
+      </div>
+
+
+    </div>
+
 
   </div>
+
 
 </main>
 
 
+
 <script>
+
 
 /* =====================================================
    FIREBASE
 ===================================================== */
 
-// CONFIGURA ESTO:
-// La misma URL de Firebase de tu ESP32,
-// terminada en /sensores.json
+// Cambia esta URL cuando tengas tu proyecto Firebase
 
 const FIREBASE_URL =
   "https://TU-PROYECTO-default-rtdb.europe-west1.firebasedatabase.app/sensores.json";
+
 
 
 /* =====================================================
@@ -681,41 +2094,60 @@ const FIREBASE_URL =
 
 async function actualizar() {
 
+
   try {
 
-    const res = await fetch(FIREBASE_URL);
 
-    const data = await res.json();
+    const res =
+      await fetch(FIREBASE_URL);
+
+
+    const data =
+      await res.json();
+
 
     if (
       data &&
       data.temperatura !== undefined
     ) {
 
-      document.getElementById("temp").innerHTML =
-        Number(data.temperatura).toFixed(1)
-        + "<span>°C</span>";
+
+      document.getElementById("temp").textContent =
+
+        Number(data.temperatura).toFixed(1);
+
 
       document.getElementById("status").textContent =
-        "Última lectura recibida correctamente";
 
-    } else {
+        "EN LÍNEA";
 
-      document.getElementById("status").textContent =
-        "Firebase responde pero sin datos todavía";
 
     }
 
+    else {
+
+
+      document.getElementById("status").textContent =
+
+        "SIN DATOS";
+
+    }
+
+
   }
+
 
   catch (e) {
 
+
     document.getElementById("status").textContent =
-      "Sin conexión con el sensor";
+
+      "SIN CONEXIÓN";
 
   }
 
 }
+
 
 
 /* =====================================================
@@ -724,7 +2156,9 @@ async function actualizar() {
 
 function cambiarTema() {
 
+
   document.body.classList.toggle("light");
+
 
   const modoClaro =
     document.body.classList.contains("light");
@@ -732,34 +2166,55 @@ function cambiarTema() {
 
   if (modoClaro) {
 
-    document.getElementById("themeIcon").textContent = "🌙";
 
-    document.getElementById("themeText").textContent =
-      "Modo oscuro";
+    document.getElementById(
+      "themeIcon"
+    ).textContent = "🌙";
 
-    localStorage.setItem("tema", "claro");
+
+    document.getElementById(
+      "themeText"
+    ).textContent = "Modo oscuro";
+
+
+    localStorage.setItem(
+      "tema",
+      "claro"
+    );
+
 
   }
 
   else {
 
-    document.getElementById("themeIcon").textContent = "☀️";
 
-    document.getElementById("themeText").textContent =
-      "Modo claro";
+    document.getElementById(
+      "themeIcon"
+    ).textContent = "☀️";
 
-    localStorage.setItem("tema", "oscuro");
+
+    document.getElementById(
+      "themeText"
+    ).textContent = "Modo claro";
+
+
+    localStorage.setItem(
+      "tema",
+      "oscuro"
+    );
 
   }
 
 }
 
 
+
 /* =====================================================
-   CARGAR TEMA GUARDADO
+   CARGAR TEMA
 ===================================================== */
 
 function cargarTema() {
+
 
   const tema =
     localStorage.getItem("tema");
@@ -767,59 +2222,103 @@ function cargarTema() {
 
   if (tema === "claro") {
 
+
     document.body.classList.add("light");
 
-    document.getElementById("themeIcon").textContent =
-      "🌙";
 
-    document.getElementById("themeText").textContent =
-      "Modo oscuro";
+    document.getElementById(
+      "themeIcon"
+    ).textContent = "🌙";
+
+
+    document.getElementById(
+      "themeText"
+    ).textContent = "Modo oscuro";
 
   }
 
 }
 
 
+
 /* =====================================================
    MENÚ LATERAL
 ===================================================== */
 
-const botonesMenu =
-  document.querySelectorAll(".menu-button");
-
-
-botonesMenu.forEach(boton => {
-
-  boton.addEventListener("click", function() {
-
-    botonesMenu.forEach(b => {
-      b.classList.remove("active");
-    });
-
-    this.classList.add("active");
-
-    // De momento los botones no hacen nada más.
-    // Posteriormente podremos cargar cada sección.
-
-  });
-
-});
-
-/* =====================================================
-   ABRIR / CERRAR BARRA LATERAL
-===================================================== */
-
 function toggleSidebar() {
 
-  const sidebar = document.getElementById("sidebar");
+
+  const sidebar =
+    document.getElementById("sidebar");
+
 
   sidebar.classList.toggle("open");
+
 
   document.body.classList.toggle(
     "sidebar-open"
   );
 
+
+  const abierto =
+    sidebar.classList.contains("open");
+
+
+  document
+    .getElementById("menuToggle")
+    .setAttribute(
+      "aria-label",
+      abierto
+        ? "Cerrar menú"
+        : "Abrir menú"
+    );
+
 }
+
+
+
+/* =====================================================
+   BOTONES DEL MENÚ
+===================================================== */
+
+const botonesMenu =
+  document.querySelectorAll(
+    ".menu-button"
+  );
+
+
+botonesMenu.forEach(
+  boton => {
+
+
+    boton.addEventListener(
+      "click",
+      function() {
+
+
+        botonesMenu.forEach(
+          b => {
+
+            b.classList.remove(
+              "active"
+            );
+
+          }
+        );
+
+
+        this.classList.add(
+          "active"
+        );
+
+      }
+    );
+
+  }
+);
+
+
+
 /* =====================================================
    INICIO
 ===================================================== */
@@ -828,9 +2327,15 @@ cargarTema();
 
 actualizar();
 
-setInterval(actualizar, 5000);
+setInterval(
+  actualizar,
+  5000
+);
+
 
 </script>
 
+
 </body>
+
 </html>
