@@ -1,2341 +1,2825 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta charset="utf-8">
+    <title>GrowSync</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
 
-<title>GrowSync</title>
+        /* =========================================================
+           VARIABLES
+        ========================================================= */
 
+        :root {
+            --primary: #39a96b;
+            --primary-dark: #2d8b57;
+            --primary-light: #e9f8ef;
 
-<style>
+            --background: #f5f7f6;
+            --surface: #ffffff;
+            --surface-hover: #f8faf9;
 
-/* =====================================================
-   CONFIGURACIÓN GENERAL
-===================================================== */
+            --text: #17231c;
+            --text-secondary: #68736d;
+            --border: #e4e9e6;
 
-* {
-  box-sizing: border-box;
-}
+            --danger: #e05252;
+            --warning: #e9a93b;
 
-:root {
+            --shadow:
+                0 10px 30px rgba(28, 45, 35, 0.08);
 
-  --bg: #0b1118;
+            --radius: 18px;
+        }
 
-  --sidebar: #101923;
+        body.dark {
+            --background: #101512;
+            --surface: #18201b;
+            --surface-hover: #202a23;
 
-  --card: #172235;
+            --text: #f0f4f1;
+            --text-secondary: #9ba69f;
+            --border: #2b362f;
 
-  --card-hover: #1d2a3d;
+            --primary-light: #183a28;
 
-  --border: #25344a;
+            --shadow:
+                0 10px 30px rgba(0, 0, 0, 0.3);
+        }
 
-  --text: #edf2f7;
 
-  --text-secondary: #71829a;
+        /* =========================================================
+           RESET
+        ========================================================= */
 
-  --green: #8be000;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-  --green-dark: #24351e;
+        body {
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
 
-  --cyan: #00b8d9;
+            background: var(--background);
+            color: var(--text);
 
-  --blue: #4b8cff;
+            min-height: 100vh;
 
-  --orange: #ffad00;
+            transition:
+                background 0.25s,
+                color 0.25s;
+        }
 
-  --red: #ff5c5c;
+        button,
+        input {
+            font-family: inherit;
+        }
 
-  --success: #00d99b;
+        button {
+            cursor: pointer;
+        }
 
-  --shadow: rgba(0,0,0,.25);
 
-}
+        /* =========================================================
+           LOGIN
+        ========================================================= */
 
+        #authView {
+            min-height: 100vh;
 
-/* =====================================================
-   MODO CLARO
-===================================================== */
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-body.light {
+            padding: 30px;
 
-  --bg: #f2f5f3;
+            position: relative;
 
-  --sidebar: #ffffff;
+            background:
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(57, 169, 107, 0.12),
+                    transparent 35%
+                ),
+                radial-gradient(
+                    circle at 90% 90%,
+                    rgba(57, 169, 107, 0.08),
+                    transparent 35%
+                ),
+                var(--background);
+        }
 
-  --card: #ffffff;
+        .auth-theme-button {
+            position: fixed;
 
-  --card-hover: #f4f7f5;
+            top: 25px;
+            right: 25px;
 
-  --border: #dce5df;
+            width: 44px;
+            height: 44px;
 
-  --text: #17241c;
+            border-radius: 50%;
 
-  --text-secondary: #65756b;
+            border: 1px solid var(--border);
+            background: var(--surface);
 
-  --green: #5e9f00;
+            color: var(--text);
 
-  --green-dark: #edf6df;
+            font-size: 19px;
 
-  --shadow: rgba(0,0,0,.08);
+            box-shadow: var(--shadow);
+        }
 
-}
+        .auth-card {
+            width: 100%;
+            max-width: 430px;
 
+            background: var(--surface);
 
-/* =====================================================
-   BODY
-===================================================== */
+            border:
+                1px solid var(--border);
 
-body {
+            border-radius: 24px;
 
-  font-family:
-    system-ui,
-    -apple-system,
-    "Segoe UI",
-    sans-serif;
+            padding: 42px;
 
-  background: var(--bg);
+            box-shadow: var(--shadow);
+        }
 
-  color: var(--text);
+        .brand {
+            text-align: center;
 
-  margin: 0;
+            margin-bottom: 34px;
+        }
 
-  min-height: 100vh;
+        .brand-icon {
+            width: 62px;
+            height: 62px;
 
-  transition:
-    background .25s ease,
-    color .25s ease;
+            margin: 0 auto 14px;
 
-}
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
+            border-radius: 18px;
 
-/* =====================================================
-   CABECERA
-===================================================== */
+            background: var(--primary-light);
 
-.topbar {
+            font-size: 31px;
+        }
 
-  position: fixed;
+        .brand h1 {
+            font-size: 29px;
+            letter-spacing: -0.7px;
+        }
 
-  top: 0;
-  left: 0;
-  right: 0;
+        .brand p {
+            color: var(--text-secondary);
 
-  height: 72px;
+            margin-top: 7px;
 
-  background: var(--sidebar);
+            font-size: 14px;
+        }
 
-  border-bottom:
-    1px solid var(--border);
+        .auth-title {
+            margin-bottom: 25px;
+        }
 
-  display: flex;
+        .auth-title h2 {
+            font-size: 23px;
+        }
 
-  align-items: center;
+        .auth-title p {
+            color: var(--text-secondary);
 
-  justify-content: space-between;
+            margin-top: 6px;
 
-  padding: 0 28px;
+            font-size: 14px;
+        }
 
-  z-index: 100;
+        .form-group {
+            margin-bottom: 17px;
+        }
 
-}
+        .form-group label {
+            display: block;
 
+            font-size: 13px;
+            font-weight: 600;
 
-/* =====================================================
-   LOGO
-===================================================== */
+            margin-bottom: 7px;
+        }
 
-.brand {
+        .input-wrapper {
+            position: relative;
+        }
 
-  display: flex;
+        .input-wrapper input {
+            width: 100%;
 
-  align-items: center;
+            height: 48px;
 
-  gap: 12px;
+            border:
+                1px solid var(--border);
 
-}
+            border-radius: 11px;
 
+            padding: 0 15px;
 
-.brand-icon {
+            background: var(--background);
 
-  width: 38px;
-  height: 38px;
+            color: var(--text);
 
-  padding: 0;
+            outline: none;
 
-  display: flex;
+            transition: 0.2s;
+        }
 
-  align-items: center;
+        .input-wrapper input:focus {
+            border-color: var(--primary);
 
-  justify-content: center;
+            box-shadow:
+                0 0 0 3px rgba(57, 169, 107, 0.12);
+        }
 
-  border-radius: 10px;
+        .password-toggle {
+            position: absolute;
 
-  background: var(--green-dark);
+            right: 12px;
+            top: 50%;
 
-  border:
-    1px solid var(--green);
+            transform: translateY(-50%);
 
-  color: var(--green);
+            border: none;
+            background: transparent;
 
-  font-size: 20px;
+            color: var(--text-secondary);
 
-  cursor: pointer;
+            font-size: 18px;
+        }
 
-  transition: .2s;
+        .forgot {
+            display: block;
 
-}
+            text-align: right;
 
+            margin-top: -4px;
+            margin-bottom: 22px;
 
-.brand-icon:hover {
+            border: none;
+            background: none;
 
-  transform: scale(1.05);
+            color: var(--primary);
 
-  background: var(--card-hover);
+            font-size: 13px;
+            font-weight: 600;
+        }
 
-}
+        .primary-button {
+            width: 100%;
 
+            height: 49px;
 
-.brand-text h1 {
+            border: none;
+            border-radius: 11px;
 
-  font-size: 16px;
+            background: var(--primary);
 
-  margin: 0;
+            color: white;
 
-  font-weight: 700;
+            font-size: 14px;
+            font-weight: 700;
 
-  letter-spacing: .04em;
+            transition: 0.2s;
+        }
 
-}
+        .primary-button:hover {
+            background: var(--primary-dark);
 
+            transform: translateY(-1px);
+        }
 
-.brand-text p {
+        .auth-message {
+            display: none;
 
-  font-size: 11px;
+            margin-bottom: 17px;
 
-  margin: 2px 0 0;
+            padding: 11px 13px;
 
-  color: var(--text-secondary);
+            border-radius: 9px;
 
-  letter-spacing: .08em;
+            font-size: 13px;
+        }
 
-  text-transform: uppercase;
+        .auth-message.error {
+            display: block;
 
-}
+            background: rgba(224, 82, 82, 0.10);
 
+            color: var(--danger);
+        }
 
-/* =====================================================
-   BOTÓN TEMA
-===================================================== */
+        .auth-message.success {
+            display: block;
 
-.theme-button {
+            background: var(--primary-light);
 
-  border:
-    1px solid var(--border);
+            color: var(--primary-dark);
+        }
 
-  background: var(--card);
+        .auth-switch {
+            text-align: center;
 
-  color: var(--text);
+            margin-top: 25px;
 
-  border-radius: 10px;
+            color: var(--text-secondary);
 
-  height: 40px;
+            font-size: 13px;
+        }
 
-  padding: 0 14px;
+        .auth-switch button {
+            border: none;
+            background: none;
 
-  display: flex;
+            color: var(--primary);
 
-  align-items: center;
+            font-weight: 700;
+        }
 
-  gap: 8px;
 
-  cursor: pointer;
+        /* =========================================================
+           APP
+        ========================================================= */
 
-  font-size: 13px;
+        #appView {
+            display: none;
 
-  font-weight: 600;
+            min-height: 100vh;
+        }
 
-}
+        .topbar {
+            height: 72px;
 
+            background: var(--surface);
 
-.theme-button:hover {
+            border-bottom:
+                1px solid var(--border);
 
-  background: var(--card-hover);
+            display: flex;
+            align-items: center;
 
-  border-color: var(--green);
+            justify-content: space-between;
 
-}
+            padding: 0 32px;
 
+            position: sticky;
+            top: 0;
 
-/* =====================================================
-   BARRA LATERAL
-===================================================== */
+            z-index: 20;
+        }
 
-.sidebar {
+        .topbar-brand {
+            display: flex;
+            align-items: center;
 
-  position: fixed;
+            gap: 10px;
 
-  left: 0;
+            font-size: 21px;
+            font-weight: 800;
+        }
 
-  top: 72px;
+        .topbar-brand span {
+            font-size: 25px;
+        }
 
-  bottom: 0;
+        .topbar-right {
+            display: flex;
+            align-items: center;
 
-  width: 245px;
+            gap: 10px;
+        }
 
-  background: var(--sidebar);
+        .icon-button {
+            width: 40px;
+            height: 40px;
 
-  border-right:
-    1px solid var(--border);
+            border-radius: 10px;
 
-  padding: 22px 14px;
+            border: 1px solid var(--border);
 
-  z-index: 90;
+            background: var(--surface);
 
-  transform:
-    translateX(-100%);
+            color: var(--text);
 
-  transition:
-    transform .25s ease;
+            font-size: 17px;
+        }
 
-}
+        .user-menu {
+            display: flex;
+            align-items: center;
 
+            gap: 10px;
 
-.sidebar.open {
+            padding-left: 10px;
 
-  transform:
-    translateX(0);
+            border-left:
+                1px solid var(--border);
+        }
 
-}
+        .avatar {
+            width: 36px;
+            height: 36px;
 
+            border-radius: 50%;
 
-.sidebar-title {
+            background: var(--primary-light);
 
-  font-size: 10px;
+            color: var(--primary-dark);
 
-  color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-  text-transform: uppercase;
+            font-weight: 800;
 
-  letter-spacing: .15em;
+            font-size: 13px;
+        }
 
-  padding: 0 12px;
+        .user-info {
+            line-height: 1.2;
+        }
 
-  margin-bottom: 10px;
+        .user-info strong {
+            display: block;
 
-}
+            font-size: 13px;
+        }
 
+        .user-info span {
+            color: var(--text-secondary);
 
-.menu {
+            font-size: 11px;
+        }
 
-  display: flex;
 
-  flex-direction: column;
+        /* =========================================================
+           APP CONTENT
+        ========================================================= */
 
-  gap: 5px;
+        .app-container {
+            max-width: 1250px;
 
-}
+            margin: 0 auto;
 
+            padding: 45px 32px 60px;
+        }
 
-.menu-button {
+        .page-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
 
-  width: 100%;
+            margin-bottom: 30px;
+        }
 
-  border:
-    1px solid transparent;
+        .page-header h1 {
+            font-size: 31px;
 
-  background: transparent;
+            letter-spacing: -0.7px;
+        }
 
-  color: var(--text-secondary);
+        .page-header p {
+            margin-top: 7px;
 
-  border-radius: 10px;
+            color: var(--text-secondary);
 
-  padding: 11px 12px;
+            font-size: 14px;
+        }
 
-  display: flex;
+        .add-button {
+            height: 45px;
 
-  align-items: center;
+            padding: 0 19px;
 
-  gap: 12px;
+            border: none;
+            border-radius: 10px;
 
-  cursor: pointer;
+            background: var(--primary);
 
-  text-align: left;
+            color: white;
 
-  font-size: 13px;
+            font-weight: 700;
 
-  font-weight: 600;
+            display: flex;
+            align-items: center;
 
-}
+            gap: 8px;
 
+            transition: 0.2s;
+        }
 
-.menu-button:hover {
+        .add-button:hover {
+            background: var(--primary-dark);
+        }
 
-  background: var(--card-hover);
 
-  color: var(--text);
+        /* =========================================================
+           GREENHOUSE GRID
+        ========================================================= */
 
-}
+        .greenhouse-grid {
+            display: grid;
 
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
 
-.menu-button.active {
+            gap: 20px;
+        }
 
-  background: var(--green-dark);
+        .greenhouse-card {
+            background: var(--surface);
 
-  border-color:
-    rgba(139,224,0,.25);
+            border:
+                1px solid var(--border);
 
-  color: var(--green);
+            border-radius: var(--radius);
 
-}
+            padding: 24px;
 
+            box-shadow:
+                0 5px 18px rgba(30, 45, 35, 0.04);
 
-.menu-icon {
+            transition: 0.2s;
+        }
 
-  width: 20px;
+        .greenhouse-card:hover {
+            transform: translateY(-2px);
 
-  text-align: center;
+            box-shadow: var(--shadow);
+        }
 
-  font-size: 16px;
+        .greenhouse-top {
+            display: flex;
+            align-items: flex-start;
 
-}
+            justify-content: space-between;
 
+            margin-bottom: 24px;
+        }
 
-/* =====================================================
-   CONTENIDO PRINCIPAL
-===================================================== */
+        .greenhouse-icon {
+            width: 48px;
+            height: 48px;
 
-.main {
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-  margin-left: 0;
+            border-radius: 13px;
 
-  padding:
-    100px 30px 40px;
+            background: var(--primary-light);
 
-  min-height: 100vh;
+            font-size: 24px;
+        }
 
-  transition:
-    margin-left .25s ease;
+        .status {
+            display: inline-flex;
+            align-items: center;
 
-}
+            gap: 6px;
 
+            padding: 6px 10px;
 
-body.sidebar-open .main {
+            border-radius: 20px;
 
-  margin-left: 245px;
+            background: var(--primary-light);
 
-}
+            color: var(--primary-dark);
 
+            font-size: 11px;
+            font-weight: 700;
+        }
 
-/* =====================================================
-   CABECERA DEL DASHBOARD
-===================================================== */
+        .status-dot {
+            width: 7px;
+            height: 7px;
 
-.page-header {
+            border-radius: 50%;
 
-  display: flex;
+            background: var(--primary);
+        }
 
-  justify-content: space-between;
+        .greenhouse-name {
+            font-size: 19px;
+            font-weight: 750;
+        }
 
-  align-items: flex-end;
+        .greenhouse-location {
+            margin-top: 4px;
 
-  margin-bottom: 28px;
+            color: var(--text-secondary);
 
-}
+            font-size: 12px;
+        }
 
+        .greenhouse-info {
+            display: grid;
 
-.page-header h2 {
+            grid-template-columns:
+                repeat(2, 1fr);
 
-  margin: 0;
+            gap: 12px;
 
-  font-size: 26px;
+            margin-bottom: 20px;
+        }
 
-  letter-spacing: -.02em;
+        .info-box {
+            background: var(--background);
 
-}
+            border-radius: 11px;
 
+            padding: 13px;
+        }
 
-.page-header p {
+        .info-box span {
+            display: block;
 
-  margin: 5px 0 0;
+            color: var(--text-secondary);
 
-  color: var(--text-secondary);
+            font-size: 11px;
 
-  font-size: 13px;
+            margin-bottom: 4px;
+        }
 
-}
+        .info-box strong {
+            font-size: 17px;
+        }
 
+        .greenhouse-footer {
+            display: flex;
+            align-items: center;
 
-/* =====================================================
-   ESTADO DEL SISTEMA
-===================================================== */
+            justify-content: space-between;
 
-.connection-status {
+            padding-top: 17px;
 
-  display: flex;
+            border-top:
+                1px solid var(--border);
+        }
 
-  align-items: center;
+        .greenhouse-code {
+            color: var(--text-secondary);
 
-  gap: 7px;
+            font-family: monospace;
 
-  color: var(--success);
+            font-size: 11px;
+        }
 
-  font-size: 12px;
+        .open-button {
+            border: none;
 
-  font-weight: 600;
+            background: none;
 
-}
+            color: var(--primary);
 
+            font-weight: 700;
 
-.connection-dot {
+            font-size: 13px;
+        }
 
-  width: 7px;
 
-  height: 7px;
+        /* =========================================================
+           EMPTY / ADD CARD
+        ========================================================= */
 
-  background: var(--success);
+        .add-card {
+            min-height: 270px;
 
-  border-radius: 50%;
+            border:
+                1.5px dashed var(--border);
 
-}
+            border-radius: var(--radius);
 
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-/* =====================================================
-   GRID DE PANELES
-===================================================== */
+            flex-direction: column;
 
-.dashboard-grid {
+            text-align: center;
 
-  display: grid;
+            background: transparent;
 
-  grid-template-columns:
-    repeat(2, minmax(300px, 1fr));
+            transition: 0.2s;
+        }
 
-  gap: 18px;
+        .add-card:hover {
+            border-color: var(--primary);
 
-}
+            background: var(--primary-light);
+        }
 
+        .add-card-icon {
+            width: 50px;
+            height: 50px;
 
-/* =====================================================
-   PANEL
-===================================================== */
+            border-radius: 50%;
 
-.sensor-card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-  background: var(--card);
+            background: var(--primary-light);
 
-  border:
-    1px solid var(--border);
+            color: var(--primary);
 
-  border-radius: 16px;
+            font-size: 25px;
 
-  padding: 22px;
+            margin-bottom: 13px;
+        }
 
-  min-height: 245px;
+        .add-card h3 {
+            font-size: 15px;
+        }
 
-  box-shadow:
-    0 10px 30px var(--shadow);
+        .add-card p {
+            color: var(--text-secondary);
 
-  transition:
-    background .25s ease,
-    border-color .25s ease,
-    transform .2s ease;
+            font-size: 12px;
 
-}
+            margin-top: 5px;
 
+            margin-bottom: 15px;
+        }
 
-.sensor-card:hover {
+        .outline-button {
+            height: 38px;
 
-  transform:
-    translateY(-2px);
+            padding: 0 15px;
 
-  border-color:
-    rgba(139,224,0,.25);
+            border-radius: 9px;
 
-}
+            border:
+                1px solid var(--primary);
 
+            color: var(--primary);
 
-/* =====================================================
-   CABECERA DEL PANEL
-===================================================== */
+            background: transparent;
 
-.sensor-header {
+            font-size: 12px;
+            font-weight: 700;
+        }
 
-  display: flex;
 
-  align-items: center;
+        /* =========================================================
+           MODALS
+        ========================================================= */
 
-  gap: 12px;
+        .modal-overlay {
+            display: none;
 
-}
+            position: fixed;
 
+            inset: 0;
 
-/* =====================================================
-   ICONO DEL SENSOR
-===================================================== */
+            background:
+                rgba(10, 20, 14, 0.45);
 
-.sensor-icon {
+            z-index: 100;
 
-  width: 36px;
+            align-items: center;
+            justify-content: center;
 
-  height: 36px;
+            padding: 20px;
 
-  border-radius: 9px;
+            backdrop-filter: blur(4px);
+        }
 
-  display: flex;
+        .modal-overlay.active {
+            display: flex;
+        }
 
-  align-items: center;
+        .modal {
+            width: 100%;
+            max-width: 480px;
 
-  justify-content: center;
+            background: var(--surface);
 
-  font-size: 18px;
+            border-radius: 20px;
 
-  border: 1px solid;
+            padding: 30px;
 
-}
+            box-shadow:
+                0 25px 70px rgba(0,0,0,0.2);
 
+            animation: modalIn 0.18s ease;
+        }
 
-/* Colores de los iconos */
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
 
-.icon-temperature {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-  color: var(--green);
+        .modal-header {
+            display: flex;
+            align-items: center;
 
-  border-color:
-    rgba(139,224,0,.3);
+            justify-content: space-between;
 
-  background:
-    rgba(139,224,0,.08);
+            margin-bottom: 23px;
+        }
 
-}
+        .modal-header h2 {
+            font-size: 21px;
+        }
 
+        .close-button {
+            width: 34px;
+            height: 34px;
 
-.icon-humidity {
+            border-radius: 9px;
 
-  color: var(--cyan);
+            border: none;
 
-  border-color:
-    rgba(0,184,217,.3);
+            background: var(--background);
 
-  background:
-    rgba(0,184,217,.08);
+            color: var(--text);
 
-}
+            font-size: 18px;
+        }
 
+        .modal-subtitle {
+            color: var(--text-secondary);
 
-.icon-soil {
+            font-size: 13px;
 
-  color: #00d99b;
+            line-height: 1.5;
 
-  border-color:
-    rgba(0,217,155,.3);
+            margin-top: -12px;
 
-  background:
-    rgba(0,217,155,.08);
+            margin-bottom: 22px;
+        }
 
-}
+        .modal-actions {
+            display: flex;
 
+            gap: 10px;
 
-.icon-light {
+            margin-top: 24px;
+        }
 
-  color: var(--orange);
+        .secondary-button {
+            flex: 1;
 
-  border-color:
-    rgba(255,173,0,.3);
+            height: 45px;
 
-  background:
-    rgba(255,173,0,.08);
+            border-radius: 10px;
 
-}
+            border:
+                1px solid var(--border);
 
+            background: var(--background);
 
-.icon-water {
+            color: var(--text);
 
-  color: var(--blue);
+            font-weight: 700;
+        }
 
-  border-color:
-    rgba(75,140,255,.3);
+        .modal-actions .primary-button {
+            flex: 1;
+        }
 
-  background:
-    rgba(75,140,255,.08);
 
-}
+        /* =========================================================
+           ADD GREENHOUSE OPTIONS
+        ========================================================= */
 
+        .option-card {
+            width: 100%;
 
-.icon-battery {
+            border:
+                1px solid var(--border);
 
-  color: var(--green);
+            background: var(--surface);
 
-  border-color:
-    rgba(139,224,0,.3);
+            border-radius: 14px;
 
-  background:
-    rgba(139,224,0,.08);
+            padding: 17px;
 
-}
+            display: flex;
+            align-items: center;
 
+            gap: 15px;
 
-.icon-solar {
+            text-align: left;
 
-  color: var(--orange);
+            color: var(--text);
 
-  border-color:
-    rgba(255,173,0,.3);
+            margin-bottom: 11px;
 
-  background:
-    rgba(255,173,0,.08);
+            transition: 0.2s;
+        }
 
-}
+        .option-card:hover {
+            border-color: var(--primary);
 
+            background: var(--primary-light);
+        }
 
-/* =====================================================
-   TÍTULO DEL SENSOR
-===================================================== */
+        .option-icon {
+            width: 45px;
+            height: 45px;
 
-.sensor-title {
+            flex-shrink: 0;
 
-  display: flex;
+            border-radius: 12px;
 
-  flex-direction: column;
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-}
+            background: var(--primary-light);
 
+            font-size: 22px;
+        }
 
-.sensor-title h3 {
+        .option-card h3 {
+            font-size: 14px;
 
-  margin: 0;
+            margin-bottom: 3px;
+        }
 
-  font-size: 13px;
+        .option-card p {
+            color: var(--text-secondary);
 
-  font-weight: 700;
+            font-size: 11px;
+        }
 
-  letter-spacing: .05em;
 
-}
+        /* =========================================================
+           CODE GENERATED
+        ========================================================= */
 
+        .generated-code {
+            text-align: center;
 
-.sensor-id {
+            padding: 22px;
 
-  margin-top: 3px;
+            background: var(--primary-light);
 
-  font-size: 10px;
+            border-radius: 14px;
 
-  color: var(--text-secondary);
+            margin: 20px 0;
+        }
 
-  letter-spacing: .1em;
+        .generated-code span {
+            display: block;
 
-}
+            color: var(--text-secondary);
 
+            font-size: 11px;
 
-/* =====================================================
-   ESTADO
-===================================================== */
+            margin-bottom: 8px;
+        }
 
-.sensor-status {
+        .generated-code strong {
+            display: block;
 
-  margin-left: auto;
+            color: var(--primary-dark);
 
-  padding:
-    5px 9px;
+            font-family: monospace;
 
-  border-radius: 20px;
+            font-size: 25px;
 
-  background:
-    rgba(139,224,0,.08);
+            letter-spacing: 2px;
+        }
 
-  color: var(--green);
+        .generated-code p {
+            margin-top: 10px;
 
-  font-size: 10px;
+            color: var(--text-secondary);
 
-  font-weight: 700;
+            font-size: 11px;
 
-  letter-spacing: .05em;
+            line-height: 1.4;
+        }
 
-}
 
+        /* =========================================================
+           PROFILE MENU
+        ========================================================= */
 
-.sensor-status::before {
+        .profile-menu {
+            position: fixed;
 
-  content: "●";
+            top: 65px;
+            right: 30px;
 
-  margin-right: 5px;
+            width: 230px;
 
-  font-size: 8px;
+            background: var(--surface);
 
-}
+            border:
+                1px solid var(--border);
 
+            border-radius: 14px;
 
-/* =====================================================
-   VALOR
-===================================================== */
+            padding: 8px;
 
-.sensor-value-row {
+            box-shadow: var(--shadow);
 
-  display: flex;
+            z-index: 50;
 
-  justify-content: space-between;
+            display: none;
+        }
 
-  align-items: center;
+        .profile-menu.active {
+            display: block;
+        }
 
-  margin-top: 28px;
+        .profile-menu button {
+            width: 100%;
 
-}
+            text-align: left;
 
+            padding: 11px 12px;
 
-.sensor-value {
+            border: none;
 
-  font-size: 40px;
+            background: transparent;
 
-  line-height: 1;
+            color: var(--text);
 
-  font-weight: 800;
+            border-radius: 8px;
+        }
 
-  letter-spacing: -.03em;
+        .profile-menu button:hover {
+            background: var(--background);
+        }
 
-}
+        .profile-menu .logout {
+            color: var(--danger);
+        }
 
 
-.sensor-unit {
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
 
-  font-size: 15px;
+        @media (max-width: 800px) {
 
-  font-weight: 600;
+            .greenhouse-grid {
+                grid-template-columns: 1fr;
+            }
 
-  color: var(--text-secondary);
+            .topbar {
+                padding: 0 18px;
+            }
 
-  margin-left: 5px;
+            .user-info {
+                display: none;
+            }
 
-}
+            .app-container {
+                padding:
+                    30px 18px 50px;
+            }
 
+            .page-header {
+                align-items: flex-start;
 
-/* =====================================================
-   MINI GRÁFICA
-===================================================== */
+                flex-direction: column;
 
-.mini-chart {
+                gap: 18px;
+            }
 
-  width: 80px;
+            .add-button {
+                width: 100%;
 
-  height: 45px;
+                justify-content: center;
+            }
+        }
 
-  position: relative;
+        @media (max-width: 500px) {
 
-  overflow: hidden;
+            .auth-card {
+                padding: 30px 23px;
+            }
 
-}
+            #authView {
+                padding: 15px;
+            }
 
+            .page-header h1 {
+                font-size: 27px;
+            }
 
-.mini-chart svg {
+            .topbar-brand {
+                font-size: 18px;
+            }
 
-  width: 100%;
+            .user-menu {
+                border-left: none;
 
-  height: 100%;
+                padding-left: 0;
+            }
+        }
 
-}
-
-
-/* =====================================================
-   ZONA ÓPTIMA
-===================================================== */
-
-.optimal-row {
-
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: center;
-
-  margin-top: 27px;
-
-}
-
-
-.optimal-title {
-
-  font-size: 10px;
-
-  color: var(--text-secondary);
-
-  letter-spacing: .12em;
-
-  text-transform: uppercase;
-
-}
-
-
-.optimal-range {
-
-  font-size: 11px;
-
-  color: var(--text-secondary);
-
-  font-weight: 600;
-
-}
-
-
-/* =====================================================
-   BARRA DE ZONA ÓPTIMA
-===================================================== */
-
-.progress-container {
-
-  width: 100%;
-
-  height: 5px;
-
-  background:
-    rgba(255,255,255,.04);
-
-  border-radius: 10px;
-
-  margin-top: 9px;
-
-  overflow: hidden;
-
-}
-
-
-.progress {
-
-  height: 100%;
-
-  border-radius: 10px;
-
-  background: var(--green);
-
-}
-
-
-.progress-cyan {
-
-  background: var(--cyan);
-
-}
-
-
-.progress-blue {
-
-  background: var(--blue);
-
-}
-
-
-.progress-orange {
-
-  background: var(--orange);
-
-}
-
-
-/* =====================================================
-   PIE DEL PANEL
-===================================================== */
-
-.sensor-footer {
-
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: center;
-
-  margin-top: 16px;
-
-}
-
-
-.online {
-
-  color: var(--success);
-
-  font-size: 11px;
-
-  font-weight: 600;
-
-}
-
-
-.online::before {
-
-  content: "〽";
-
-  margin-right: 5px;
-
-}
-
-
-.change {
-
-  color: var(--orange);
-
-  font-size: 10px;
-
-  font-weight: 600;
-
-}
-
-
-/* =====================================================
-   RESPONSIVE
-===================================================== */
-
-@media (max-width: 900px) {
-
-  body.sidebar-open .main {
-
-    margin-left: 0;
-
-  }
-
-  .dashboard-grid {
-
-    grid-template-columns: 1fr;
-
-  }
-
-}
-
-
-@media (max-width: 650px) {
-
-  .topbar {
-
-    padding:
-      0 16px;
-
-  }
-
-
-  .brand-text p {
-
-    display: none;
-
-  }
-
-
-  .brand-text h1 {
-
-    font-size: 15px;
-
-  }
-
-
-  .theme-button {
-
-    width: 40px;
-
-    padding: 0;
-
-    justify-content: center;
-
-  }
-
-
-  .theme-button span:last-child {
-
-    display: none;
-
-  }
-
-
-  .main {
-
-    padding:
-      95px 16px 30px;
-
-  }
-
-
-  .page-header {
-
-    align-items: flex-start;
-
-    flex-direction: column;
-
-    gap: 10px;
-
-  }
-
-
-  .dashboard-grid {
-
-    grid-template-columns: 1fr;
-
-  }
-
-
-  .sensor-card {
-
-    padding: 18px;
-
-  }
-
-
-  .sensor-value {
-
-    font-size: 34px;
-
-  }
-
-}
-
-</style>
-
+    </style>
 </head>
 
 
 <body>
 
 
-<!-- =====================================================
-     CABECERA
-===================================================== -->
+<!-- =============================================================
+     AUTHENTICATION
+============================================================= -->
 
-<header class="topbar">
-
-
-  <div class="brand">
-
-
-    <!-- BOTÓN MENÚ -->
+<section id="authView">
 
     <button
-      class="brand-icon"
-      id="menuToggle"
-      onclick="toggleSidebar()"
-      aria-label="Abrir menú">
-
-      🌱
-
+        class="auth-theme-button"
+        onclick="toggleTheme()"
+        id="authThemeButton">
+        ☾
     </button>
 
 
-    <div class="brand-text">
+    <div class="auth-card">
 
-      <h1>
-        GrowSync
-      </h1>
+        <div class="brand">
 
-      <p>
-        Smart Greenhouse
-      </p>
+            <div class="brand-icon">
+                🌱
+            </div>
 
-    </div>
+            <h1>GrowSync</h1>
 
-  </div>
-
-
-  <!-- MODO CLARO / OSCURO -->
-
-  <button
-    class="theme-button"
-    onclick="cambiarTema()">
-
-    <span id="themeIcon">
-      ☀️
-    </span>
-
-    <span id="themeText">
-      Modo claro
-    </span>
-
-  </button>
-
-
-</header>
-
-
-
-<!-- =====================================================
-     BARRA LATERAL
-===================================================== -->
-
-<aside
-  class="sidebar"
-  id="sidebar">
-
-
-  <div class="sidebar-title">
-    Navegación
-  </div>
-
-
-  <nav class="menu">
-
-
-    <button
-      class="menu-button active">
-
-      <span class="menu-icon">
-        ▦
-      </span>
-
-      <span>
-        Dashboard
-      </span>
-
-    </button>
-
-
-    <button
-      class="menu-button">
-
-      <span class="menu-icon">
-        ⚙
-      </span>
-
-      <span>
-        Configuración
-      </span>
-
-    </button>
-
-
-  </nav>
-
-</aside>
-
-
-
-<!-- =====================================================
-     CONTENIDO
-===================================================== -->
-
-<main class="main">
-
-
-  <!-- CABECERA -->
-
-  <div class="page-header">
-
-
-    <div>
-
-      <h2>
-        Dashboard
-      </h2>
-
-      <p>
-        Monitorización del invernadero en tiempo real
-      </p>
-
-    </div>
-
-
-    <div class="connection-status">
-
-      <span class="connection-dot"></span>
-
-      Sistema online
-
-    </div>
-
-
-  </div>
-
-
-
-  <!-- =================================================
-       PANELES DE SENSORES
-  ================================================== -->
-
-  <div class="dashboard-grid">
-
-
-
-    <!-- =================================================
-         TEMPERATURA
-    ================================================== -->
-
-    <div class="sensor-card">
-
-
-      <div class="sensor-header">
-
-
-        <div class="sensor-icon icon-temperature">
-
-          🌡️
+            <p>
+                Gestión inteligente de tu invernadero
+            </p>
 
         </div>
 
 
-        <div class="sensor-title">
+        <!-- LOGIN -->
 
-          <h3>
-            TEMPERATURA AMBIENTAL
-          </h3>
+        <div id="loginForm">
 
-          <span class="sensor-id">
-            ID · TEMPERATURE
-          </span>
+            <div class="auth-title">
+
+                <h2>Bienvenido de nuevo</h2>
+
+                <p>
+                    Accede a tu cuenta para gestionar
+                    tus invernaderos.
+                </p>
+
+            </div>
+
+
+            <div
+                id="loginMessage"
+                class="auth-message">
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="loginEmail">
+                    Correo electrónico
+                </label>
+
+                <div class="input-wrapper">
+
+                    <input
+                        id="loginEmail"
+                        type="email"
+                        placeholder="tu@email.com">
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="loginPassword">
+                    Contraseña
+                </label>
+
+                <div class="input-wrapper">
+
+                    <input
+                        id="loginPassword"
+                        type="password"
+                        placeholder="Introduce tu contraseña">
+
+                    <button
+                        class="password-toggle"
+                        onclick="togglePassword('loginPassword', this)">
+                        👁
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="forgot"
+                onclick="showForgotPassword()">
+                ¿Has olvidado tu contraseña?
+            </button>
+
+
+            <button
+                class="primary-button"
+                onclick="login()">
+                ENTRAR
+            </button>
+
+
+            <div class="auth-switch">
+
+                ¿No tienes una cuenta?
+
+                <button onclick="showRegister()">
+                    Crear cuenta
+                </button>
+
+            </div>
 
         </div>
 
 
-        <div class="sensor-status">
-          ÓPTIMO
-        </div>
-
-
-      </div>
-
-
-      <div class="sensor-value-row">
-
-
-        <div>
-
-          <span
-            class="sensor-value"
-            id="temp">
-
-            ---
-
-          </span>
-
-          <span class="sensor-unit">
-            °C
-          </span>
-
-        </div>
-
-
-        <div class="mini-chart">
-
-          <svg
-            viewBox="0 0 100 50"
-            preserveAspectRatio="none">
-
-            <polyline
-              points="0,32 20,32 40,29 60,25 80,27 100,23"
-              fill="none"
-              stroke="#8BE000"
-              stroke-width="2"/>
-
-          </svg>
-
-        </div>
-
-
-      </div>
-
-
-      <div class="optimal-row">
-
-        <span class="optimal-title">
-          Zona óptima
-        </span>
-
-        <span class="optimal-range">
-          18 — 26 °C
-        </span>
-
-      </div>
-
-
-      <div class="progress-container">
+        <!-- REGISTER -->
 
         <div
-          class="progress"
-          id="temperatureProgress"
-          style="width: 65%;">
+            id="registerForm"
+            style="display:none;">
+
+            <div class="auth-title">
+
+                <h2>Crear cuenta</h2>
+
+                <p>
+                    Empieza a gestionar tus invernaderos.
+                </p>
+
+            </div>
+
+
+            <div
+                id="registerMessage"
+                class="auth-message">
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="registerName">
+                    Nombre
+                </label>
+
+                <div class="input-wrapper">
+
+                    <input
+                        id="registerName"
+                        type="text"
+                        placeholder="Tu nombre">
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="registerEmail">
+                    Correo electrónico
+                </label>
+
+                <div class="input-wrapper">
+
+                    <input
+                        id="registerEmail"
+                        type="email"
+                        placeholder="tu@email.com">
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="registerPassword">
+                    Contraseña
+                </label>
+
+                <div class="input-wrapper">
+
+                    <input
+                        id="registerPassword"
+                        type="password"
+                        placeholder="Mínimo 6 caracteres">
+
+                    <button
+                        class="password-toggle"
+                        onclick="togglePassword('registerPassword', this)">
+                        👁
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="registerPassword2">
+                    Repetir contraseña
+                </label>
+
+                <div class="input-wrapper">
+
+                    <input
+                        id="registerPassword2"
+                        type="password"
+                        placeholder="Repite la contraseña">
+
+                    <button
+                        class="password-toggle"
+                        onclick="togglePassword('registerPassword2', this)">
+                        👁
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="primary-button"
+                onclick="register()">
+                CREAR CUENTA
+            </button>
+
+
+            <div class="auth-switch">
+
+                ¿Ya tienes una cuenta?
+
+                <button onclick="showLogin()">
+                    Iniciar sesión
+                </button>
+
+            </div>
 
         </div>
 
-      </div>
+
+        <!-- FORGOT PASSWORD -->
+
+        <div
+            id="forgotForm"
+            style="display:none;">
+
+            <div class="auth-title">
+
+                <h2>Recuperar contraseña</h2>
+
+                <p>
+                    Introduce tu correo y te enviaremos
+                    las instrucciones para recuperar
+                    tu contraseña.
+                </p>
+
+            </div>
 
 
-      <div class="sensor-footer">
+            <div
+                id="forgotMessage"
+                class="auth-message">
+            </div>
 
-        <span
-          class="online"
-          id="status">
 
-          EN LÍNEA
+            <div class="form-group">
 
-        </span>
+                <label>
+                    Correo electrónico
+                </label>
 
-        <span class="change">
-          ↓ 1.5 VS ANTERIOR
-        </span>
+                <div class="input-wrapper">
 
-      </div>
+                    <input
+                        id="forgotEmail"
+                        type="email"
+                        placeholder="tu@email.com">
 
+                </div>
+
+            </div>
+
+
+            <button
+                class="primary-button"
+                onclick="recoverPassword()">
+                ENVIAR INSTRUCCIONES
+            </button>
+
+
+            <div class="auth-switch">
+
+                <button onclick="showLogin()">
+                    ← Volver al inicio de sesión
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =============================================================
+     MAIN APPLICATION
+============================================================= -->
+
+<section id="appView">
+
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+        <div class="topbar-brand">
+
+            <span>🌱</span>
+
+            GrowSync
+
+        </div>
+
+
+        <div class="topbar-right">
+
+            <button
+                class="icon-button"
+                onclick="toggleTheme()"
+                id="appThemeButton">
+                ☾
+            </button>
+
+
+            <div class="user-menu">
+
+                <div
+                    class="avatar"
+                    id="userAvatar">
+                    P
+                </div>
+
+                <div class="user-info">
+
+                    <strong id="userName">
+                        Pablo
+                    </strong>
+
+                    <span id="userEmail">
+                        pablo@email.com
+                    </span>
+
+                </div>
+
+                <button
+                    class="icon-button"
+                    onclick="toggleProfileMenu()">
+                    ⋮
+                </button>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- PROFILE MENU -->
+
+    <div
+        class="profile-menu"
+        id="profileMenu">
+
+        <button onclick="alert('Perfil próximamente')">
+            👤 Mi perfil
+        </button>
+
+        <button onclick="alert('Configuración próximamente')">
+            ⚙️ Configuración
+        </button>
+
+        <button
+            class="logout"
+            onclick="logout()">
+            ↪ Cerrar sesión
+        </button>
 
     </div>
 
 
 
-    <!-- =================================================
-         HUMEDAD AMBIENTAL
-    ================================================== -->
+    <!-- CONTENT -->
 
-    <div class="sensor-card">
+    <main class="app-container">
 
 
-      <div class="sensor-header">
+        <div class="page-header">
+
+            <div>
+
+                <h1>
+                    Mis invernaderos
+                </h1>
+
+                <p>
+                    Gestiona todos tus invernaderos
+                    desde un único lugar.
+                </p>
+
+            </div>
 
 
-        <div class="sensor-icon icon-humidity">
+            <button
+                class="add-button"
+                onclick="openAddGreenhouse()">
 
-          💧
+                <span>＋</span>
 
-        </div>
+                Añadir invernadero
 
-
-        <div class="sensor-title">
-
-          <h3>
-            HUMEDAD RELATIVA
-          </h3>
-
-          <span class="sensor-id">
-            ID · HUMIDITY_ENV
-          </span>
-
-        </div>
-
-
-        <div class="sensor-status">
-          ÓPTIMO
-        </div>
-
-
-      </div>
-
-
-      <div class="sensor-value-row">
-
-
-        <div>
-
-          <span class="sensor-value">
-            61.7
-          </span>
-
-          <span class="sensor-unit">
-            %
-          </span>
+            </button>
 
         </div>
 
 
-        <div class="mini-chart">
 
-          <svg
-            viewBox="0 0 100 50"
-            preserveAspectRatio="none">
-
-            <polyline
-              points="0,20 20,21 40,25 60,29 80,27 100,30"
-              fill="none"
-              stroke="#00B8D9"
-              stroke-width="2"/>
-
-          </svg>
-
-        </div>
-
-
-      </div>
-
-
-      <div class="optimal-row">
-
-        <span class="optimal-title">
-          Zona óptima
-        </span>
-
-        <span class="optimal-range">
-          50 — 75 %
-        </span>
-
-      </div>
-
-
-      <div class="progress-container">
+        <!-- GREENHOUSES -->
 
         <div
-          class="progress progress-cyan"
-          style="width: 58%;">
+            class="greenhouse-grid"
+            id="greenhouseGrid">
+
+
+            <!-- GREENHOUSE 1 -->
+
+            <div class="greenhouse-card">
+
+                <div class="greenhouse-top">
+
+                    <div>
+
+                        <div class="greenhouse-icon">
+                            🌱
+                        </div>
+
+                    </div>
+
+                    <div class="status">
+
+                        <span class="status-dot"></span>
+
+                        Online
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="greenhouse-name">
+
+                    Invernadero terraza
+
+                </div>
+
+
+                <div
+                    class="greenhouse-location">
+
+                    📍 Zaragoza
+
+                </div>
+
+
+                <div class="greenhouse-info">
+
+                    <div class="info-box">
+
+                        <span>
+                            Temperatura
+                        </span>
+
+                        <strong>
+                            24,6 °C
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-box">
+
+                        <span>
+                            Humedad
+                        </span>
+
+                        <strong>
+                            63 %
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="greenhouse-footer">
+
+                    <span class="greenhouse-code">
+                        GS-7K4P-92XM
+                    </span>
+
+                    <button
+                        class="open-button"
+                        onclick="openGreenhouse('Invernadero terraza')">
+
+                        Abrir →
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- GREENHOUSE 2 -->
+
+            <div class="greenhouse-card">
+
+                <div class="greenhouse-top">
+
+                    <div>
+
+                        <div class="greenhouse-icon">
+                            🌱
+                        </div>
+
+                    </div>
+
+                    <div class="status">
+
+                        <span class="status-dot"></span>
+
+                        Online
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="greenhouse-name">
+
+                    Invernadero huerto
+
+                </div>
+
+
+                <div
+                    class="greenhouse-location">
+
+                    📍 Zaragoza
+
+                </div>
+
+
+                <div class="greenhouse-info">
+
+                    <div class="info-box">
+
+                        <span>
+                            Temperatura
+                        </span>
+
+                        <strong>
+                            21,8 °C
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-box">
+
+                        <span>
+                            Humedad
+                        </span>
+
+                        <strong>
+                            71 %
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="greenhouse-footer">
+
+                    <span class="greenhouse-code">
+                        GS-91LM-3KQP
+                    </span>
+
+                    <button
+                        class="open-button"
+                        onclick="openGreenhouse('Invernadero huerto')">
+
+                        Abrir →
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ADD CARD -->
+
+            <div
+                class="add-card"
+                onclick="openAddGreenhouse()">
+
+                <div class="add-card-icon">
+                    ＋
+                </div>
+
+                <h3>
+                    Añadir otro invernadero
+                </h3>
+
+                <p>
+                    Crea uno nuevo o únete
+                    mediante un código.
+                </p>
+
+                <button
+                    class="outline-button">
+
+                    Añadir invernadero
+
+                </button>
+
+            </div>
+
 
         </div>
 
-      </div>
+    </main>
+
+</section>
 
 
-      <div class="sensor-footer">
 
-        <span class="online">
-          EN LÍNEA
-        </span>
+<!-- =============================================================
+     ADD GREENHOUSE MODAL
+============================================================= -->
 
-        <span class="change">
-          ↑ 4.4 VS ANTERIOR
-        </span>
+<div
+    class="modal-overlay"
+    id="addGreenhouseModal">
 
-      </div>
+    <div class="modal">
 
+        <div class="modal-header">
+
+            <h2>
+                Añadir invernadero
+            </h2>
+
+            <button
+                class="close-button"
+                onclick="closeModal('addGreenhouseModal')">
+                ×
+            </button>
+
+        </div>
+
+
+        <p class="modal-subtitle">
+            Puedes crear un nuevo invernadero
+            o unirte a uno existente.
+        </p>
+
+
+        <button
+            class="option-card"
+            onclick="showCreateGreenhouse()">
+
+            <div class="option-icon">
+                🌱
+            </div>
+
+            <div>
+
+                <h3>
+                    Crear un invernadero
+                </h3>
+
+                <p>
+                    Crea una nueva instalación
+                    GrowSync.
+                </p>
+
+            </div>
+
+        </button>
+
+
+        <button
+            class="option-card"
+            onclick="showJoinGreenhouse()">
+
+            <div class="option-icon">
+                🔗
+            </div>
+
+            <div>
+
+                <h3>
+                    Unirme a un invernadero
+                </h3>
+
+                <p>
+                    Introduce el código proporcionado
+                    por otro usuario.
+                </p>
+
+            </div>
+
+        </button>
 
     </div>
 
+</div>
 
 
-    <!-- =================================================
-         HUMEDAD DEL SUELO
-    ================================================== -->
 
-    <div class="sensor-card">
+<!-- =============================================================
+     CREATE GREENHOUSE MODAL
+============================================================= -->
 
+<div
+    class="modal-overlay"
+    id="createGreenhouseModal">
 
-      <div class="sensor-header">
+    <div class="modal">
 
+        <div class="modal-header">
 
-        <div class="sensor-icon icon-soil">
+            <h2>
+                Crear invernadero
+            </h2>
 
-          🌱
-
-        </div>
-
-
-        <div class="sensor-title">
-
-          <h3>
-            HUMEDAD DEL SUELO
-          </h3>
-
-          <span class="sensor-id">
-            ID · SOIL_MOISTURE
-          </span>
+            <button
+                class="close-button"
+                onclick="closeModal('createGreenhouseModal')">
+                ×
+            </button>
 
         </div>
 
 
-        <div class="sensor-status">
-          ÓPTIMO
-        </div>
+        <p class="modal-subtitle">
+            Introduce los datos básicos de tu
+            nuevo invernadero.
+        </p>
 
 
-      </div>
+        <div class="form-group">
 
+            <label>
+                Nombre del invernadero
+            </label>
 
-      <div class="sensor-value-row">
+            <div class="input-wrapper">
 
+                <input
+                    id="newGreenhouseName"
+                    type="text"
+                    placeholder="Ej. Invernadero terraza">
 
-        <div>
-
-          <span class="sensor-value">
-            55.4
-          </span>
-
-          <span class="sensor-unit">
-            %
-          </span>
-
-        </div>
-
-
-        <div class="mini-chart">
-
-          <svg
-            viewBox="0 0 100 50"
-            preserveAspectRatio="none">
-
-            <polyline
-              points="0,24 20,22 40,21 60,23 80,21 100,24"
-              fill="none"
-              stroke="#00D99B"
-              stroke-width="2"/>
-
-          </svg>
+            </div>
 
         </div>
 
 
-      </div>
+        <div class="form-group">
 
+            <label>
+                Ubicación
+            </label>
 
-      <div class="optimal-row">
+            <div class="input-wrapper">
 
-        <span class="optimal-title">
-          Zona óptima
-        </span>
+                <input
+                    id="newGreenhouseLocation"
+                    type="text"
+                    placeholder="Ej. Zaragoza">
 
-        <span class="optimal-range">
-          40 — 70 %
-        </span>
-
-      </div>
-
-
-      <div class="progress-container">
-
-        <div
-          class="progress"
-          style="width: 52%;">
+            </div>
 
         </div>
 
-      </div>
 
+        <div class="modal-actions">
 
-      <div class="sensor-footer">
+            <button
+                class="secondary-button"
+                onclick="closeModal('createGreenhouseModal')">
 
-        <span class="online">
-          EN LÍNEA
-        </span>
+                Cancelar
 
-        <span class="change">
-          ↓ 2.7 VS ANTERIOR
-        </span>
+            </button>
 
-      </div>
+            <button
+                class="primary-button"
+                onclick="createGreenhouse()">
 
+                CREAR
+
+            </button>
+
+        </div>
 
     </div>
 
+</div>
 
 
-    <!-- =================================================
-         LUMINOSIDAD
-    ================================================== -->
 
-    <div class="sensor-card">
+<!-- =============================================================
+     GENERATED CODE MODAL
+============================================================= -->
 
+<div
+    class="modal-overlay"
+    id="generatedCodeModal">
 
-      <div class="sensor-header">
+    <div class="modal">
 
+        <div class="modal-header">
 
-        <div class="sensor-icon icon-light">
+            <h2>
+                ¡Invernadero creado!
+            </h2>
 
-          ☀️
-
-        </div>
-
-
-        <div class="sensor-title">
-
-          <h3>
-            LUMINOSIDAD
-          </h3>
-
-          <span class="sensor-id">
-            ID · LUMINOSITY
-          </span>
+            <button
+                class="close-button"
+                onclick="closeModal('generatedCodeModal')">
+                ×
+            </button>
 
         </div>
 
 
-        <div
-          class="sensor-status"
-          style="
-            color:var(--orange);
-            background:rgba(255,173,0,.08);
-          ">
-
-          REVISAR
-
-        </div>
+        <p class="modal-subtitle">
+            Tu invernadero ha sido creado
+            correctamente.
+        </p>
 
 
-      </div>
+        <div class="generated-code">
 
+            <span>
+                Código de vinculación
+            </span>
 
-      <div class="sensor-value-row">
+            <strong id="generatedCode">
+                GS-7K4P-92XM
+            </strong>
 
-
-        <div>
-
-          <span class="sensor-value">
-            9612
-          </span>
-
-          <span class="sensor-unit">
-            Lux
-          </span>
+            <p>
+                Comparte este código con otros
+                usuarios para permitirles solicitar
+                acceso a tu invernadero.
+            </p>
 
         </div>
 
 
-        <div class="mini-chart">
+        <button
+            class="primary-button"
+            onclick="closeModal('generatedCodeModal')">
 
-          <svg
-            viewBox="0 0 100 50"
-            preserveAspectRatio="none">
+            CONTINUAR
 
-            <polyline
-              points="0,20 20,15 40,13 60,17 80,25 100,40"
-              fill="none"
-              stroke="#FFAD00"
-              stroke-width="2"/>
-
-          </svg>
-
-        </div>
-
-
-      </div>
-
-
-      <div class="optimal-row">
-
-        <span class="optimal-title">
-          Zona óptima
-        </span>
-
-        <span class="optimal-range">
-          15.000 — 45.000 Lux
-        </span>
-
-      </div>
-
-
-      <div class="progress-container">
-
-        <div
-          class="progress progress-orange"
-          style="width: 4%;">
-
-        </div>
-
-      </div>
-
-
-      <div class="sensor-footer">
-
-        <span class="online">
-          EN LÍNEA
-        </span>
-
-        <span class="change">
-          ↓ 7838.0 VS ANTERIOR
-        </span>
-
-      </div>
-
+        </button>
 
     </div>
 
+</div>
 
 
-    <!-- =================================================
-         NIVEL DEL TANQUE
-    ================================================== -->
 
-    <div class="sensor-card">
+<!-- =============================================================
+     JOIN GREENHOUSE MODAL
+============================================================= -->
 
+<div
+    class="modal-overlay"
+    id="joinGreenhouseModal">
 
-      <div class="sensor-header">
+    <div class="modal">
 
+        <div class="modal-header">
 
-        <div class="sensor-icon icon-water">
+            <h2>
+                Unirme a un invernadero
+            </h2>
 
-          ≋
-
-        </div>
-
-
-        <div class="sensor-title">
-
-          <h3>
-            NIVEL DEL TANQUE
-          </h3>
-
-          <span class="sensor-id">
-            ID · WATER_LEVEL
-          </span>
+            <button
+                class="close-button"
+                onclick="closeModal('joinGreenhouseModal')">
+                ×
+            </button>
 
         </div>
 
 
-        <div class="sensor-status">
-          ÓPTIMO
-        </div>
+        <p class="modal-subtitle">
+            Introduce el código que te ha
+            proporcionado el propietario.
+        </p>
 
 
-      </div>
+        <div class="form-group">
 
+            <label>
+                Código del invernadero
+            </label>
 
-      <div class="sensor-value-row">
+            <div class="input-wrapper">
 
+                <input
+                    id="joinCode"
+                    type="text"
+                    maxlength="11"
+                    placeholder="GS-XXXX-XXXX"
+                    style="
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        font-family: monospace;
+                    ">
 
-        <div>
-
-          <span class="sensor-value">
-            75.4
-          </span>
-
-          <span class="sensor-unit">
-            %
-          </span>
-
-        </div>
-
-
-        <div class="mini-chart">
-
-          <svg
-            viewBox="0 0 100 50"
-            preserveAspectRatio="none">
-
-            <polyline
-              points="0,28 20,25 40,26 60,25 80,26 100,26"
-              fill="none"
-              stroke="#4B8CFF"
-              stroke-width="2"/>
-
-          </svg>
+            </div>
 
         </div>
 
 
-      </div>
+        <div class="modal-actions">
 
+            <button
+                class="secondary-button"
+                onclick="closeModal('joinGreenhouseModal')">
 
-      <div class="optimal-row">
+                Cancelar
 
-        <span class="optimal-title">
-          Zona óptima
-        </span>
+            </button>
 
-        <span class="optimal-range">
-          20 — 100 %
-        </span>
+            <button
+                class="primary-button"
+                onclick="joinGreenhouse()">
 
-      </div>
+                CONTINUAR
 
-
-      <div class="progress-container">
-
-        <div
-          class="progress progress-blue"
-          style="width: 75%;">
+            </button>
 
         </div>
-
-      </div>
-
-
-      <div class="sensor-footer">
-
-        <span class="online">
-          EN LÍNEA
-        </span>
-
-        <span class="change">
-          ↓ 0.5 VS ANTERIOR
-        </span>
-
-      </div>
-
 
     </div>
 
+</div>
 
 
-    <!-- =================================================
-         BATERÍA
-    ================================================== -->
 
-    <div class="sensor-card">
-
-
-      <div class="sensor-header">
-
-
-        <div class="sensor-icon icon-battery">
-
-          🔋
-
-        </div>
-
-
-        <div class="sensor-title">
-
-          <h3>
-            CARGA DE BATERÍA
-          </h3>
-
-          <span class="sensor-id">
-            ID · BATTERY_STATUS
-          </span>
-
-        </div>
-
-
-        <div class="sensor-status">
-          ÓPTIMO
-        </div>
-
-
-      </div>
-
-
-      <div class="sensor-value-row">
-
-
-        <div>
-
-          <span class="sensor-value">
-            82.8
-          </span>
-
-          <span class="sensor-unit">
-            %
-          </span>
-
-        </div>
-
-
-        <div class="mini-chart">
-
-          <svg
-            viewBox="0 0 100 50"
-            preserveAspectRatio="none">
-
-            <polyline
-              points="0,20 20,20 40,20 60,21 80,21 100,21"
-              fill="none"
-              stroke="#8BE000"
-              stroke-width="2"/>
-
-          </svg>
-
-        </div>
-
-
-      </div>
-
-
-      <div class="optimal-row">
-
-        <span class="optimal-title">
-          Zona óptima
-        </span>
-
-        <span class="optimal-range">
-          30 — 100 %
-        </span>
-
-      </div>
-
-
-      <div class="progress-container">
-
-        <div
-          class="progress"
-          style="width: 83%;">
-
-        </div>
-
-      </div>
-
-
-      <div class="sensor-footer">
-
-        <span class="online">
-          EN LÍNEA
-        </span>
-
-        <span class="change">
-          ↓ 0.2 VS ANTERIOR
-        </span>
-
-      </div>
-
-
-    </div>
-
-
-
-    <!-- =================================================
-         GENERACIÓN SOLAR
-    ================================================== -->
-
-    <div class="sensor-card">
-
-
-      <div class="sensor-header">
-
-
-        <div class="sensor-icon icon-solar">
-
-          ⚡
-
-        </div>
-
-
-        <div class="sensor-title">
-
-          <h3>
-            GENERACIÓN SOLAR
-          </h3>
-
-          <span class="sensor-id">
-            ID · SOLAR_PRODUCTION
-          </span>
-
-        </div>
-
-
-        <div class="sensor-status">
-          ÓPTIMO
-        </div>
-
-
-      </div>
-
-
-      <div class="sensor-value-row">
-
-
-        <div>
-
-          <span class="sensor-value">
-            184
-          </span>
-
-          <span class="sensor-unit">
-            W
-          </span>
-
-        </div>
-
-
-        <div class="mini-chart">
-
-          <svg
-            viewBox="0 0 100 50"
-            preserveAspectRatio="none">
-
-            <polyline
-              points="0,42 20,35 40,25 60,20 80,24 100,17"
-              fill="none"
-              stroke="#FFAD00"
-              stroke-width="2"/>
-
-          </svg>
-
-        </div>
-
-
-      </div>
-
-
-      <div class="optimal-row">
-
-        <span class="optimal-title">
-          Producción actual
-        </span>
-
-        <span class="optimal-range">
-          0 — 200 W
-        </span>
-
-      </div>
-
-
-      <div class="progress-container">
-
-        <div
-          class="progress progress-orange"
-          style="width: 92%;">
-
-        </div>
-
-      </div>
-
-
-      <div class="sensor-footer">
-
-        <span class="online">
-          EN LÍNEA
-        </span>
-
-        <span class="change">
-          ↑ 12.4 VS ANTERIOR
-        </span>
-
-      </div>
-
-
-    </div>
-
-
-  </div>
-
-
-</main>
-
-
+<!-- =============================================================
+     JAVASCRIPT
+============================================================= -->
 
 <script>
 
 
-/* =====================================================
-   FIREBASE
-===================================================== */
+/* =============================================================
+   DEMO USER
+============================================================= */
 
-// Cambia esta URL cuando tengas tu proyecto Firebase
-
-const FIREBASE_URL =
-  "https://TU-PROYECTO-default-rtdb.europe-west1.firebasedatabase.app/sensores.json";
-
-
-
-/* =====================================================
-   ACTUALIZAR TEMPERATURA
-===================================================== */
-
-async function actualizar() {
+let currentUser = {
+    name: "Pablo",
+    email: "pablo@email.com"
+};
 
 
-  try {
+/* =============================================================
+   THEME
+============================================================= */
+
+function toggleTheme() {
+
+    document.body.classList.toggle("dark");
+
+    const isDark =
+        document.body.classList.contains("dark");
+
+    localStorage.setItem(
+        "growsync-theme",
+        isDark ? "dark" : "light"
+    );
+
+    updateThemeButtons();
+}
 
 
-    const res =
-      await fetch(FIREBASE_URL);
+function updateThemeButtons() {
+
+    const isDark =
+        document.body.classList.contains("dark");
+
+    const symbol =
+        isDark ? "☀" : "☾";
+
+    document.getElementById(
+        "authThemeButton"
+    ).textContent = symbol;
+
+    document.getElementById(
+        "appThemeButton"
+    ).textContent = symbol;
+}
 
 
-    const data =
-      await res.json();
+function loadTheme() {
 
+    const theme =
+        localStorage.getItem("growsync-theme");
 
-    if (
-      data &&
-      data.temperatura !== undefined
-    ) {
+    if (theme === "dark") {
 
-
-      document.getElementById("temp").textContent =
-
-        Number(data.temperatura).toFixed(1);
-
-
-      document.getElementById("status").textContent =
-
-        "EN LÍNEA";
-
+        document.body.classList.add("dark");
 
     }
 
-    else {
+    updateThemeButtons();
+}
 
 
-      document.getElementById("status").textContent =
+/* =============================================================
+   AUTH VIEWS
+============================================================= */
 
-        "SIN DATOS";
+function showLogin() {
 
+    document.getElementById(
+        "loginForm"
+    ).style.display = "block";
+
+    document.getElementById(
+        "registerForm"
+    ).style.display = "none";
+
+    document.getElementById(
+        "forgotForm"
+    ).style.display = "none";
+}
+
+
+function showRegister() {
+
+    document.getElementById(
+        "loginForm"
+    ).style.display = "none";
+
+    document.getElementById(
+        "registerForm"
+    ).style.display = "block";
+
+    document.getElementById(
+        "forgotForm"
+    ).style.display = "none";
+}
+
+
+function showForgotPassword() {
+
+    document.getElementById(
+        "loginForm"
+    ).style.display = "none";
+
+    document.getElementById(
+        "registerForm"
+    ).style.display = "none";
+
+    document.getElementById(
+        "forgotForm"
+    ).style.display = "block";
+}
+
+
+/* =============================================================
+   DEMO LOGIN
+============================================================= */
+
+function login() {
+
+    const email =
+        document.getElementById(
+            "loginEmail"
+        ).value.trim();
+
+    const password =
+        document.getElementById(
+            "loginPassword"
+        ).value;
+
+
+    if (!email || !password) {
+
+        showMessage(
+            "loginMessage",
+            "Introduce tu correo y contraseña.",
+            "error"
+        );
+
+        return;
     }
 
 
-  }
+    /*
+       TEMPORAL
+
+       Más adelante sustituiremos esto por:
+
+       signInWithEmailAndPassword(
+           auth,
+           email,
+           password
+       );
+
+       usando Firebase Authentication.
+    */
 
 
-  catch (e) {
+    currentUser = {
+        name: email.split("@")[0],
+        email: email
+    };
 
 
-    document.getElementById("status").textContent =
-
-      "SIN CONEXIÓN";
-
-  }
-
+    enterApplication();
 }
 
 
+/* =============================================================
+   DEMO REGISTER
+============================================================= */
 
-/* =====================================================
-   MODO CLARO / OSCURO
-===================================================== */
+function register() {
 
-function cambiarTema() {
+    const name =
+        document.getElementById(
+            "registerName"
+        ).value.trim();
 
+    const email =
+        document.getElementById(
+            "registerEmail"
+        ).value.trim();
 
-  document.body.classList.toggle("light");
+    const password =
+        document.getElementById(
+            "registerPassword"
+        ).value;
 
-
-  const modoClaro =
-    document.body.classList.contains("light");
-
-
-  if (modoClaro) {
-
-
-    document.getElementById(
-      "themeIcon"
-    ).textContent = "🌙";
-
-
-    document.getElementById(
-      "themeText"
-    ).textContent = "Modo oscuro";
+    const password2 =
+        document.getElementById(
+            "registerPassword2"
+        ).value;
 
 
-    localStorage.setItem(
-      "tema",
-      "claro"
+    if (!name || !email || !password || !password2) {
+
+        showMessage(
+            "registerMessage",
+            "Completa todos los campos.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if (password.length < 6) {
+
+        showMessage(
+            "registerMessage",
+            "La contraseña debe tener al menos 6 caracteres.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if (password !== password2) {
+
+        showMessage(
+            "registerMessage",
+            "Las contraseñas no coinciden.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    currentUser = {
+        name: name,
+        email: email
+    };
+
+
+    showMessage(
+        "registerMessage",
+        "Cuenta creada correctamente.",
+        "success"
     );
 
 
-  }
+    setTimeout(() => {
 
-  else {
+        enterApplication();
+
+    }, 600);
+}
+
+
+/* =============================================================
+   RECOVERY
+============================================================= */
+
+function recoverPassword() {
+
+    const email =
+        document.getElementById(
+            "forgotEmail"
+        ).value.trim();
+
+
+    if (!email) {
+
+        showMessage(
+            "forgotMessage",
+            "Introduce tu correo electrónico.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    showMessage(
+        "forgotMessage",
+        "Si la cuenta existe, recibirás instrucciones para recuperar tu contraseña.",
+        "success"
+    );
+}
+
+
+/* =============================================================
+   ENTER APPLICATION
+============================================================= */
+
+function enterApplication() {
+
+    document.getElementById(
+        "authView"
+    ).style.display = "none";
+
+    document.getElementById(
+        "appView"
+    ).style.display = "block";
 
 
     document.getElementById(
-      "themeIcon"
-    ).textContent = "☀️";
+        "userName"
+    ).textContent = currentUser.name;
+
+    document.getElementById(
+        "userEmail"
+    ).textContent = currentUser.email;
 
 
     document.getElementById(
-      "themeText"
-    ).textContent = "Modo claro";
+        "userAvatar"
+    ).textContent =
+        currentUser.name
+            .charAt(0)
+            .toUpperCase();
 
 
-    localStorage.setItem(
-      "tema",
-      "oscuro"
+    closeProfileMenu();
+}
+
+
+/* =============================================================
+   LOGOUT
+============================================================= */
+
+function logout() {
+
+    document.getElementById(
+        "appView"
+    ).style.display = "none";
+
+    document.getElementById(
+        "authView"
+    ).style.display = "flex";
+
+
+    document.getElementById(
+        "loginPassword"
+    ).value = "";
+
+
+    showLogin();
+
+    closeProfileMenu();
+}
+
+
+/* =============================================================
+   PASSWORD VISIBILITY
+============================================================= */
+
+function togglePassword(
+    inputId,
+    button
+) {
+
+    const input =
+        document.getElementById(inputId);
+
+
+    if (input.type === "password") {
+
+        input.type = "text";
+
+        button.textContent = "🙈";
+
+    } else {
+
+        input.type = "password";
+
+        button.textContent = "👁";
+    }
+}
+
+
+/* =============================================================
+   ADD GREENHOUSE
+============================================================= */
+
+function openAddGreenhouse() {
+
+    openModal(
+        "addGreenhouseModal"
+    );
+}
+
+
+function showCreateGreenhouse() {
+
+    closeModal(
+        "addGreenhouseModal"
     );
 
-  }
-
+    openModal(
+        "createGreenhouseModal"
+    );
 }
 
 
+function showJoinGreenhouse() {
 
-/* =====================================================
-   CARGAR TEMA
-===================================================== */
-
-function cargarTema() {
-
-
-  const tema =
-    localStorage.getItem("tema");
-
-
-  if (tema === "claro") {
-
-
-    document.body.classList.add("light");
-
-
-    document.getElementById(
-      "themeIcon"
-    ).textContent = "🌙";
-
-
-    document.getElementById(
-      "themeText"
-    ).textContent = "Modo oscuro";
-
-  }
-
-}
-
-
-
-/* =====================================================
-   MENÚ LATERAL
-===================================================== */
-
-function toggleSidebar() {
-
-
-  const sidebar =
-    document.getElementById("sidebar");
-
-
-  sidebar.classList.toggle("open");
-
-
-  document.body.classList.toggle(
-    "sidebar-open"
-  );
-
-
-  const abierto =
-    sidebar.classList.contains("open");
-
-
-  document
-    .getElementById("menuToggle")
-    .setAttribute(
-      "aria-label",
-      abierto
-        ? "Cerrar menú"
-        : "Abrir menú"
+    closeModal(
+        "addGreenhouseModal"
     );
 
+    openModal(
+        "joinGreenhouseModal"
+    );
 }
 
 
+/* =============================================================
+   CREATE GREENHOUSE
+============================================================= */
 
-/* =====================================================
-   BOTONES DEL MENÚ
-===================================================== */
+function createGreenhouse() {
 
-const botonesMenu =
-  document.querySelectorAll(
-    ".menu-button"
-  );
+    const name =
+        document.getElementById(
+            "newGreenhouseName"
+        ).value.trim();
 
-
-botonesMenu.forEach(
-  boton => {
-
-
-    boton.addEventListener(
-      "click",
-      function() {
+    const location =
+        document.getElementById(
+            "newGreenhouseLocation"
+        ).value.trim();
 
 
-        botonesMenu.forEach(
-          b => {
+    if (!name) {
 
-            b.classList.remove(
-              "active"
-            );
+        alert(
+            "Introduce un nombre para el invernadero."
+        );
 
-          }
+        return;
+    }
+
+
+    const code =
+        generateGreenhouseCode();
+
+
+    document.getElementById(
+        "generatedCode"
+    ).textContent = code;
+
+
+    closeModal(
+        "createGreenhouseModal"
+    );
+
+
+    openModal(
+        "generatedCodeModal"
+    );
+
+
+    /*
+       TEMPORALMENTE NO GUARDAMOS EL INVERNADERO.
+
+       Más adelante:
+
+       /greenhouses/{greenhouseId}
+
+       y:
+
+       /users/{uid}/greenhouses/{greenhouseId}
+
+       con Firebase Realtime Database.
+    */
+
+
+    console.log(
+        "Nuevo invernadero:",
+        {
+            name,
+            location,
+            code
+        }
+    );
+}
+
+
+/* =============================================================
+   GENERATE GREENHOUSE CODE
+============================================================= */
+
+function generateGreenhouseCode() {
+
+    const chars =
+        "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+
+    function randomPart(length) {
+
+        let result = "";
+
+        for (
+            let i = 0;
+            i < length;
+            i++
+        ) {
+
+            result +=
+                chars.charAt(
+                    Math.floor(
+                        Math.random() *
+                        chars.length
+                    )
+                );
+        }
+
+        return result;
+    }
+
+
+    return (
+        "GS-" +
+        randomPart(4) +
+        "-" +
+        randomPart(4)
+    );
+}
+
+
+/* =============================================================
+   JOIN GREENHOUSE
+============================================================= */
+
+function joinGreenhouse() {
+
+    const input =
+        document.getElementById(
+            "joinCode"
         );
 
 
-        this.classList.add(
-          "active"
+    const code =
+        input.value
+            .trim()
+            .toUpperCase();
+
+
+    if (!/^GS-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code)) {
+
+        alert(
+            "El código no tiene un formato válido."
         );
 
-      }
+        return;
+    }
+
+
+    closeModal(
+        "joinGreenhouseModal"
     );
 
-  }
-);
+
+    alert(
+        "Solicitud enviada para el invernadero " +
+        code +
+        ".\n\nMás adelante esta solicitud se guardará en Firebase."
+    );
 
 
+    input.value = "";
+}
 
-/* =====================================================
-   INICIO
-===================================================== */
 
-cargarTema();
+/* =============================================================
+   OPEN GREENHOUSE
+============================================================= */
 
-actualizar();
+function openGreenhouse(name) {
 
-setInterval(
-  actualizar,
-  5000
-);
+    alert(
+        "Abrir " +
+        name +
+        "\n\nAquí conectaremos posteriormente el dashboard de sensores."
+    );
+}
 
+
+/* =============================================================
+   MODALS
+============================================================= */
+
+function openModal(id) {
+
+    document
+        .getElementById(id)
+        .classList.add("active");
+}
+
+
+function closeModal(id) {
+
+    document
+        .getElementById(id)
+        .classList.remove("active");
+}
+
+
+/* =============================================================
+   PROFILE MENU
+============================================================= */
+
+function toggleProfileMenu() {
+
+    document
+        .getElementById("profileMenu")
+        .classList.toggle("active");
+}
+
+
+function closeProfileMenu() {
+
+    document
+        .getElementById("profileMenu")
+        .classList.remove("active");
+}
+
+
+/* =============================================================
+   MESSAGES
+============================================================= */
+
+function showMessage(
+    elementId,
+    text,
+    type
+) {
+
+    const element =
+        document.getElementById(elementId);
+
+
+    element.textContent = text;
+
+    element.className =
+        "auth-message " + type;
+}
+
+
+/* =============================================================
+   CLOSE MODAL WHEN CLICK OUTSIDE
+============================================================= */
+
+document
+    .querySelectorAll(".modal-overlay")
+    .forEach(modal => {
+
+        modal.addEventListener(
+            "click",
+            function(event) {
+
+                if (
+                    event.target === modal
+                ) {
+
+                    modal.classList.remove(
+                        "active"
+                    );
+
+                }
+
+            }
+        );
+
+    });
+
+
+/* =============================================================
+   INIT
+============================================================= */
+
+loadTheme();
 
 </script>
 
-
 </body>
-
 </html>
