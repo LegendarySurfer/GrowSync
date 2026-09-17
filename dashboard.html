@@ -1,1595 +1,829 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
 
     <meta charset="UTF-8">
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0">
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>GrowSync - Dashboard</title>
 
-
-    <style>
-
-        :root {
-
-            --primary: #39a96b;
-            --primary-dark: #2d8b57;
-            --primary-light: #e9f8ef;
-
-            --background: #f5f7f6;
-            --surface: #ffffff;
-
-            --text: #17231c;
-            --text-secondary: #68736d;
-
-            --border: #e4e9e6;
-
-            --warning: #e9a93b;
-
-            --shadow:
-                0 8px 25px rgba(28,45,35,.06);
-        }
-
-
-        * {
-
-            box-sizing: border-box;
-
-            margin: 0;
-
-            padding: 0;
-        }
-
-
-        body {
-
-            min-height: 100vh;
-
-            background: var(--background);
-
-            color: var(--text);
-
-            font-family:
-                Inter,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                sans-serif;
-        }
-
-
-        /* =========================
-           TOPBAR
-        ========================= */
-
-        .topbar {
-
-            height: 72px;
-
-            background: var(--surface);
-
-            border-bottom:
-                1px solid var(--border);
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            padding: 0 32px;
-
-            position: sticky;
-
-            top: 0;
-
-            z-index: 10;
-        }
-
-
-        .left {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 20px;
-        }
-
-
-        .brand {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 9px;
-
-            font-size: 21px;
-
-            font-weight: 800;
-        }
-
-
-        .brand span {
-
-            font-size: 25px;
-        }
-
-
-        .back {
-
-            border: none;
-
-            background: var(--background);
-
-            border-radius: 9px;
-
-            padding: 9px 12px;
-
-            cursor: pointer;
-
-            color: var(--text);
-        }
-
-
-        .right {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 10px;
-        }
-
-
-        .icon {
-
-            width: 40px;
-
-            height: 40px;
-
-            border-radius: 10px;
-
-            border:
-                1px solid var(--border);
-
-            background: var(--surface);
-
-            cursor: pointer;
-
-            font-size: 17px;
-        }
-
-
-        /* =========================
-           CONTAINER
-        ========================= */
-
-        .container {
-
-            max-width: 1400px;
-
-            margin: auto;
-
-            padding: 35px 32px 60px;
-        }
-
-
-        .dashboard-header {
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            margin-bottom: 28px;
-        }
-
-
-        .title h1 {
-
-            font-size: 30px;
-
-            letter-spacing: -.6px;
-        }
-
-
-        .title p {
-
-            color: var(--text-secondary);
-
-            margin-top: 6px;
-
-            font-size: 13px;
-        }
-
-
-        .status {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 7px;
-
-            padding: 8px 12px;
-
-            border-radius: 20px;
-
-            background: var(--primary-light);
-
-            color: var(--primary-dark);
-
-            font-size: 12px;
-
-            font-weight: 700;
-        }
-
-
-        .dot {
-
-            width: 8px;
-
-            height: 8px;
-
-            background: var(--primary);
-
-            border-radius: 50%;
-        }
-
-
-        /* =========================
-           SENSOR GRID
-        ========================= */
-
-        .grid {
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(2, minmax(0, 1fr));
-
-            gap: 20px;
-        }
-
-
-        .sensor {
-
-            background: var(--surface);
-
-            border:
-                1px solid var(--border);
-
-            border-radius: 18px;
-
-            padding: 23px;
-
-            box-shadow: var(--shadow);
-        }
-
-
-        .sensor-header {
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            margin-bottom: 23px;
-        }
-
-
-        .sensor-title {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 11px;
-        }
-
-
-        .sensor-icon {
-
-            width: 42px;
-
-            height: 42px;
-
-            border-radius: 11px;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            background: var(--primary-light);
-
-            font-size: 20px;
-        }
-
-
-        .sensor-title h3 {
-
-            font-size: 14px;
-        }
-
-
-        .sensor-title span {
-
-            display: block;
-
-            color: var(--text-secondary);
-
-            font-size: 10px;
-
-            margin-top: 3px;
-        }
-
-
-        .online {
-
-            color: var(--primary-dark);
-
-            font-size: 10px;
-
-            font-weight: 700;
-        }
-
-
-        .value {
-
-            display: flex;
-
-            align-items: baseline;
-
-            gap: 7px;
-
-            margin-bottom: 18px;
-        }
-
-
-        .value strong {
-
-            font-size: 38px;
-
-            letter-spacing: -1px;
-        }
-
-
-        .value span {
-
-            color: var(--text-secondary);
-
-            font-size: 14px;
-        }
-
-
-        /* =========================
-           OPTIMAL
-        ========================= */
-
-        .optimal {
-
-            margin-bottom: 13px;
-        }
-
-
-        .optimal-title {
-
-            color: var(--text-secondary);
-
-            font-size: 11px;
-
-            margin-bottom: 7px;
-        }
-
-
-        .range {
-
-            position: relative;
-
-            height: 7px;
-
-            border-radius: 10px;
-
-            background:
-                linear-gradient(
-                    to right,
-                    #e4e9e6 0%,
-                    #e4e9e6 20%,
-                    var(--primary) 20%,
-                    var(--primary) 80%,
-                    #e4e9e6 80%
-                );
-        }
-
-
-        .range-marker {
-
-            position: absolute;
-
-            top: 50%;
-
-            left: 58%;
-
-            transform:
-                translate(-50%, -50%);
-
-            width: 13px;
-
-            height: 13px;
-
-            border-radius: 50%;
-
-            background: white;
-
-            border: 3px solid var(--primary);
-        }
-
-
-        .range-labels {
-
-            display: flex;
-
-            justify-content: space-between;
-
-            margin-top: 6px;
-
-            color: var(--text-secondary);
-
-            font-size: 10px;
-        }
-
-
-        /* =========================
-           MINI CHART
-        ========================= */
-
-        .chart {
-
-            height: 55px;
-
-            margin-top: 17px;
-
-            position: relative;
-        }
-
-
-        .chart svg {
-
-            width: 100%;
-
-            height: 100%;
-        }
-
-
-        .chart-line {
-
-            fill: none;
-
-            stroke: var(--primary);
-
-            stroke-width: 3;
-
-            stroke-linecap: round;
-
-            stroke-linejoin: round;
-        }
-
-
-        /* =========================
-           FOOTER
-        ========================= */
-
-        .sensor-footer {
-
-            margin-top: 17px;
-
-            padding-top: 13px;
-
-            border-top:
-                1px solid var(--border);
-
-            display: flex;
-
-            justify-content: space-between;
-
-            color: var(--text-secondary);
-
-            font-size: 10px;
-        }
-
-
-        @media(max-width:800px) {
-
-            .grid {
-
-                grid-template-columns: 1fr;
-            }
-
-            .topbar {
-
-                padding: 0 18px;
-            }
-
-            .container {
-
-                padding:
-                    30px 18px;
-            }
-
-            .dashboard-header {
-
-                align-items: flex-start;
-
-                gap: 15px;
-            }
-
-        }
-
-    </style>
+    <link
+        rel="stylesheet"
+        href="css/growsync.css"
+    >
 
 </head>
 
 
 <body>
 
-
-<header class="topbar">
-
-
-    <div class="left">
-
+    <header class="topbar">
 
         <div class="brand">
 
-            <span>🌱</span>
+            <button
+                class="back-button"
+                id="backButton"
+            >
+                ←
+            </button>
 
-            GrowSync
+            <span class="brand-icon">
+                🌱
+            </span>
 
-        </div>
-
-
-        <button
-            class="back"
-            onclick="goBack()">
-
-            ← Invernaderos
-
-        </button>
-
-    </div>
-
-
-    <div class="right">
-
-        <button
-            class="icon"
-            onclick="toggleTheme()">
-
-            ☾
-
-        </button>
-
-    </div>
-
-</header>
-
-
-<main class="container">
-
-
-    <div class="dashboard-header">
-
-
-        <div class="title">
-
-            <h1>
-
-                Invernadero terraza
-
-            </h1>
-
-            <p>
-
-                GS-7K4P-92XM
-
-            </p>
+            <span>
+                GrowSync
+            </span>
 
         </div>
 
 
-        <div class="status">
+        <div class="topbar-actions">
 
-            <span class="dot"></span>
+            <button
+                class="theme-button small"
+                id="themeButton"
+            >
+                🌙
+            </button>
 
-            Sistema online
+            <div
+                class="user-avatar"
+                id="userAvatar"
+            >
+                U
+            </div>
 
         </div>
 
-    </div>
+    </header>
 
 
+    <main class="dashboard-page">
 
-    <div class="grid">
 
+        <!-- CABECERA -->
 
-        <!-- TEMPERATURA -->
+        <section class="dashboard-header">
 
-        <div class="sensor">
+            <div>
 
-            <div class="sensor-header">
+                <span class="page-label">
+                    INVERNADERO
+                </span>
 
-                <div class="sensor-title">
+                <h1 id="greenhouseName">
+                    Mi invernadero
+                </h1>
 
-                    <div class="sensor-icon">
+                <div class="greenhouse-code">
 
-                        🌡️
+                    Código:
 
-                    </div>
-
-                    <div>
-
-                        <h3>
-
-                            Temperatura
-
-                        </h3>
-
-                        <span>
-
-                            SENSOR-TEMP-01
-
-                        </span>
-
-                    </div>
+                    <strong id="greenhouseCode">
+                        GS-000000
+                    </strong>
 
                 </div>
-
-
-                <span class="online">
-
-                    ONLINE
-
-                </span>
 
             </div>
 
 
-            <div class="value">
+            <div class="system-status">
 
-                <strong>
+                <span class="status-dot"></span>
 
-                    24,6
-
-                </strong>
-
-                <span>
-
-                    °C
-
-                </span>
+                Sistema online
 
             </div>
 
+        </section>
 
-            <div class="optimal">
 
-                <div class="optimal-title">
+        <!-- SENSORES -->
 
-                    Zona óptima
+        <section
+            class="sensor-grid"
+            id="sensorGrid"
+        >
+
+
+            <!-- TEMPERATURA -->
+
+            <article class="sensor-card">
+
+                <div class="sensor-header">
+
+                    <div class="sensor-title">
+
+                        <div class="sensor-icon temperature">
+                            🌡️
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Temperatura
+                            </h3>
+
+                            <span>
+                                TEMP-01
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <span class="sensor-status">
+                        Online
+                    </span>
 
                 </div>
 
 
-                <div class="range">
+                <div class="sensor-value">
+
+                    <strong id="temperature">
+                        24.6
+                    </strong>
+
+                    <span>
+                        °C
+                    </span>
+
+                </div>
+
+
+                <div class="sensor-chart">
+                    <svg viewBox="0 0 300 60">
+
+                        <polyline
+                            points="0,42 35,35 70,39 105,28 140,32 175,22 210,26 250,15 300,20"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="3"
+                        />
+
+                    </svg>
+                </div>
+
+
+                <div class="optimal-info">
+
+                    <span>
+                        Zona óptima
+                    </span>
+
+                    <strong>
+                        18°C - 28°C
+                    </strong>
+
+                </div>
+
+
+                <div class="optimal-bar">
 
                     <div
-                        class="range-marker"
-                        style="left:58%;">
-                    </div>
+                        class="optimal-progress"
+                        style="width: 65%"
+                    ></div>
 
                 </div>
 
 
-                <div class="range-labels">
+                <div class="sensor-footer">
 
                     <span>
-
-                        18°C
-
+                        Actualizado ahora
                     </span>
 
                     <span>
-
-                        28°C
-
+                        ✓
                     </span>
 
                 </div>
 
-            </div>
+            </article>
 
 
-            <div class="chart">
+            <!-- HUMEDAD -->
 
-                <svg
-                    viewBox="0 0 300 55"
-                    preserveAspectRatio="none">
+            <article class="sensor-card">
 
-                    <polyline
-                        class="chart-line"
-                        points="
-                        0,40
-                        25,36
-                        50,39
-                        75,28
-                        100,32
-                        125,22
-                        150,27
-                        175,19
-                        200,25
-                        225,18
-                        250,22
-                        275,15
-                        300,19
-                        " />
+                <div class="sensor-header">
 
-                </svg>
+                    <div class="sensor-title">
 
-            </div>
+                        <div class="sensor-icon humidity">
+                            💧
+                        </div>
 
+                        <div>
 
-            <div class="sensor-footer">
+                            <h3>
+                                Humedad ambiente
+                            </h3>
 
-                <span>
+                            <span>
+                                HUM-01
+                            </span>
 
-                    Actualizado ahora
-
-                </span>
-
-                <span>
-
-                    ↑ 0,4°C
-
-                </span>
-
-            </div>
-
-        </div>
-
-
-
-        <!-- HUMEDAD -->
-
-        <div class="sensor">
-
-            <div class="sensor-header">
-
-                <div class="sensor-title">
-
-                    <div class="sensor-icon">
-
-                        💧
+                        </div>
 
                     </div>
 
-                    <div>
-
-                        <h3>
-
-                            Humedad ambiente
-
-                        </h3>
-
-                        <span>
-
-                            SENSOR-HUM-01
-
-                        </span>
-
-                    </div>
+                    <span class="sensor-status">
+                        Online
+                    </span>
 
                 </div>
 
 
-                <span class="online">
+                <div class="sensor-value">
 
-                    ONLINE
+                    <strong id="humidity">
+                        62
+                    </strong>
 
-                </span>
-
-            </div>
-
-
-            <div class="value">
-
-                <strong>
-
-                    63
-
-                </strong>
-
-                <span>
-
-                    %
-
-                </span>
-
-            </div>
-
-
-            <div class="optimal">
-
-                <div class="optimal-title">
-
-                    Zona óptima
+                    <span>
+                        %
+                    </span>
 
                 </div>
 
-                <div class="range">
+
+                <div class="sensor-chart">
+
+                    <svg viewBox="0 0 300 60">
+
+                        <polyline
+                            points="0,32 40,28 80,34 120,20 160,27 200,18 240,25 300,20"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="3"
+                        />
+
+                    </svg>
+
+                </div>
+
+
+                <div class="optimal-info">
+
+                    <span>
+                        Zona óptima
+                    </span>
+
+                    <strong>
+                        50% - 75%
+                    </strong>
+
+                </div>
+
+
+                <div class="optimal-bar">
 
                     <div
-                        class="range-marker"
-                        style="left:63%;">
-                    </div>
+                        class="optimal-progress"
+                        style="width: 62%"
+                    ></div>
 
                 </div>
 
-                <div class="range-labels">
+
+                <div class="sensor-footer">
 
                     <span>
-
-                        50%
-
+                        Actualizado ahora
                     </span>
 
                     <span>
-
-                        80%
-
+                        ✓
                     </span>
 
                 </div>
 
-            </div>
+            </article>
 
 
-            <div class="chart">
+            <!-- HUMEDAD SUELO -->
 
-                <svg
-                    viewBox="0 0 300 55"
-                    preserveAspectRatio="none">
+            <article class="sensor-card">
 
-                    <polyline
-                        class="chart-line"
-                        points="
-                        0,30
-                        30,27
-                        60,31
-                        90,22
-                        120,26
-                        150,20
-                        180,23
-                        210,18
-                        240,21
-                        270,17
-                        300,20
-                        " />
+                <div class="sensor-header">
 
-                </svg>
+                    <div class="sensor-title">
 
-            </div>
+                        <div class="sensor-icon soil">
+                            🌱
+                        </div>
 
+                        <div>
 
-            <div class="sensor-footer">
+                            <h3>
+                                Humedad del suelo
+                            </h3>
 
-                <span>
+                            <span>
+                                SOIL-01
+                            </span>
 
-                    Actualizado ahora
-
-                </span>
-
-                <span>
-
-                    Estable
-
-                </span>
-
-            </div>
-
-        </div>
-
-
-
-        <!-- HUMEDAD SUELO -->
-
-        <div class="sensor">
-
-            <div class="sensor-header">
-
-                <div class="sensor-title">
-
-                    <div class="sensor-icon">
-
-                        🌱
+                        </div>
 
                     </div>
 
-                    <div>
-
-                        <h3>
-
-                            Humedad del suelo
-
-                        </h3>
-
-                        <span>
-
-                            SENSOR-SOIL-01
-
-                        </span>
-
-                    </div>
+                    <span class="sensor-status">
+                        Online
+                    </span>
 
                 </div>
 
 
-                <span class="online">
+                <div class="sensor-value">
 
-                    ONLINE
+                    <strong id="soil">
+                        48
+                    </strong>
 
-                </span>
-
-            </div>
-
-
-            <div class="value">
-
-                <strong>
-
-                    42
-
-                </strong>
-
-                <span>
-
-                    %
-
-                </span>
-
-            </div>
-
-
-            <div class="optimal">
-
-                <div class="optimal-title">
-
-                    Zona óptima
+                    <span>
+                        %
+                    </span>
 
                 </div>
 
-                <div class="range">
+
+                <div class="sensor-chart">
+
+                    <svg viewBox="0 0 300 60">
+
+                        <polyline
+                            points="0,25 40,32 80,30 120,40 160,35 200,42 240,38 300,44"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="3"
+                        />
+
+                    </svg>
+
+                </div>
+
+
+                <div class="optimal-info">
+
+                    <span>
+                        Zona óptima
+                    </span>
+
+                    <strong>
+                        40% - 70%
+                    </strong>
+
+                </div>
+
+
+                <div class="optimal-bar">
 
                     <div
-                        class="range-marker"
-                        style="left:47%;">
-                    </div>
+                        class="optimal-progress"
+                        style="width: 48%"
+                    ></div>
 
                 </div>
 
-                <div class="range-labels">
+
+                <div class="sensor-footer">
 
                     <span>
-
-                        30%
-
+                        Actualizado ahora
                     </span>
 
                     <span>
-
-                        70%
-
+                        ✓
                     </span>
 
                 </div>
 
-            </div>
+            </article>
 
 
-            <div class="chart">
+            <!-- LUMINOSIDAD -->
 
-                <svg
-                    viewBox="0 0 300 55"
-                    preserveAspectRatio="none">
+            <article class="sensor-card">
 
-                    <polyline
-                        class="chart-line"
-                        points="
-                        0,18
-                        30,22
-                        60,25
-                        90,30
-                        120,28
-                        150,35
-                        180,31
-                        210,38
-                        240,35
-                        270,41
-                        300,39
-                        " />
+                <div class="sensor-header">
 
-                </svg>
+                    <div class="sensor-title">
 
-            </div>
+                        <div class="sensor-icon light">
+                            ☀️
+                        </div>
 
+                        <div>
 
-            <div class="sensor-footer">
+                            <h3>
+                                Luminosidad
+                            </h3>
 
-                <span>
+                            <span>
+                                LUX-01
+                            </span>
 
-                    Actualizado ahora
-
-                </span>
-
-                <span>
-
-                    Normal
-
-                </span>
-
-            </div>
-
-        </div>
-
-
-
-        <!-- LUMINOSIDAD -->
-
-        <div class="sensor">
-
-            <div class="sensor-header">
-
-                <div class="sensor-title">
-
-                    <div class="sensor-icon">
-
-                        ☀️
+                        </div>
 
                     </div>
 
-                    <div>
-
-                        <h3>
-
-                            Luminosidad
-
-                        </h3>
-
-                        <span>
-
-                            SENSOR-LIGHT-01
-
-                        </span>
-
-                    </div>
+                    <span class="sensor-status">
+                        Online
+                    </span>
 
                 </div>
 
 
-                <span class="online">
+                <div class="sensor-value">
 
-                    ONLINE
+                    <strong id="light">
+                        8.420
+                    </strong>
 
-                </span>
-
-            </div>
-
-
-            <div class="value">
-
-                <strong>
-
-                    720
-
-                </strong>
-
-                <span>
-
-                    lux
-
-                </span>
-
-            </div>
-
-
-            <div class="optimal">
-
-                <div class="optimal-title">
-
-                    Zona óptima
+                    <span>
+                        lux
+                    </span>
 
                 </div>
 
-                <div class="range">
+
+                <div class="sensor-chart">
+
+                    <svg viewBox="0 0 300 60">
+
+                        <polyline
+                            points="0,50 40,42 80,30 120,25 160,15 200,22 240,18 300,10"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="3"
+                        />
+
+                    </svg>
+
+                </div>
+
+
+                <div class="optimal-info">
+
+                    <span>
+                        Zona óptima
+                    </span>
+
+                    <strong>
+                        5.000 - 15.000 lux
+                    </strong>
+
+                </div>
+
+
+                <div class="optimal-bar">
 
                     <div
-                        class="range-marker"
-                        style="left:70%;">
-                    </div>
+                        class="optimal-progress"
+                        style="width: 56%"
+                    ></div>
 
                 </div>
 
-                <div class="range-labels">
+
+                <div class="sensor-footer">
 
                     <span>
-
-                        400 lux
-
+                        Actualizado ahora
                     </span>
 
                     <span>
-
-                        1200 lux
-
+                        ✓
                     </span>
 
                 </div>
 
-            </div>
+            </article>
 
 
-            <div class="chart">
+            <!-- AGUA -->
 
-                <svg
-                    viewBox="0 0 300 55"
-                    preserveAspectRatio="none">
+            <article class="sensor-card">
 
-                    <polyline
-                        class="chart-line"
-                        points="
-                        0,45
-                        30,40
-                        60,35
-                        90,30
-                        120,23
-                        150,27
-                        180,19
-                        210,22
-                        240,14
-                        270,18
-                        300,10
-                        " />
+                <div class="sensor-header">
 
-                </svg>
+                    <div class="sensor-title">
 
-            </div>
+                        <div class="sensor-icon water">
+                            🚰
+                        </div>
 
+                        <div>
 
-            <div class="sensor-footer">
+                            <h3>
+                                Depósito de agua
+                            </h3>
 
-                <span>
+                            <span>
+                                WATER-01
+                            </span>
 
-                    Actualizado ahora
-
-                </span>
-
-                <span>
-
-                    Normal
-
-                </span>
-
-            </div>
-
-        </div>
-
-
-
-        <!-- AGUA -->
-
-        <div class="sensor">
-
-            <div class="sensor-header">
-
-                <div class="sensor-title">
-
-                    <div class="sensor-icon">
-
-                        🚰
+                        </div>
 
                     </div>
 
-                    <div>
-
-                        <h3>
-
-                            Depósito de agua
-
-                        </h3>
-
-                        <span>
-
-                            SENSOR-WATER-01
-
-                        </span>
-
-                    </div>
+                    <span class="sensor-status">
+                        Online
+                    </span>
 
                 </div>
 
 
-                <span class="online">
+                <div class="sensor-value">
 
-                    ONLINE
+                    <strong id="water">
+                        76
+                    </strong>
 
-                </span>
-
-            </div>
-
-
-            <div class="value">
-
-                <strong>
-
-                    78
-
-                </strong>
-
-                <span>
-
-                    %
-
-                </span>
-
-            </div>
-
-
-            <div class="optimal">
-
-                <div class="optimal-title">
-
-                    Nivel recomendado
+                    <span>
+                        %
+                    </span>
 
                 </div>
 
-                <div class="range">
+
+                <div class="sensor-chart">
+
+                    <svg viewBox="0 0 300 60">
+
+                        <polyline
+                            points="0,20 50,22 100,25 150,28 200,32 250,36 300,40"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="3"
+                        />
+
+                    </svg>
+
+                </div>
+
+
+                <div class="optimal-info">
+
+                    <span>
+                        Nivel recomendado
+                    </span>
+
+                    <strong>
+                        &gt; 30%
+                    </strong>
+
+                </div>
+
+
+                <div class="optimal-bar">
 
                     <div
-                        class="range-marker"
-                        style="left:78%;">
-                    </div>
+                        class="optimal-progress"
+                        style="width: 76%"
+                    ></div>
 
                 </div>
 
-                <div class="range-labels">
+
+                <div class="sensor-footer">
 
                     <span>
-
-                        20%
-
+                        Actualizado ahora
                     </span>
 
                     <span>
-
-                        100%
-
+                        ✓
                     </span>
 
                 </div>
 
-            </div>
+            </article>
 
 
-            <div class="sensor-footer">
+            <!-- BATERÍA -->
 
-                <span>
+            <article class="sensor-card">
 
-                    Actualizado ahora
+                <div class="sensor-header">
 
-                </span>
+                    <div class="sensor-title">
 
-                <span>
+                        <div class="sensor-icon battery">
+                            🔋
+                        </div>
 
-                    Suficiente
+                        <div>
 
-                </span>
+                            <h3>
+                                Batería
+                            </h3>
 
-            </div>
+                            <span>
+                                BAT-01
+                            </span>
 
-        </div>
-
-
-
-        <!-- BATERÍA -->
-
-        <div class="sensor">
-
-            <div class="sensor-header">
-
-                <div class="sensor-title">
-
-                    <div class="sensor-icon">
-
-                        🔋
+                        </div>
 
                     </div>
 
-                    <div>
-
-                        <h3>
-
-                            Batería
-
-                        </h3>
-
-                        <span>
-
-                            ENERGY-01
-
-                        </span>
-
-                    </div>
+                    <span class="sensor-status">
+                        Online
+                    </span>
 
                 </div>
 
 
-                <span class="online">
+                <div class="sensor-value">
 
-                    ONLINE
+                    <strong id="battery">
+                        87
+                    </strong>
 
-                </span>
-
-            </div>
-
-
-            <div class="value">
-
-                <strong>
-
-                    91
-
-                </strong>
-
-                <span>
-
-                    %
-
-                </span>
-
-            </div>
-
-
-            <div class="optimal">
-
-                <div class="optimal-title">
-
-                    Estado de batería
+                    <span>
+                        %
+                    </span>
 
                 </div>
 
-                <div class="range">
+
+                <div class="sensor-chart">
+
+                    <svg viewBox="0 0 300 60">
+
+                        <polyline
+                            points="0,45 40,40 80,32 120,35 160,25 200,28 240,18 300,12"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="3"
+                        />
+
+                    </svg>
+
+                </div>
+
+
+                <div class="optimal-info">
+
+                    <span>
+                        Nivel recomendado
+                    </span>
+
+                    <strong>
+                        &gt; 30%
+                    </strong>
+
+                </div>
+
+
+                <div class="optimal-bar">
 
                     <div
-                        class="range-marker"
-                        style="left:91%;">
-                    </div>
+                        class="optimal-progress"
+                        style="width: 87%"
+                    ></div>
 
                 </div>
 
-                <div class="range-labels">
+
+                <div class="sensor-footer">
 
                     <span>
-
-                        20%
-
+                        Actualizado ahora
                     </span>
 
                     <span>
-
-                        100%
-
+                        ✓
                     </span>
 
                 </div>
 
-            </div>
+            </article>
 
 
-            <div class="sensor-footer">
+            <!-- PRODUCCIÓN SOLAR -->
 
-                <span>
+            <article class="sensor-card">
 
-                    Actualizado ahora
+                <div class="sensor-header">
 
-                </span>
+                    <div class="sensor-title">
 
-                <span>
+                        <div class="sensor-icon solar">
+                            ☀️
+                        </div>
 
-                    Cargando
+                        <div>
 
-                </span>
+                            <h3>
+                                Producción solar
+                            </h3>
 
-            </div>
+                            <span>
+                                SOLAR-01
+                            </span>
 
-        </div>
-
-
-
-        <!-- SOLAR -->
-
-        <div class="sensor">
-
-            <div class="sensor-header">
-
-                <div class="sensor-title">
-
-                    <div class="sensor-icon">
-
-                        ☀️
+                        </div>
 
                     </div>
 
-                    <div>
-
-                        <h3>
-
-                            Producción solar
-
-                        </h3>
-
-                        <span>
-
-                            SOLAR-01
-
-                        </span>
-
-                    </div>
+                    <span class="sensor-status">
+                        Online
+                    </span>
 
                 </div>
 
 
-                <span class="online">
+                <div class="sensor-value">
 
-                    ONLINE
+                    <strong id="solar">
+                        142
+                    </strong>
 
-                </span>
-
-            </div>
-
-
-            <div class="value">
-
-                <strong>
-
-                    126
-
-                </strong>
-
-                <span>
-
-                    W
-
-                </span>
-
-            </div>
-
-
-            <div class="optimal">
-
-                <div class="optimal-title">
-
-                    Producción actual
+                    <span>
+                        W
+                    </span>
 
                 </div>
 
-                <div class="range">
+
+                <div class="sensor-chart">
+
+                    <svg viewBox="0 0 300 60">
+
+                        <polyline
+                            points="0,48 40,42 80,35 120,20 160,15 200,18 240,25 300,30"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="3"
+                        />
+
+                    </svg>
+
+                </div>
+
+
+                <div class="optimal-info">
+
+                    <span>
+                        Producción actual
+                    </span>
+
+                    <strong>
+                        0 - 200 W
+                    </strong>
+
+                </div>
+
+
+                <div class="optimal-bar">
 
                     <div
-                        class="range-marker"
-                        style="left:63%;">
-                    </div>
+                        class="optimal-progress"
+                        style="width: 71%"
+                    ></div>
 
                 </div>
 
-                <div class="range-labels">
+
+                <div class="sensor-footer">
 
                     <span>
-
-                        0 W
-
+                        Actualizado ahora
                     </span>
 
                     <span>
-
-                        200 W
-
+                        ✓
                     </span>
 
                 </div>
 
-            </div>
+            </article>
+
+        </section>
+
+    </main>
 
 
-            <div class="chart">
+    <script
+        src="js/firebase.js"
+        type="module"
+    ></script>
 
-                <svg
-                    viewBox="0 0 300 55"
-                    preserveAspectRatio="none">
-
-                    <polyline
-                        class="chart-line"
-                        points="
-                        0,48
-                        30,44
-                        60,40
-                        90,34
-                        120,30
-                        150,25
-                        180,22
-                        210,20
-                        240,17
-                        270,12
-                        300,10
-                        " />
-
-                </svg>
-
-            </div>
-
-
-            <div class="sensor-footer">
-
-                <span>
-
-                    Actualizado ahora
-
-                </span>
-
-                <span>
-
-                    Produciendo
-
-                </span>
-
-            </div>
-
-        </div>
-
-
-    </div>
-
-</main>
-
-
-<script>
-
-
-function goBack() {
-
-    window.location.href =
-        "invernaderos.html";
-}
-
-
-function toggleTheme() {
-
-    document.body.classList.toggle("dark");
-
-}
-
-
-</script>
-
+    <script
+        src="js/dashboard.js"
+        type="module"
+    ></script>
 
 </body>
-
 </html>
