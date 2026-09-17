@@ -1,58 +1,39 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>GrowSync</title>
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>GrowSync - Iniciar sesión</title>
+
 
     <style>
 
-        /* =========================================================
-           VARIABLES
-        ========================================================= */
-
         :root {
+
             --primary: #39a96b;
             --primary-dark: #2d8b57;
             --primary-light: #e9f8ef;
 
             --background: #f5f7f6;
             --surface: #ffffff;
-            --surface-hover: #f8faf9;
 
             --text: #17231c;
             --text-secondary: #68736d;
+
             --border: #e4e9e6;
 
             --danger: #e05252;
-            --warning: #e9a93b;
 
             --shadow:
-                0 10px 30px rgba(28, 45, 35, 0.08);
-
-            --radius: 18px;
+                0 15px 40px rgba(28, 45, 35, 0.09);
         }
 
-        body.dark {
-            --background: #101512;
-            --surface: #18201b;
-            --surface-hover: #202a23;
-
-            --text: #f0f4f1;
-            --text-secondary: #9ba69f;
-            --border: #2b362f;
-
-            --primary-light: #183a28;
-
-            --shadow:
-                0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-
-        /* =========================================================
-           RESET
-        ========================================================= */
 
         * {
             box-sizing: border-box;
@@ -60,7 +41,11 @@
             padding: 0;
         }
 
+
         body {
+
+            min-height: 100vh;
+
             font-family:
                 Inter,
                 -apple-system,
@@ -68,56 +53,35 @@
                 "Segoe UI",
                 sans-serif;
 
-            background: var(--background);
+            background:
+
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(57,169,107,.12),
+                    transparent 35%
+                ),
+
+                radial-gradient(
+                    circle at 90% 90%,
+                    rgba(57,169,107,.08),
+                    transparent 35%
+                ),
+
+                var(--background);
+
             color: var(--text);
 
-            min-height: 100vh;
-
-            transition:
-                background 0.25s,
-                color 0.25s;
-        }
-
-        button,
-        input {
-            font-family: inherit;
-        }
-
-        button {
-            cursor: pointer;
-        }
-
-
-        /* =========================================================
-           LOGIN
-        ========================================================= */
-
-        #authView {
-            min-height: 100vh;
-
             display: flex;
+
             align-items: center;
             justify-content: center;
 
-            padding: 30px;
-
-            position: relative;
-
-            background:
-                radial-gradient(
-                    circle at 10% 10%,
-                    rgba(57, 169, 107, 0.12),
-                    transparent 35%
-                ),
-                radial-gradient(
-                    circle at 90% 90%,
-                    rgba(57, 169, 107, 0.08),
-                    transparent 35%
-                ),
-                var(--background);
+            padding: 20px;
         }
 
-        .auth-theme-button {
+
+        .theme-button {
+
             position: fixed;
 
             top: 25px;
@@ -129,23 +93,26 @@
             border-radius: 50%;
 
             border: 1px solid var(--border);
+
             background: var(--surface);
 
-            color: var(--text);
+            cursor: pointer;
 
-            font-size: 19px;
+            font-size: 18px;
 
             box-shadow: var(--shadow);
         }
 
-        .auth-card {
+
+        .login-card {
+
             width: 100%;
+
             max-width: 430px;
 
             background: var(--surface);
 
-            border:
-                1px solid var(--border);
+            border: 1px solid var(--border);
 
             border-radius: 24px;
 
@@ -154,86 +121,114 @@
             box-shadow: var(--shadow);
         }
 
+
         .brand {
+
             text-align: center;
 
-            margin-bottom: 34px;
+            margin-bottom: 35px;
         }
 
+
         .brand-icon {
-            width: 62px;
-            height: 62px;
 
-            margin: 0 auto 14px;
+            width: 64px;
+            height: 64px;
 
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            margin: auto;
+
+            margin-bottom: 14px;
 
             border-radius: 18px;
 
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
             background: var(--primary-light);
 
-            font-size: 31px;
+            font-size: 32px;
         }
+
 
         .brand h1 {
+
             font-size: 29px;
-            letter-spacing: -0.7px;
+
+            letter-spacing: -.7px;
         }
 
+
         .brand p {
-            color: var(--text-secondary);
 
             margin-top: 7px;
 
+            color: var(--text-secondary);
+
             font-size: 14px;
         }
 
-        .auth-title {
-            margin-bottom: 25px;
+
+        .title {
+
+            margin-bottom: 24px;
         }
 
-        .auth-title h2 {
+
+        .title h2 {
+
             font-size: 23px;
         }
 
-        .auth-title p {
-            color: var(--text-secondary);
+
+        .title p {
 
             margin-top: 6px;
 
+            color: var(--text-secondary);
+
             font-size: 14px;
+
+            line-height: 1.5;
         }
+
 
         .form-group {
-            margin-bottom: 17px;
+
+            margin-bottom: 18px;
         }
 
-        .form-group label {
+
+        label {
+
             display: block;
 
-            font-size: 13px;
-            font-weight: 600;
-
             margin-bottom: 7px;
+
+            font-size: 13px;
+
+            font-weight: 600;
         }
 
+
         .input-wrapper {
+
             position: relative;
         }
 
-        .input-wrapper input {
+
+        input {
+
             width: 100%;
 
             height: 48px;
 
-            border:
-                1px solid var(--border);
+            padding: 0 14px;
 
             border-radius: 11px;
 
-            padding: 0 15px;
+            border: 1px solid var(--border);
 
             background: var(--background);
 
@@ -241,55 +236,69 @@
 
             outline: none;
 
-            transition: 0.2s;
+            font-size: 14px;
         }
 
-        .input-wrapper input:focus {
+
+        input:focus {
+
             border-color: var(--primary);
 
             box-shadow:
-                0 0 0 3px rgba(57, 169, 107, 0.12);
+                0 0 0 3px rgba(57,169,107,.12);
         }
 
+
         .password-toggle {
+
             position: absolute;
 
             right: 12px;
+
             top: 50%;
 
             transform: translateY(-50%);
 
             border: none;
+
             background: transparent;
 
-            color: var(--text-secondary);
+            cursor: pointer;
 
-            font-size: 18px;
+            font-size: 17px;
         }
 
+
         .forgot {
+
             display: block;
 
-            text-align: right;
+            margin-left: auto;
 
-            margin-top: -4px;
             margin-bottom: 22px;
 
             border: none;
+
             background: none;
 
             color: var(--primary);
 
-            font-size: 13px;
             font-weight: 600;
+
+            font-size: 13px;
+
+            cursor: pointer;
         }
 
+
         .primary-button {
+
             width: 100%;
 
             height: 49px;
 
             border: none;
+
             border-radius: 11px;
 
             background: var(--primary);
@@ -297,46 +306,25 @@
             color: white;
 
             font-size: 14px;
+
             font-weight: 700;
 
-            transition: 0.2s;
+            cursor: pointer;
+
+            transition: .2s;
         }
 
+
         .primary-button:hover {
+
             background: var(--primary-dark);
 
             transform: translateY(-1px);
         }
 
-        .auth-message {
-            display: none;
 
-            margin-bottom: 17px;
+        .register {
 
-            padding: 11px 13px;
-
-            border-radius: 9px;
-
-            font-size: 13px;
-        }
-
-        .auth-message.error {
-            display: block;
-
-            background: rgba(224, 82, 82, 0.10);
-
-            color: var(--danger);
-        }
-
-        .auth-message.success {
-            display: block;
-
-            background: var(--primary-light);
-
-            color: var(--primary-dark);
-        }
-
-        .auth-switch {
             text-align: center;
 
             margin-top: 25px;
@@ -346,1939 +334,214 @@
             font-size: 13px;
         }
 
-        .auth-switch button {
-            border: none;
-            background: none;
+
+        .register a {
 
             color: var(--primary);
 
             font-weight: 700;
+
+            text-decoration: none;
+
+            cursor: pointer;
         }
 
 
-        /* =========================================================
-           APP
-        ========================================================= */
+        .message {
 
-        #appView {
             display: none;
 
-            min-height: 100vh;
-        }
+            margin-bottom: 17px;
 
-        .topbar {
-            height: 72px;
-
-            background: var(--surface);
-
-            border-bottom:
-                1px solid var(--border);
-
-            display: flex;
-            align-items: center;
-
-            justify-content: space-between;
-
-            padding: 0 32px;
-
-            position: sticky;
-            top: 0;
-
-            z-index: 20;
-        }
-
-        .topbar-brand {
-            display: flex;
-            align-items: center;
-
-            gap: 10px;
-
-            font-size: 21px;
-            font-weight: 800;
-        }
-
-        .topbar-brand span {
-            font-size: 25px;
-        }
-
-        .topbar-right {
-            display: flex;
-            align-items: center;
-
-            gap: 10px;
-        }
-
-        .icon-button {
-            width: 40px;
-            height: 40px;
-
-            border-radius: 10px;
-
-            border: 1px solid var(--border);
-
-            background: var(--surface);
-
-            color: var(--text);
-
-            font-size: 17px;
-        }
-
-        .user-menu {
-            display: flex;
-            align-items: center;
-
-            gap: 10px;
-
-            padding-left: 10px;
-
-            border-left:
-                1px solid var(--border);
-        }
-
-        .avatar {
-            width: 36px;
-            height: 36px;
-
-            border-radius: 50%;
-
-            background: var(--primary-light);
-
-            color: var(--primary-dark);
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            font-weight: 800;
-
-            font-size: 13px;
-        }
-
-        .user-info {
-            line-height: 1.2;
-        }
-
-        .user-info strong {
-            display: block;
-
-            font-size: 13px;
-        }
-
-        .user-info span {
-            color: var(--text-secondary);
-
-            font-size: 11px;
-        }
-
-
-        /* =========================================================
-           APP CONTENT
-        ========================================================= */
-
-        .app-container {
-            max-width: 1250px;
-
-            margin: 0 auto;
-
-            padding: 45px 32px 60px;
-        }
-
-        .page-header {
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-
-            margin-bottom: 30px;
-        }
-
-        .page-header h1 {
-            font-size: 31px;
-
-            letter-spacing: -0.7px;
-        }
-
-        .page-header p {
-            margin-top: 7px;
-
-            color: var(--text-secondary);
-
-            font-size: 14px;
-        }
-
-        .add-button {
-            height: 45px;
-
-            padding: 0 19px;
-
-            border: none;
-            border-radius: 10px;
-
-            background: var(--primary);
-
-            color: white;
-
-            font-weight: 700;
-
-            display: flex;
-            align-items: center;
-
-            gap: 8px;
-
-            transition: 0.2s;
-        }
-
-        .add-button:hover {
-            background: var(--primary-dark);
-        }
-
-
-        /* =========================================================
-           GREENHOUSE GRID
-        ========================================================= */
-
-        .greenhouse-grid {
-            display: grid;
-
-            grid-template-columns:
-                repeat(2, minmax(0, 1fr));
-
-            gap: 20px;
-        }
-
-        .greenhouse-card {
-            background: var(--surface);
-
-            border:
-                1px solid var(--border);
-
-            border-radius: var(--radius);
-
-            padding: 24px;
-
-            box-shadow:
-                0 5px 18px rgba(30, 45, 35, 0.04);
-
-            transition: 0.2s;
-        }
-
-        .greenhouse-card:hover {
-            transform: translateY(-2px);
-
-            box-shadow: var(--shadow);
-        }
-
-        .greenhouse-top {
-            display: flex;
-            align-items: flex-start;
-
-            justify-content: space-between;
-
-            margin-bottom: 24px;
-        }
-
-        .greenhouse-icon {
-            width: 48px;
-            height: 48px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            border-radius: 13px;
-
-            background: var(--primary-light);
-
-            font-size: 24px;
-        }
-
-        .status {
-            display: inline-flex;
-            align-items: center;
-
-            gap: 6px;
-
-            padding: 6px 10px;
-
-            border-radius: 20px;
-
-            background: var(--primary-light);
-
-            color: var(--primary-dark);
-
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        .status-dot {
-            width: 7px;
-            height: 7px;
-
-            border-radius: 50%;
-
-            background: var(--primary);
-        }
-
-        .greenhouse-name {
-            font-size: 19px;
-            font-weight: 750;
-        }
-
-        .greenhouse-location {
-            margin-top: 4px;
-
-            color: var(--text-secondary);
-
-            font-size: 12px;
-        }
-
-        .greenhouse-info {
-            display: grid;
-
-            grid-template-columns:
-                repeat(2, 1fr);
-
-            gap: 12px;
-
-            margin-bottom: 20px;
-        }
-
-        .info-box {
-            background: var(--background);
-
-            border-radius: 11px;
-
-            padding: 13px;
-        }
-
-        .info-box span {
-            display: block;
-
-            color: var(--text-secondary);
-
-            font-size: 11px;
-
-            margin-bottom: 4px;
-        }
-
-        .info-box strong {
-            font-size: 17px;
-        }
-
-        .greenhouse-footer {
-            display: flex;
-            align-items: center;
-
-            justify-content: space-between;
-
-            padding-top: 17px;
-
-            border-top:
-                1px solid var(--border);
-        }
-
-        .greenhouse-code {
-            color: var(--text-secondary);
-
-            font-family: monospace;
-
-            font-size: 11px;
-        }
-
-        .open-button {
-            border: none;
-
-            background: none;
-
-            color: var(--primary);
-
-            font-weight: 700;
-
-            font-size: 13px;
-        }
-
-
-        /* =========================================================
-           EMPTY / ADD CARD
-        ========================================================= */
-
-        .add-card {
-            min-height: 270px;
-
-            border:
-                1.5px dashed var(--border);
-
-            border-radius: var(--radius);
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            flex-direction: column;
-
-            text-align: center;
-
-            background: transparent;
-
-            transition: 0.2s;
-        }
-
-        .add-card:hover {
-            border-color: var(--primary);
-
-            background: var(--primary-light);
-        }
-
-        .add-card-icon {
-            width: 50px;
-            height: 50px;
-
-            border-radius: 50%;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            background: var(--primary-light);
-
-            color: var(--primary);
-
-            font-size: 25px;
-
-            margin-bottom: 13px;
-        }
-
-        .add-card h3 {
-            font-size: 15px;
-        }
-
-        .add-card p {
-            color: var(--text-secondary);
-
-            font-size: 12px;
-
-            margin-top: 5px;
-
-            margin-bottom: 15px;
-        }
-
-        .outline-button {
-            height: 38px;
-
-            padding: 0 15px;
+            padding: 11px;
 
             border-radius: 9px;
 
-            border:
-                1px solid var(--primary);
-
-            color: var(--primary);
-
-            background: transparent;
-
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-
-        /* =========================================================
-           MODALS
-        ========================================================= */
-
-        .modal-overlay {
-            display: none;
-
-            position: fixed;
-
-            inset: 0;
-
-            background:
-                rgba(10, 20, 14, 0.45);
-
-            z-index: 100;
-
-            align-items: center;
-            justify-content: center;
-
-            padding: 20px;
-
-            backdrop-filter: blur(4px);
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal {
-            width: 100%;
-            max-width: 480px;
-
-            background: var(--surface);
-
-            border-radius: 20px;
-
-            padding: 30px;
-
-            box-shadow:
-                0 25px 70px rgba(0,0,0,0.2);
-
-            animation: modalIn 0.18s ease;
-        }
-
-        @keyframes modalIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .modal-header {
-            display: flex;
-            align-items: center;
-
-            justify-content: space-between;
-
-            margin-bottom: 23px;
-        }
-
-        .modal-header h2 {
-            font-size: 21px;
-        }
-
-        .close-button {
-            width: 34px;
-            height: 34px;
-
-            border-radius: 9px;
-
-            border: none;
-
-            background: var(--background);
-
-            color: var(--text);
-
-            font-size: 18px;
-        }
-
-        .modal-subtitle {
-            color: var(--text-secondary);
-
             font-size: 13px;
-
-            line-height: 1.5;
-
-            margin-top: -12px;
-
-            margin-bottom: 22px;
-        }
-
-        .modal-actions {
-            display: flex;
-
-            gap: 10px;
-
-            margin-top: 24px;
-        }
-
-        .secondary-button {
-            flex: 1;
-
-            height: 45px;
-
-            border-radius: 10px;
-
-            border:
-                1px solid var(--border);
-
-            background: var(--background);
-
-            color: var(--text);
-
-            font-weight: 700;
-        }
-
-        .modal-actions .primary-button {
-            flex: 1;
         }
 
 
-        /* =========================================================
-           ADD GREENHOUSE OPTIONS
-        ========================================================= */
+        .message.error {
 
-        .option-card {
-            width: 100%;
-
-            border:
-                1px solid var(--border);
-
-            background: var(--surface);
-
-            border-radius: 14px;
-
-            padding: 17px;
-
-            display: flex;
-            align-items: center;
-
-            gap: 15px;
-
-            text-align: left;
-
-            color: var(--text);
-
-            margin-bottom: 11px;
-
-            transition: 0.2s;
-        }
-
-        .option-card:hover {
-            border-color: var(--primary);
-
-            background: var(--primary-light);
-        }
-
-        .option-icon {
-            width: 45px;
-            height: 45px;
-
-            flex-shrink: 0;
-
-            border-radius: 12px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            background: var(--primary-light);
-
-            font-size: 22px;
-        }
-
-        .option-card h3 {
-            font-size: 14px;
-
-            margin-bottom: 3px;
-        }
-
-        .option-card p {
-            color: var(--text-secondary);
-
-            font-size: 11px;
-        }
-
-
-        /* =========================================================
-           CODE GENERATED
-        ========================================================= */
-
-        .generated-code {
-            text-align: center;
-
-            padding: 22px;
-
-            background: var(--primary-light);
-
-            border-radius: 14px;
-
-            margin: 20px 0;
-        }
-
-        .generated-code span {
             display: block;
 
-            color: var(--text-secondary);
+            background: rgba(224,82,82,.1);
 
-            font-size: 11px;
-
-            margin-bottom: 8px;
-        }
-
-        .generated-code strong {
-            display: block;
-
-            color: var(--primary-dark);
-
-            font-family: monospace;
-
-            font-size: 25px;
-
-            letter-spacing: 2px;
-        }
-
-        .generated-code p {
-            margin-top: 10px;
-
-            color: var(--text-secondary);
-
-            font-size: 11px;
-
-            line-height: 1.4;
-        }
-
-
-        /* =========================================================
-           PROFILE MENU
-        ========================================================= */
-
-        .profile-menu {
-            position: fixed;
-
-            top: 65px;
-            right: 30px;
-
-            width: 230px;
-
-            background: var(--surface);
-
-            border:
-                1px solid var(--border);
-
-            border-radius: 14px;
-
-            padding: 8px;
-
-            box-shadow: var(--shadow);
-
-            z-index: 50;
-
-            display: none;
-        }
-
-        .profile-menu.active {
-            display: block;
-        }
-
-        .profile-menu button {
-            width: 100%;
-
-            text-align: left;
-
-            padding: 11px 12px;
-
-            border: none;
-
-            background: transparent;
-
-            color: var(--text);
-
-            border-radius: 8px;
-        }
-
-        .profile-menu button:hover {
-            background: var(--background);
-        }
-
-        .profile-menu .logout {
             color: var(--danger);
         }
 
 
-        /* =========================================================
-           RESPONSIVE
-        ========================================================= */
+        @media(max-width:500px) {
 
-        @media (max-width: 800px) {
+            .login-card {
 
-            .greenhouse-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .topbar {
-                padding: 0 18px;
-            }
-
-            .user-info {
-                display: none;
-            }
-
-            .app-container {
-                padding:
-                    30px 18px 50px;
-            }
-
-            .page-header {
-                align-items: flex-start;
-
-                flex-direction: column;
-
-                gap: 18px;
-            }
-
-            .add-button {
-                width: 100%;
-
-                justify-content: center;
-            }
-        }
-
-        @media (max-width: 500px) {
-
-            .auth-card {
                 padding: 30px 23px;
             }
 
-            #authView {
-                padding: 15px;
-            }
-
-            .page-header h1 {
-                font-size: 27px;
-            }
-
-            .topbar-brand {
-                font-size: 18px;
-            }
-
-            .user-menu {
-                border-left: none;
-
-                padding-left: 0;
-            }
         }
 
     </style>
+
 </head>
 
 
 <body>
 
 
-<!-- =============================================================
-     AUTHENTICATION
-============================================================= -->
+<button
+    class="theme-button"
+    onclick="toggleTheme()"
+    id="themeButton">
 
-<section id="authView">
+    ☾
 
-    <button
-        class="auth-theme-button"
-        onclick="toggleTheme()"
-        id="authThemeButton">
-        ☾
-    </button>
+</button>
 
 
-    <div class="auth-card">
+<div class="login-card">
 
-        <div class="brand">
 
-            <div class="brand-icon">
-                🌱
-            </div>
+    <div class="brand">
 
-            <h1>GrowSync</h1>
+        <div class="brand-icon">
 
-            <p>
-                Gestión inteligente de tu invernadero
-            </p>
+            🌱
 
         </div>
 
-
-        <!-- LOGIN -->
-
-        <div id="loginForm">
-
-            <div class="auth-title">
-
-                <h2>Bienvenido de nuevo</h2>
-
-                <p>
-                    Accede a tu cuenta para gestionar
-                    tus invernaderos.
-                </p>
-
-            </div>
-
-
-            <div
-                id="loginMessage"
-                class="auth-message">
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="loginEmail">
-                    Correo electrónico
-                </label>
-
-                <div class="input-wrapper">
-
-                    <input
-                        id="loginEmail"
-                        type="email"
-                        placeholder="tu@email.com">
-
-                </div>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="loginPassword">
-                    Contraseña
-                </label>
-
-                <div class="input-wrapper">
-
-                    <input
-                        id="loginPassword"
-                        type="password"
-                        placeholder="Introduce tu contraseña">
-
-                    <button
-                        class="password-toggle"
-                        onclick="togglePassword('loginPassword', this)">
-                        👁
-                    </button>
-
-                </div>
-
-            </div>
-
-
-            <button
-                class="forgot"
-                onclick="showForgotPassword()">
-                ¿Has olvidado tu contraseña?
-            </button>
-
-
-            <button
-                class="primary-button"
-                onclick="login()">
-                ENTRAR
-            </button>
-
-
-            <div class="auth-switch">
-
-                ¿No tienes una cuenta?
-
-                <button onclick="showRegister()">
-                    Crear cuenta
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <!-- REGISTER -->
-
-        <div
-            id="registerForm"
-            style="display:none;">
-
-            <div class="auth-title">
-
-                <h2>Crear cuenta</h2>
-
-                <p>
-                    Empieza a gestionar tus invernaderos.
-                </p>
-
-            </div>
-
-
-            <div
-                id="registerMessage"
-                class="auth-message">
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="registerName">
-                    Nombre
-                </label>
-
-                <div class="input-wrapper">
-
-                    <input
-                        id="registerName"
-                        type="text"
-                        placeholder="Tu nombre">
-
-                </div>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="registerEmail">
-                    Correo electrónico
-                </label>
-
-                <div class="input-wrapper">
-
-                    <input
-                        id="registerEmail"
-                        type="email"
-                        placeholder="tu@email.com">
-
-                </div>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="registerPassword">
-                    Contraseña
-                </label>
-
-                <div class="input-wrapper">
-
-                    <input
-                        id="registerPassword"
-                        type="password"
-                        placeholder="Mínimo 6 caracteres">
-
-                    <button
-                        class="password-toggle"
-                        onclick="togglePassword('registerPassword', this)">
-                        👁
-                    </button>
-
-                </div>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="registerPassword2">
-                    Repetir contraseña
-                </label>
-
-                <div class="input-wrapper">
-
-                    <input
-                        id="registerPassword2"
-                        type="password"
-                        placeholder="Repite la contraseña">
-
-                    <button
-                        class="password-toggle"
-                        onclick="togglePassword('registerPassword2', this)">
-                        👁
-                    </button>
-
-                </div>
-
-            </div>
-
-
-            <button
-                class="primary-button"
-                onclick="register()">
-                CREAR CUENTA
-            </button>
-
-
-            <div class="auth-switch">
-
-                ¿Ya tienes una cuenta?
-
-                <button onclick="showLogin()">
-                    Iniciar sesión
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <!-- FORGOT PASSWORD -->
-
-        <div
-            id="forgotForm"
-            style="display:none;">
-
-            <div class="auth-title">
-
-                <h2>Recuperar contraseña</h2>
-
-                <p>
-                    Introduce tu correo y te enviaremos
-                    las instrucciones para recuperar
-                    tu contraseña.
-                </p>
-
-            </div>
-
-
-            <div
-                id="forgotMessage"
-                class="auth-message">
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    Correo electrónico
-                </label>
-
-                <div class="input-wrapper">
-
-                    <input
-                        id="forgotEmail"
-                        type="email"
-                        placeholder="tu@email.com">
-
-                </div>
-
-            </div>
-
-
-            <button
-                class="primary-button"
-                onclick="recoverPassword()">
-                ENVIAR INSTRUCCIONES
-            </button>
-
-
-            <div class="auth-switch">
-
-                <button onclick="showLogin()">
-                    ← Volver al inicio de sesión
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<!-- =============================================================
-     MAIN APPLICATION
-============================================================= -->
-
-<section id="appView">
-
-
-    <!-- TOPBAR -->
-
-    <header class="topbar">
-
-        <div class="topbar-brand">
-
-            <span>🌱</span>
+        <h1>
 
             GrowSync
 
-        </div>
+        </h1>
+
+        <p>
+
+            Gestión inteligente de tu invernadero
+
+        </p>
+
+    </div>
 
 
-        <div class="topbar-right">
+    <div class="title">
 
-            <button
-                class="icon-button"
-                onclick="toggleTheme()"
-                id="appThemeButton">
-                ☾
-            </button>
+        <h2>
 
+            Bienvenido de nuevo
 
-            <div class="user-menu">
+        </h2>
 
-                <div
-                    class="avatar"
-                    id="userAvatar">
-                    P
-                </div>
+        <p>
 
-                <div class="user-info">
+            Accede a tu cuenta para gestionar
+            tus invernaderos.
 
-                    <strong id="userName">
-                        Pablo
-                    </strong>
+        </p>
 
-                    <span id="userEmail">
-                        pablo@email.com
-                    </span>
+    </div>
 
-                </div>
-
-                <button
-                    class="icon-button"
-                    onclick="toggleProfileMenu()">
-                    ⋮
-                </button>
-
-            </div>
-
-        </div>
-
-    </header>
-
-
-
-    <!-- PROFILE MENU -->
 
     <div
-        class="profile-menu"
-        id="profileMenu">
+        id="message"
+        class="message">
+    </div>
 
-        <button onclick="alert('Perfil próximamente')">
-            👤 Mi perfil
-        </button>
 
-        <button onclick="alert('Configuración próximamente')">
-            ⚙️ Configuración
-        </button>
+    <div class="form-group">
 
-        <button
-            class="logout"
-            onclick="logout()">
-            ↪ Cerrar sesión
-        </button>
+        <label for="email">
+
+            Correo electrónico
+
+        </label>
+
+        <input
+            id="email"
+            type="email"
+            placeholder="tu@email.com">
 
     </div>
 
 
+    <div class="form-group">
 
-    <!-- CONTENT -->
+        <label for="password">
 
-    <main class="app-container">
+            Contraseña
+
+        </label>
 
 
-        <div class="page-header">
+        <div class="input-wrapper">
 
-            <div>
-
-                <h1>
-                    Mis invernaderos
-                </h1>
-
-                <p>
-                    Gestiona todos tus invernaderos
-                    desde un único lugar.
-                </p>
-
-            </div>
+            <input
+                id="password"
+                type="password"
+                placeholder="Introduce tu contraseña">
 
 
             <button
-                class="add-button"
-                onclick="openAddGreenhouse()">
+                class="password-toggle"
+                onclick="togglePassword()">
 
-                <span>＋</span>
-
-                Añadir invernadero
+                👁
 
             </button>
 
         </div>
 
+    </div>
 
 
-        <!-- GREENHOUSES -->
+    <button
+        class="forgot"
+        onclick="forgotPassword()">
 
-        <div
-            class="greenhouse-grid"
-            id="greenhouseGrid">
+        ¿Has olvidado tu contraseña?
 
+    </button>
 
-            <!-- GREENHOUSE 1 -->
 
-            <div class="greenhouse-card">
+    <button
+        class="primary-button"
+        onclick="login()">
 
-                <div class="greenhouse-top">
+        ENTRAR
 
-                    <div>
+    </button>
 
-                        <div class="greenhouse-icon">
-                            🌱
-                        </div>
 
-                    </div>
+    <div class="register">
 
-                    <div class="status">
+        ¿No tienes una cuenta?
 
-                        <span class="status-dot"></span>
+        <a onclick="register()">
 
-                        Online
+            Crear cuenta
 
-                    </div>
-
-                </div>
-
-
-                <div
-                    class="greenhouse-name">
-
-                    Invernadero terraza
-
-                </div>
-
-
-                <div
-                    class="greenhouse-location">
-
-                    📍 Zaragoza
-
-                </div>
-
-
-                <div class="greenhouse-info">
-
-                    <div class="info-box">
-
-                        <span>
-                            Temperatura
-                        </span>
-
-                        <strong>
-                            24,6 °C
-                        </strong>
-
-                    </div>
-
-
-                    <div class="info-box">
-
-                        <span>
-                            Humedad
-                        </span>
-
-                        <strong>
-                            63 %
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="greenhouse-footer">
-
-                    <span class="greenhouse-code">
-                        GS-7K4P-92XM
-                    </span>
-
-                    <button
-                        class="open-button"
-                        onclick="openGreenhouse('Invernadero terraza')">
-
-                        Abrir →
-
-                    </button>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- GREENHOUSE 2 -->
-
-            <div class="greenhouse-card">
-
-                <div class="greenhouse-top">
-
-                    <div>
-
-                        <div class="greenhouse-icon">
-                            🌱
-                        </div>
-
-                    </div>
-
-                    <div class="status">
-
-                        <span class="status-dot"></span>
-
-                        Online
-
-                    </div>
-
-                </div>
-
-
-                <div
-                    class="greenhouse-name">
-
-                    Invernadero huerto
-
-                </div>
-
-
-                <div
-                    class="greenhouse-location">
-
-                    📍 Zaragoza
-
-                </div>
-
-
-                <div class="greenhouse-info">
-
-                    <div class="info-box">
-
-                        <span>
-                            Temperatura
-                        </span>
-
-                        <strong>
-                            21,8 °C
-                        </strong>
-
-                    </div>
-
-
-                    <div class="info-box">
-
-                        <span>
-                            Humedad
-                        </span>
-
-                        <strong>
-                            71 %
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="greenhouse-footer">
-
-                    <span class="greenhouse-code">
-                        GS-91LM-3KQP
-                    </span>
-
-                    <button
-                        class="open-button"
-                        onclick="openGreenhouse('Invernadero huerto')">
-
-                        Abrir →
-
-                    </button>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- ADD CARD -->
-
-            <div
-                class="add-card"
-                onclick="openAddGreenhouse()">
-
-                <div class="add-card-icon">
-                    ＋
-                </div>
-
-                <h3>
-                    Añadir otro invernadero
-                </h3>
-
-                <p>
-                    Crea uno nuevo o únete
-                    mediante un código.
-                </p>
-
-                <button
-                    class="outline-button">
-
-                    Añadir invernadero
-
-                </button>
-
-            </div>
-
-
-        </div>
-
-    </main>
-
-</section>
-
-
-
-<!-- =============================================================
-     ADD GREENHOUSE MODAL
-============================================================= -->
-
-<div
-    class="modal-overlay"
-    id="addGreenhouseModal">
-
-    <div class="modal">
-
-        <div class="modal-header">
-
-            <h2>
-                Añadir invernadero
-            </h2>
-
-            <button
-                class="close-button"
-                onclick="closeModal('addGreenhouseModal')">
-                ×
-            </button>
-
-        </div>
-
-
-        <p class="modal-subtitle">
-            Puedes crear un nuevo invernadero
-            o unirte a uno existente.
-        </p>
-
-
-        <button
-            class="option-card"
-            onclick="showCreateGreenhouse()">
-
-            <div class="option-icon">
-                🌱
-            </div>
-
-            <div>
-
-                <h3>
-                    Crear un invernadero
-                </h3>
-
-                <p>
-                    Crea una nueva instalación
-                    GrowSync.
-                </p>
-
-            </div>
-
-        </button>
-
-
-        <button
-            class="option-card"
-            onclick="showJoinGreenhouse()">
-
-            <div class="option-icon">
-                🔗
-            </div>
-
-            <div>
-
-                <h3>
-                    Unirme a un invernadero
-                </h3>
-
-                <p>
-                    Introduce el código proporcionado
-                    por otro usuario.
-                </p>
-
-            </div>
-
-        </button>
+        </a>
 
     </div>
 
 </div>
 
-
-
-<!-- =============================================================
-     CREATE GREENHOUSE MODAL
-============================================================= -->
-
-<div
-    class="modal-overlay"
-    id="createGreenhouseModal">
-
-    <div class="modal">
-
-        <div class="modal-header">
-
-            <h2>
-                Crear invernadero
-            </h2>
-
-            <button
-                class="close-button"
-                onclick="closeModal('createGreenhouseModal')">
-                ×
-            </button>
-
-        </div>
-
-
-        <p class="modal-subtitle">
-            Introduce los datos básicos de tu
-            nuevo invernadero.
-        </p>
-
-
-        <div class="form-group">
-
-            <label>
-                Nombre del invernadero
-            </label>
-
-            <div class="input-wrapper">
-
-                <input
-                    id="newGreenhouseName"
-                    type="text"
-                    placeholder="Ej. Invernadero terraza">
-
-            </div>
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                Ubicación
-            </label>
-
-            <div class="input-wrapper">
-
-                <input
-                    id="newGreenhouseLocation"
-                    type="text"
-                    placeholder="Ej. Zaragoza">
-
-            </div>
-
-        </div>
-
-
-        <div class="modal-actions">
-
-            <button
-                class="secondary-button"
-                onclick="closeModal('createGreenhouseModal')">
-
-                Cancelar
-
-            </button>
-
-            <button
-                class="primary-button"
-                onclick="createGreenhouse()">
-
-                CREAR
-
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-
-<!-- =============================================================
-     GENERATED CODE MODAL
-============================================================= -->
-
-<div
-    class="modal-overlay"
-    id="generatedCodeModal">
-
-    <div class="modal">
-
-        <div class="modal-header">
-
-            <h2>
-                ¡Invernadero creado!
-            </h2>
-
-            <button
-                class="close-button"
-                onclick="closeModal('generatedCodeModal')">
-                ×
-            </button>
-
-        </div>
-
-
-        <p class="modal-subtitle">
-            Tu invernadero ha sido creado
-            correctamente.
-        </p>
-
-
-        <div class="generated-code">
-
-            <span>
-                Código de vinculación
-            </span>
-
-            <strong id="generatedCode">
-                GS-7K4P-92XM
-            </strong>
-
-            <p>
-                Comparte este código con otros
-                usuarios para permitirles solicitar
-                acceso a tu invernadero.
-            </p>
-
-        </div>
-
-
-        <button
-            class="primary-button"
-            onclick="closeModal('generatedCodeModal')">
-
-            CONTINUAR
-
-        </button>
-
-    </div>
-
-</div>
-
-
-
-<!-- =============================================================
-     JOIN GREENHOUSE MODAL
-============================================================= -->
-
-<div
-    class="modal-overlay"
-    id="joinGreenhouseModal">
-
-    <div class="modal">
-
-        <div class="modal-header">
-
-            <h2>
-                Unirme a un invernadero
-            </h2>
-
-            <button
-                class="close-button"
-                onclick="closeModal('joinGreenhouseModal')">
-                ×
-            </button>
-
-        </div>
-
-
-        <p class="modal-subtitle">
-            Introduce el código que te ha
-            proporcionado el propietario.
-        </p>
-
-
-        <div class="form-group">
-
-            <label>
-                Código del invernadero
-            </label>
-
-            <div class="input-wrapper">
-
-                <input
-                    id="joinCode"
-                    type="text"
-                    maxlength="11"
-                    placeholder="GS-XXXX-XXXX"
-                    style="
-                        text-transform: uppercase;
-                        letter-spacing: 1px;
-                        font-family: monospace;
-                    ">
-
-            </div>
-
-        </div>
-
-
-        <div class="modal-actions">
-
-            <button
-                class="secondary-button"
-                onclick="closeModal('joinGreenhouseModal')">
-
-                Cancelar
-
-            </button>
-
-            <button
-                class="primary-button"
-                onclick="joinGreenhouse()">
-
-                CONTINUAR
-
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-
-<!-- =============================================================
-     JAVASCRIPT
-============================================================= -->
 
 <script>
-
-
-/* =============================================================
-   DEMO USER
-============================================================= */
-
-let currentUser = {
-    name: "Pablo",
-    email: "pablo@email.com"
-};
-
-
-/* =============================================================
-   THEME
-============================================================= */
-
-function toggleTheme() {
-
-    document.body.classList.toggle("dark");
-
-    const isDark =
-        document.body.classList.contains("dark");
-
-    localStorage.setItem(
-        "growsync-theme",
-        isDark ? "dark" : "light"
-    );
-
-    updateThemeButtons();
-}
-
-
-function updateThemeButtons() {
-
-    const isDark =
-        document.body.classList.contains("dark");
-
-    const symbol =
-        isDark ? "☀" : "☾";
-
-    document.getElementById(
-        "authThemeButton"
-    ).textContent = symbol;
-
-    document.getElementById(
-        "appThemeButton"
-    ).textContent = symbol;
-}
-
-
-function loadTheme() {
-
-    const theme =
-        localStorage.getItem("growsync-theme");
-
-    if (theme === "dark") {
-
-        document.body.classList.add("dark");
-
-    }
-
-    updateThemeButtons();
-}
-
-
-/* =============================================================
-   AUTH VIEWS
-============================================================= */
-
-function showLogin() {
-
-    document.getElementById(
-        "loginForm"
-    ).style.display = "block";
-
-    document.getElementById(
-        "registerForm"
-    ).style.display = "none";
-
-    document.getElementById(
-        "forgotForm"
-    ).style.display = "none";
-}
-
-
-function showRegister() {
-
-    document.getElementById(
-        "loginForm"
-    ).style.display = "none";
-
-    document.getElementById(
-        "registerForm"
-    ).style.display = "block";
-
-    document.getElementById(
-        "forgotForm"
-    ).style.display = "none";
-}
-
-
-function showForgotPassword() {
-
-    document.getElementById(
-        "loginForm"
-    ).style.display = "none";
-
-    document.getElementById(
-        "registerForm"
-    ).style.display = "none";
-
-    document.getElementById(
-        "forgotForm"
-    ).style.display = "block";
-}
-
-
-/* =============================================================
-   DEMO LOGIN
-============================================================= */
 
 function login() {
 
     const email =
-        document.getElementById(
-            "loginEmail"
-        ).value.trim();
+        document.getElementById("email").value;
 
     const password =
-        document.getElementById(
-            "loginPassword"
-        ).value;
+        document.getElementById("password").value;
 
 
     if (!email || !password) {
 
         showMessage(
-            "loginMessage",
-            "Introduce tu correo y contraseña.",
-            "error"
+            "Introduce tu correo y contraseña."
         );
 
         return;
@@ -2286,540 +549,73 @@ function login() {
 
 
     /*
-       TEMPORAL
+        TEMPORAL
 
-       Más adelante sustituiremos esto por:
+        Aquí conectaremos Firebase:
 
-       signInWithEmailAndPassword(
-           auth,
-           email,
-           password
-       );
-
-       usando Firebase Authentication.
+        signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+        )
     */
 
 
-    currentUser = {
-        name: email.split("@")[0],
-        email: email
-    };
-
-
-    enterApplication();
+    window.location.href =
+        "invernaderos.html";
 }
 
-
-/* =============================================================
-   DEMO REGISTER
-============================================================= */
 
 function register() {
 
-    const name =
-        document.getElementById(
-            "registerName"
-        ).value.trim();
-
-    const email =
-        document.getElementById(
-            "registerEmail"
-        ).value.trim();
-
-    const password =
-        document.getElementById(
-            "registerPassword"
-        ).value;
-
-    const password2 =
-        document.getElementById(
-            "registerPassword2"
-        ).value;
-
-
-    if (!name || !email || !password || !password2) {
-
-        showMessage(
-            "registerMessage",
-            "Completa todos los campos.",
-            "error"
-        );
-
-        return;
-    }
-
-
-    if (password.length < 6) {
-
-        showMessage(
-            "registerMessage",
-            "La contraseña debe tener al menos 6 caracteres.",
-            "error"
-        );
-
-        return;
-    }
-
-
-    if (password !== password2) {
-
-        showMessage(
-            "registerMessage",
-            "Las contraseñas no coinciden.",
-            "error"
-        );
-
-        return;
-    }
-
-
-    currentUser = {
-        name: name,
-        email: email
-    };
-
-
-    showMessage(
-        "registerMessage",
-        "Cuenta creada correctamente.",
-        "success"
-    );
-
-
-    setTimeout(() => {
-
-        enterApplication();
-
-    }, 600);
-}
-
-
-/* =============================================================
-   RECOVERY
-============================================================= */
-
-function recoverPassword() {
-
-    const email =
-        document.getElementById(
-            "forgotEmail"
-        ).value.trim();
-
-
-    if (!email) {
-
-        showMessage(
-            "forgotMessage",
-            "Introduce tu correo electrónico.",
-            "error"
-        );
-
-        return;
-    }
-
-
-    showMessage(
-        "forgotMessage",
-        "Si la cuenta existe, recibirás instrucciones para recuperar tu contraseña.",
-        "success"
+    alert(
+        "Aquí añadiremos la pantalla de registro."
     );
 }
 
 
-/* =============================================================
-   ENTER APPLICATION
-============================================================= */
-
-function enterApplication() {
-
-    document.getElementById(
-        "authView"
-    ).style.display = "none";
-
-    document.getElementById(
-        "appView"
-    ).style.display = "block";
-
-
-    document.getElementById(
-        "userName"
-    ).textContent = currentUser.name;
-
-    document.getElementById(
-        "userEmail"
-    ).textContent = currentUser.email;
-
-
-    document.getElementById(
-        "userAvatar"
-    ).textContent =
-        currentUser.name
-            .charAt(0)
-            .toUpperCase();
-
-
-    closeProfileMenu();
-}
-
-
-/* =============================================================
-   LOGOUT
-============================================================= */
-
-function logout() {
-
-    document.getElementById(
-        "appView"
-    ).style.display = "none";
-
-    document.getElementById(
-        "authView"
-    ).style.display = "flex";
-
-
-    document.getElementById(
-        "loginPassword"
-    ).value = "";
-
-
-    showLogin();
-
-    closeProfileMenu();
-}
-
-
-/* =============================================================
-   PASSWORD VISIBILITY
-============================================================= */
-
-function togglePassword(
-    inputId,
-    button
-) {
-
-    const input =
-        document.getElementById(inputId);
-
-
-    if (input.type === "password") {
-
-        input.type = "text";
-
-        button.textContent = "🙈";
-
-    } else {
-
-        input.type = "password";
-
-        button.textContent = "👁";
-    }
-}
-
-
-/* =============================================================
-   ADD GREENHOUSE
-============================================================= */
-
-function openAddGreenhouse() {
-
-    openModal(
-        "addGreenhouseModal"
-    );
-}
-
-
-function showCreateGreenhouse() {
-
-    closeModal(
-        "addGreenhouseModal"
-    );
-
-    openModal(
-        "createGreenhouseModal"
-    );
-}
-
-
-function showJoinGreenhouse() {
-
-    closeModal(
-        "addGreenhouseModal"
-    );
-
-    openModal(
-        "joinGreenhouseModal"
-    );
-}
-
-
-/* =============================================================
-   CREATE GREENHOUSE
-============================================================= */
-
-function createGreenhouse() {
-
-    const name =
-        document.getElementById(
-            "newGreenhouseName"
-        ).value.trim();
-
-    const location =
-        document.getElementById(
-            "newGreenhouseLocation"
-        ).value.trim();
-
-
-    if (!name) {
-
-        alert(
-            "Introduce un nombre para el invernadero."
-        );
-
-        return;
-    }
-
-
-    const code =
-        generateGreenhouseCode();
-
-
-    document.getElementById(
-        "generatedCode"
-    ).textContent = code;
-
-
-    closeModal(
-        "createGreenhouseModal"
-    );
-
-
-    openModal(
-        "generatedCodeModal"
-    );
-
-
-    /*
-       TEMPORALMENTE NO GUARDAMOS EL INVERNADERO.
-
-       Más adelante:
-
-       /greenhouses/{greenhouseId}
-
-       y:
-
-       /users/{uid}/greenhouses/{greenhouseId}
-
-       con Firebase Realtime Database.
-    */
-
-
-    console.log(
-        "Nuevo invernadero:",
-        {
-            name,
-            location,
-            code
-        }
-    );
-}
-
-
-/* =============================================================
-   GENERATE GREENHOUSE CODE
-============================================================= */
-
-function generateGreenhouseCode() {
-
-    const chars =
-        "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-
-
-    function randomPart(length) {
-
-        let result = "";
-
-        for (
-            let i = 0;
-            i < length;
-            i++
-        ) {
-
-            result +=
-                chars.charAt(
-                    Math.floor(
-                        Math.random() *
-                        chars.length
-                    )
-                );
-        }
-
-        return result;
-    }
-
-
-    return (
-        "GS-" +
-        randomPart(4) +
-        "-" +
-        randomPart(4)
-    );
-}
-
-
-/* =============================================================
-   JOIN GREENHOUSE
-============================================================= */
-
-function joinGreenhouse() {
-
-    const input =
-        document.getElementById(
-            "joinCode"
-        );
-
-
-    const code =
-        input.value
-            .trim()
-            .toUpperCase();
-
-
-    if (!/^GS-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code)) {
-
-        alert(
-            "El código no tiene un formato válido."
-        );
-
-        return;
-    }
-
-
-    closeModal(
-        "joinGreenhouseModal"
-    );
-
+function forgotPassword() {
 
     alert(
-        "Solicitud enviada para el invernadero " +
-        code +
-        ".\n\nMás adelante esta solicitud se guardará en Firebase."
-    );
-
-
-    input.value = "";
-}
-
-
-/* =============================================================
-   OPEN GREENHOUSE
-============================================================= */
-
-function openGreenhouse(name) {
-
-    alert(
-        "Abrir " +
-        name +
-        "\n\nAquí conectaremos posteriormente el dashboard de sensores."
+        "Aquí añadiremos la recuperación de contraseña."
     );
 }
 
 
-/* =============================================================
-   MODALS
-============================================================= */
+function togglePassword() {
 
-function openModal(id) {
+    const input =
+        document.getElementById("password");
 
-    document
-        .getElementById(id)
-        .classList.add("active");
+
+    input.type =
+        input.type === "password"
+            ? "text"
+            : "password";
 }
 
 
-function closeModal(id) {
+function showMessage(text) {
 
-    document
-        .getElementById(id)
-        .classList.remove("active");
+    const message =
+        document.getElementById("message");
+
+    message.textContent = text;
+
+    message.className =
+        "message error";
 }
 
 
-/* =============================================================
-   PROFILE MENU
-============================================================= */
+function toggleTheme() {
 
-function toggleProfileMenu() {
+    document.body.classList.toggle("dark");
 
-    document
-        .getElementById("profileMenu")
-        .classList.toggle("active");
 }
-
-
-function closeProfileMenu() {
-
-    document
-        .getElementById("profileMenu")
-        .classList.remove("active");
-}
-
-
-/* =============================================================
-   MESSAGES
-============================================================= */
-
-function showMessage(
-    elementId,
-    text,
-    type
-) {
-
-    const element =
-        document.getElementById(elementId);
-
-
-    element.textContent = text;
-
-    element.className =
-        "auth-message " + type;
-}
-
-
-/* =============================================================
-   CLOSE MODAL WHEN CLICK OUTSIDE
-============================================================= */
-
-document
-    .querySelectorAll(".modal-overlay")
-    .forEach(modal => {
-
-        modal.addEventListener(
-            "click",
-            function(event) {
-
-                if (
-                    event.target === modal
-                ) {
-
-                    modal.classList.remove(
-                        "active"
-                    );
-
-                }
-
-            }
-        );
-
-    });
-
-
-/* =============================================================
-   INIT
-============================================================= */
-
-loadTheme();
 
 </script>
 
+
 </body>
+
 </html>
