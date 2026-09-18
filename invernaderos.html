@@ -29,53 +29,63 @@
 
     <header class="topbar">
 
+    <div class="brand">
 
-        <div class="brand">
+        <button
+            type="button"
+            class="menu-button"
+            id="menuButton"
+            aria-label="Abrir menú"
+        >
+            🌱
+        </button>
 
+        <span>GrowSync</span>
+
+        <div class="side-menu" id="sideMenu">
+
+            <a
+                href="invernaderos.html"
+                class="side-menu-item"
+            >
+                <span class="side-menu-icon">🌱</span>
+                <span>Invernaderos</span>
+            </a>
 
             <button
                 type="button"
-                class="menu-button"
-                id="menuButton"
-                aria-label="Abrir menú"
+                class="side-menu-item"
+                id="settingsButton"
             >
-                🌱
+                <span class="side-menu-icon">⚙️</span>
+                <span>Ajustes</span>
             </button>
-
-
-            <span>
-                GrowSync
-            </span>
-
 
         </div>
 
-
-        <div class="topbar-actions">
-
-
-            <button
-                type="button"
-                class="theme-button small"
-                id="themeButton"
-                aria-label="Cambiar tema"
-            >
-                🌙
-            </button>
+    </div>
 
 
-            <div
-                class="user-avatar"
-                id="userAvatar"
-            >
-                U
-            </div>
+    <div class="topbar-actions">
 
+        <button
+            type="button"
+            class="theme-button small"
+            id="themeButton"
+        >
+            🌙
+        </button>
 
+        <div
+            class="user-avatar"
+            id="userAvatar"
+        >
+            U
         </div>
 
+    </div>
 
-    </header>
+</header>
 
 
 
@@ -83,46 +93,19 @@
          MENÚ DESPLEGABLE
          ===================================================== -->
 
-    <nav
-        class="side-menu"
-        id="sideMenu"
-    >
+    <nav class="side-menu" id="sideMenu">
 
+    <a href="invernaderos.html" class="side-menu-item">
+        <span class="side-menu-icon">🌱</span>
+        <span>Invernaderos</span>
+    </a>
 
-        <a
-            href="invernaderos.html"
-            class="side-menu-item"
-        >
+    <button type="button" class="side-menu-item" id="settingsButton">
+        <span class="side-menu-icon">⚙️</span>
+        <span>Ajustes</span>
+    </button>
 
-            <span class="side-menu-icon">
-                🌱
-            </span>
-
-            <span>
-                Invernaderos
-            </span>
-
-        </a>
-
-
-        <button
-            type="button"
-            class="side-menu-item"
-            id="settingsButton"
-        >
-
-            <span class="side-menu-icon">
-                ⚙️
-            </span>
-
-            <span>
-                Ajustes
-            </span>
-
-        </button>
-
-
-    </nav>
+</nav>
 
 
 
