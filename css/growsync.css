@@ -1399,6 +1399,148 @@ button {
 
 }
 
+/* =========================================================
+   MENÚ
+   ========================================================= */
+
+.brand {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 21px;
+    font-weight: 700;
+}
+
+
+.menu-button {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    background: var(--primary-light);
+    color: var(--text);
+
+    border: none;
+    border-radius: 12px;
+
+    font-size: 22px;
+
+    cursor: pointer;
+}
+
+
+.menu-button:hover {
+    transform: scale(1.05);
+}
+
+
+/* MENÚ OCULTO */
+
+.side-menu {
+
+    position: absolute;
+
+    top: 52px;
+    left: 0;
+
+    width: 220px;
+
+    padding: 8px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.12);
+
+    z-index: 9999;
+
+    display: none;
+}
+
+
+/* MENÚ ABIERTO */
+
+.side-menu.active {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 4px;
+
+}
+
+
+/* OPCIONES */
+
+.side-menu-item {
+
+    width: 100%;
+    height: 44px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 0 12px;
+
+    background: transparent;
+
+    border: none;
+
+    border-radius: 10px;
+
+    color: var(--text);
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    font-weight: 500;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    text-align: left;
+
+}
+
+
+.side-menu-item:hover {
+
+    background: var(--surface-secondary);
+
+    color: var(--primary);
+
+}
+
+
+.side-menu-icon {
+
+    width: 24px;
+    min-width: 24px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 18px;
+
+}
 
 /* =========================================================
    RESPONSIVE
