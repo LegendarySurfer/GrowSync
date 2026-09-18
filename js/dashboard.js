@@ -3,113 +3,50 @@
 // =========================================================
 
 import {
-    auth
+    auth,
+    database
 } from "./firebase.js";
 
 import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
+import {
+    ref,
+    onValue
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+
 
 // =========================================================
 // ELEMENTOS
 // =========================================================
 
-const greenhouseName =
-    document.getElementById(
-        "greenhouseName"
-    );
+const greenhouseName = document.getElementById("greenhouseName");
+const greenhouseCode = document.getElementById("greenhouseCode");
+const userAvatar = document.getElementById("userAvatar");
+const backButton = document.getElementById("backButton");
+const themeButton = document.getElementById("themeButton");
 
-const greenhouseCode =
-    document.getElementById(
-        "greenhouseCode"
-    );
-
-const userAvatar =
-    document.getElementById(
-        "userAvatar"
-    );
-
-const backButton =
-    document.getElementById(
-        "backButton"
-    );
-
-const themeButton =
-    document.getElementById(
-        "themeButton"
-    );
+// Un elemento por sensor: [id del <strong>, campo en Firebase, unidad]
+const SENSORES = [
+    ["temperature", "temperatura", "°C"],
+    ["humidity", "humedad", "%"],
+    ["soil", "suelo", "%"],
+    ["light", "luz", "lux"],
+    ["water", "agua", "%"],
+    ["battery", "bateria", "%"],
+    ["solar", "solar", "W"]
+];
 
 
 // =========================================================
 // INVERNADERO SELECCIONADO
 // =========================================================
 
-const selectedGreenhouse =
-    localStorage.getItem(
-        "selectedGreenhouse"
-    );
+const codigo = localStorage.getItem("selectedGreenhouse");
 
-
-if (!selectedGreenhouse) {
-
-    window.location.href =
-        "invernaderos.html";
-
-}
-
-
-// =========================================================
-// DATOS TEMPORALES
-// =========================================================
-
-const greenhouseData = {
-
-    "GS-001245": {
-
-        name:
-            "Invernadero Terraza",
-
-        code:
-            "GS-001245"
-
-    },
-
-    "GS-008721": {
-
-        name:
-            "Invernadero Huerto",
-
-        code:
-            "GS-008721"
-
-    }
-
-};
-
-
-// =========================================================
-// MOSTRAR DATOS
-// =========================================================
-
-if (
-    selectedGreenhouse &&
-    greenhouseData[selectedGreenhouse]
-) {
-
-    const greenhouse =
-        greenhouseData[
-            selectedGreenhouse
-        ];
-
-
-    greenhouseName.textContent =
-        greenhouse.name;
-
-
-    greenhouseCode.textContent =
-        greenhouse.code;
-
+if (!codigo) {
+    window.location.href = "invernaderos.html";
 }
 
 
@@ -117,40 +54,63 @@ if (
 // SESIÓN
 // =========================================================
 
-onAuthStateChanged(
-    auth,
-    (user) => {
+onAuthStateChanged(auth, (user) => {
 
-        if (!user) {
-
-            // window.location.href = "login.html";
-
-            return;
-        }
-
-
-        console.log(
-            "Dashboard usuario:",
-            user.uid
-        );
-
+    if (!user) {
+        window.location.href = "login.html";
+        return;
     }
-);
+
+    if (userAvatar) {
+        userAvatar.textContent = (user.email || "U")[0].toUpperCase();
+    }
+
+    cargarDatos();
+
+});
+
+
+// =========================================================
+// CARGAR DATOS EN VIVO
+// =========================================================
+
+function cargarDatos() {
+
+    onValue(ref(database, `greenhouses/${codigo}/info`), (snap) => {
+        const info = snap.exists() ? snap.val() : { nombre: "Invernadero" };
+        greenhouseName.textContent = info.nombre;
+        greenhouseCode.textContent = codigo;
+    });
+
+    onValue(ref(database, `greenhouses/${codigo}/sensores`), (snap) => {
+
+        const datos = snap.exists() ? snap.val() : {};
+
+        SENSORES.forEach(([elementId, campo, unidad]) => {
+
+            const el = document.getElementById(elementId);
+            if (!el) return;
+
+            if (datos[campo] === undefined) {
+                el.textContent = "—";
+            } else {
+                el.textContent = datos[campo];
+            }
+
+        });
+
+    });
+
+}
 
 
 // =========================================================
 // VOLVER
 // =========================================================
 
-backButton?.addEventListener(
-    "click",
-    () => {
-
-        window.location.href =
-            "invernaderos.html";
-
-    }
-);
+backButton?.addEventListener("click", () => {
+    window.location.href = "invernaderos.html";
+});
 
 
 // =========================================================
@@ -158,57 +118,18 @@ backButton?.addEventListener(
 // =========================================================
 
 function cargarTema() {
-
-    const tema =
-        localStorage.getItem(
-            "growsync-theme"
-        );
-
-
+    const tema = localStorage.getItem("growsync-theme");
     if (tema === "dark") {
-
-        document.body.classList.add(
-            "dark"
-        );
-
-        themeButton.textContent =
-            "☀️";
-
+        document.body.classList.add("dark");
+        themeButton.textContent = "☀️";
     }
-
 }
 
-
-themeButton?.addEventListener(
-    "click",
-    () => {
-
-        document.body.classList.toggle(
-            "dark"
-        );
-
-
-        const dark =
-            document.body.classList.contains(
-                "dark"
-            );
-
-
-        localStorage.setItem(
-            "growsync-theme",
-            dark
-                ? "dark"
-                : "light"
-        );
-
-
-        themeButton.textContent =
-            dark
-                ? "☀️"
-                : "🌙";
-
-    }
-);
-
+themeButton?.addEventListener("click", () => {
+    document.body.classList.toggle("dark");
+    const dark = document.body.classList.contains("dark");
+    localStorage.setItem("growsync-theme", dark ? "dark" : "light");
+    themeButton.textContent = dark ? "☀️" : "🌙";
+});
 
 cargarTema();
