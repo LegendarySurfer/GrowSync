@@ -27,6 +27,9 @@ const recoverMessage =
 const themeButton =
     document.getElementById("themeButton");
 
+const backToLogin =
+    document.getElementById("backToLogin");
+
 
 // =========================================================
 // RECUPERAR CONTRASEÑA
@@ -136,10 +139,6 @@ function traducirError(codigo) {
 // =========================================================
 // VOLVER AL LOGIN
 // =========================================================
-
-const backToLogin =
-    document.getElementById("backToLogin");
-
 
 backToLogin?.addEventListener("click", () => {
 
