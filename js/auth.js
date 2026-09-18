@@ -7,7 +7,8 @@ import {
 } from "./firebase.js";
 
 import {
-    onAuthStateChanged
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
 
@@ -30,6 +31,9 @@ const passwordInput =
 const themeButton =
     document.getElementById("themeButton");
 
+const createAccountButton =
+    document.getElementById("createAccount");
+
 
 // =========================================================
 // LOGIN
@@ -43,7 +47,9 @@ if (loginForm) {
 
             event.preventDefault();
 
-            const username =
+            // El campo se sigue llamando "username" en el HTML,
+            // pero Firebase Authentication necesita un correo real.
+            const email =
                 document
                     .getElementById("username")
                     .value
@@ -53,36 +59,78 @@ if (loginForm) {
                 passwordInput.value;
 
 
-            if (!username || !password) {
-
-                mostrarMensaje(
-                    "Introduce usuario y contraseña."
-                );
-
+            if (!email || !password) {
+                mostrarMensaje("Introduce correo y contraseña.");
                 return;
             }
 
+            try {
 
-            /*
-             * IMPORTANTE:
-             *
-             * Aquí conectaremos posteriormente
-             * el usuario con Firebase.
-             *
-             * No guardaremos la contraseña
-             * en localStorage.
-             */
+                await signInWithEmailAndPassword(
+                    auth,
+                    email,
+                    password
+                );
 
+                window.location.href = "invernaderos.html";
 
-            mostrarMensaje(
-                "Sistema de autenticación pendiente de conectar.",
-                false
-            );
+            } catch (error) {
+
+                mostrarMensaje(
+                    traducirError(error.code)
+                );
+
+            }
 
         }
     );
 
 }
+
+
+// =========================================================
+// CREAR CUENTA
+// (versión mínima con prompt, mientras no haya página
+//  de registro propia)
+// =========================================================
+
+createAccountButton?.addEventListener(
+    "click",
+    async () => {
+
+        const email =
+            prompt("Correo electrónico:");
+
+        if (!email) return;
+
+        const password =
+            prompt("Contraseña (mínimo 6 caracteres):");
+
+        if (!password) return;
+
+        try {
+
+            await createUserWithEmailAndPassword(
+                auth,
+                email,
+                password
+            );
+
+            mostrarMensaje(
+                "Cuenta creada. Ya puedes iniciar sesión.",
+                false
+            );
+
+        } catch (error) {
+
+            mostrarMensaje(
+                traducirError(error.code)
+            );
+
+        }
+
+    }
+);
 
 
 // =========================================================
@@ -95,20 +143,12 @@ if (passwordToggle) {
         "click",
         () => {
 
-            if (
-                passwordInput.type === "password"
-            ) {
-
+            if (passwordInput.type === "password") {
                 passwordInput.type = "text";
-
                 passwordToggle.textContent = "🙈";
-
             } else {
-
                 passwordInput.type = "password";
-
                 passwordToggle.textContent = "👁";
-
             }
 
         }
@@ -121,22 +161,28 @@ if (passwordToggle) {
 // MENSAJES
 // =========================================================
 
-function mostrarMensaje(
-    mensaje,
-    error = true
-) {
+function mostrarMensaje(mensaje, error = true) {
 
-    if (!loginMessage) {
-        return;
-    }
+    if (!loginMessage) return;
 
-    loginMessage.textContent =
-        mensaje;
+    loginMessage.textContent = mensaje;
+    loginMessage.style.color = error ? "var(--danger)" : "var(--primary)";
 
-    loginMessage.style.color =
-        error
-            ? "var(--danger)"
-            : "var(--primary)";
+}
+
+
+function traducirError(codigo) {
+
+    const mapa = {
+        "auth/invalid-email": "Ese correo no es válido.",
+        "auth/user-not-found": "No existe ninguna cuenta con ese correo.",
+        "auth/wrong-password": "Contraseña incorrecta.",
+        "auth/invalid-credential": "Correo o contraseña incorrectos.",
+        "auth/email-already-in-use": "Ya existe una cuenta con ese correo.",
+        "auth/weak-password": "La contraseña debe tener al menos 6 caracteres."
+    };
+
+    return mapa[codigo] || "Ha ocurrido un error. Inténtalo de nuevo.";
 
 }
 
@@ -147,23 +193,14 @@ function mostrarMensaje(
 
 function cargarTema() {
 
-    const tema =
-        localStorage.getItem(
-            "growsync-theme"
-        );
+    const tema = localStorage.getItem("growsync-theme");
 
     if (tema === "dark") {
-
         document.body.classList.add("dark");
-
-        if (themeButton) {
-            themeButton.textContent = "☀️";
-        }
-
+        if (themeButton) themeButton.textContent = "☀️";
     }
 
 }
-
 
 if (themeButton) {
 
@@ -171,33 +208,17 @@ if (themeButton) {
         "click",
         () => {
 
-            document.body.classList.toggle(
-                "dark"
-            );
+            document.body.classList.toggle("dark");
 
-            const dark =
-                document.body.classList.contains(
-                    "dark"
-                );
+            const dark = document.body.classList.contains("dark");
 
+            localStorage.setItem("growsync-theme", dark ? "dark" : "light");
 
-            localStorage.setItem(
-                "growsync-theme",
-                dark
-                    ? "dark"
-                    : "light"
-            );
-
-
-            themeButton.textContent =
-                dark
-                    ? "☀️"
-                    : "🌙";
+            themeButton.textContent = dark ? "☀️" : "🌙";
 
         }
     );
 
 }
-
 
 cargarTema();
