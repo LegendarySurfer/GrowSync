@@ -21,25 +21,19 @@ import {
 
 const firebaseConfig = {
 
-    apiKey: "TU_API_KEY",
+    apiKey: "AIzaSyBu7QMjWoT0YAuWSgHmSt0H5aELTb322Fo",
 
-    authDomain:
-        "TU_PROYECTO.firebaseapp.com",
+    authDomain: "growsync-84d88.firebaseapp.com",
 
-    databaseURL:
-        "https://TU_PROYECTO-default-rtdb.europe-west1.firebasedatabase.app",
+    databaseURL: "https://growsync-84d88-default-rtdb.firebaseio.com",
 
-    projectId:
-        "TU_PROYECTO",
+    projectId: "growsync-84d88",
 
-    storageBucket:
-        "TU_PROYECTO.firebasestorage.app",
+    storageBucket: "growsync-84d88.firebasestorage.app",
 
-    messagingSenderId:
-        "TU_MESSAGING_SENDER_ID",
+    messagingSenderId: "210812675253",
 
-    appId:
-        "TU_APP_ID"
+    appId: "1:210812675253:web:40b6415ba2d114c1d34afc"
 
 };
 
@@ -48,16 +42,11 @@ const firebaseConfig = {
 // INICIALIZACIÓN
 // =========================================================
 
-const app =
-    initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
+const auth = getAuth(app);
 
-const auth =
-    getAuth(app);
-
-
-const database =
-    getDatabase(app);
+const database = getDatabase(app);
 
 
 // =========================================================
