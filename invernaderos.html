@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
 
     <meta charset="UTF-8">
+
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
@@ -10,16 +12,26 @@
 
     <title>GrowSync - Mis invernaderos</title>
 
-    <link rel="stylesheet" href="css/growsync.css">
+    <link
+        rel="stylesheet"
+        href="css/growsync.css"
+    >
 
 </head>
 
 
 <body>
 
+
+    <!-- =====================================================
+         CABECERA
+         ===================================================== -->
+
     <header class="topbar">
 
+
         <div class="brand">
+
 
             <button
                 type="button"
@@ -29,98 +41,174 @@
             >
                 🌱
             </button>
-        
-            <span>GrowSync</span>
-        
+
+
+            <span>
+                GrowSync
+            </span>
+
+
         </div>
 
 
         <div class="topbar-actions">
 
+
             <button
+                type="button"
                 class="theme-button small"
                 id="themeButton"
+                aria-label="Cambiar tema"
             >
                 🌙
             </button>
 
-            <div class="user-avatar" id="userAvatar">
+
+            <div
+                class="user-avatar"
+                id="userAvatar"
+            >
                 U
             </div>
 
+
         </div>
+
 
     </header>
 
-<nav class="side-menu" id="sideMenu">
 
-    <a href="invernaderos.html" class="side-menu-item">
-        <span class="side-menu-icon">🌱</span>
-        <span>Invernaderos</span>
-    </a>
 
-    <button type="button" class="side-menu-item" id="settingsButton">
-        <span class="side-menu-icon">⚙️</span>
-        <span>Ajustes</span>
-    </button>
+    <!-- =====================================================
+         MENÚ DESPLEGABLE
+         ===================================================== -->
 
-</nav>
+    <nav
+        class="side-menu"
+        id="sideMenu"
+    >
+
+
+        <a
+            href="invernaderos.html"
+            class="side-menu-item"
+        >
+
+            <span class="side-menu-icon">
+                🌱
+            </span>
+
+            <span>
+                Invernaderos
+            </span>
+
+        </a>
+
+
+        <button
+            type="button"
+            class="side-menu-item"
+            id="settingsButton"
+        >
+
+            <span class="side-menu-icon">
+                ⚙️
+            </span>
+
+            <span>
+                Ajustes
+            </span>
+
+        </button>
+
+
+    </nav>
+
+
+
+    <!-- =====================================================
+         CONTENIDO
+         ===================================================== -->
 
     <main class="greenhouses-page">
 
+
         <section class="page-header">
 
+
             <div>
+
 
                 <span class="page-label">
                     MI CUENTA
                 </span>
 
+
                 <h1>
                     Mis invernaderos
                 </h1>
+
 
                 <p>
                     Gestiona todos tus invernaderos desde un único lugar.
                 </p>
 
+
             </div>
 
 
             <button
+                type="button"
                 class="primary-button"
                 id="addGreenhouseButton"
             >
                 + Añadir invernadero
             </button>
 
+
         </section>
 
+
+
+        <!-- =================================================
+             LISTADO DE INVERNADEROS
+             ================================================= -->
 
         <section
             class="greenhouses-grid"
             id="greenhousesContainer"
         >
 
-            <!-- Los invernaderos se cargarán mediante JavaScript -->
+            <!--
+                Los invernaderos se cargarán
+                mediante JavaScript.
+            -->
 
         </section>
+
 
     </main>
 
 
-    <!-- MODAL -->
+
+    <!-- =====================================================
+         MODAL AÑADIR INVERNADERO
+         ===================================================== -->
 
     <div
         class="modal-overlay"
         id="greenhouseModal"
     >
 
+
         <div class="modal">
 
+
             <button
+                type="button"
                 class="modal-close"
                 id="closeModal"
+                aria-label="Cerrar"
             >
                 ×
             </button>
@@ -130,76 +218,116 @@
                 🌱
             </div>
 
+
             <h2>
                 Añadir invernadero
             </h2>
+
 
             <p>
                 Elige cómo quieres añadir tu invernadero.
             </p>
 
 
+
             <div class="modal-options">
 
+
+                <!-- Crear -->
+
                 <button
+                    type="button"
                     class="modal-option"
                     id="createGreenhouse"
                 >
+
 
                     <span class="option-icon">
                         ➕
                     </span>
 
+
                     <div>
+
                         <strong>
                             Crear un invernadero
                         </strong>
 
+
                         <small>
                             Crea un nuevo sistema GrowSync
                         </small>
+
                     </div>
+
 
                 </button>
 
 
+
+                <!-- Unirse -->
+
                 <button
+                    type="button"
                     class="modal-option"
                     id="joinGreenhouse"
                 >
+
 
                     <span class="option-icon">
                         🔗
                     </span>
 
+
                     <div>
+
                         <strong>
                             Unirme a un invernadero
                         </strong>
 
+
                         <small>
                             Introduce el código de otro invernadero
                         </small>
+
                     </div>
+
 
                 </button>
 
+
             </div>
+
 
         </div>
 
+
     </div>
 
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+         ===================================================== -->
 
     <script
         src="js/firebase.js"
         type="module"
     ></script>
 
+
     <script
         src="js/invernaderos.js"
         type="module"
     ></script>
 
+
+    <script
+        src="js/menu.js"
+        type="module"
+    ></script>
+
+
 </body>
+
 </html>
