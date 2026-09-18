@@ -60,9 +60,13 @@ body.dark {
    ========================================================= */
 
 * {
+
     box-sizing: border-box;
+
     margin: 0;
+
     padding: 0;
+
 }
 
 
@@ -119,13 +123,11 @@ button {
 
     justify-content: space-between;
 
-    padding:
-        0 30px;
+    padding: 0 30px;
 
     background: var(--surface);
 
-    border-bottom:
-        1px solid var(--border);
+    border-bottom: 1px solid var(--border);
 
     position: sticky;
 
@@ -135,6 +137,10 @@ button {
 
 }
 
+
+/* =========================================================
+   MARCA
+   ========================================================= */
 
 .brand {
 
@@ -151,12 +157,54 @@ button {
 }
 
 
-.brand-icon {
+/* =========================================================
+   BOTÓN DEL MENÚ
+   ========================================================= */
 
-    font-size: 25px;
+.menu-button {
+
+    width: 42px;
+
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 0;
+
+    background: var(--primary-light);
+
+    color: var(--text);
+
+    border: none;
+
+    border-radius: 12px;
+
+    font-size: 22px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease;
 
 }
 
+
+.menu-button:hover {
+
+    transform: scale(1.05);
+
+}
+
+
+/* =========================================================
+   ACCIONES DE LA TOPBAR
+   ========================================================= */
 
 .topbar-actions {
 
@@ -169,30 +217,48 @@ button {
 }
 
 
+/* =========================================================
+   BOTÓN TEMA
+   ========================================================= */
+
 .theme-button {
+
     width: 45px;
+
     height: 45px;
 
     border: none;
+
     border-radius: 50%;
 
     background: #ffffff;
+
     cursor: pointer;
 
     font-size: 20px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.15);
+
 }
 
+
 .theme-button.floating {
+
     position: fixed;
+
     top: 20px;
+
     right: 20px;
+
     z-index: 1000;
+
 }
 
 
@@ -204,6 +270,10 @@ button {
 
 }
 
+
+/* =========================================================
+   AVATAR
+   ========================================================= */
 
 .user-avatar {
 
@@ -229,6 +299,129 @@ button {
 
 
 /* =========================================================
+   MENÚ DESPLEGABLE
+   ========================================================= */
+
+.side-menu {
+
+    position: fixed;
+
+    top: 82px;
+
+    left: 30px;
+
+    width: 220px;
+
+    padding: 8px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.12);
+
+    z-index: 1000;
+
+    visibility: hidden;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transform: translateY(-8px);
+
+    transition:
+        opacity 0.15s ease,
+        transform 0.15s ease,
+        visibility 0.15s ease;
+
+}
+
+
+.side-menu.active {
+
+    visibility: visible;
+
+    opacity: 1;
+
+    pointer-events: auto;
+
+    transform: translateY(0);
+
+}
+
+
+/* =========================================================
+   OPCIONES DEL MENÚ
+   ========================================================= */
+
+.side-menu-item {
+
+    width: 100%;
+
+    height: 44px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 0 12px;
+
+    background: transparent;
+
+    border: none;
+
+    border-radius: 10px;
+
+    color: var(--text);
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    font-weight: 500;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    text-align: left;
+
+}
+
+
+.side-menu-item:hover {
+
+    background: var(--surface-secondary);
+
+    color: var(--primary);
+
+}
+
+
+.side-menu-icon {
+
+    width: 24px;
+
+    min-width: 24px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 18px;
+
+}
+
+
+/* =========================================================
    BOTONES
    ========================================================= */
 
@@ -238,8 +431,7 @@ button {
 
     color: white;
 
-    padding:
-        13px 20px;
+    padding: 13px 20px;
 
     border-radius: 11px;
 
@@ -310,8 +502,7 @@ button {
 
     background: var(--surface);
 
-    border:
-        1px solid var(--border);
+    border: 1px solid var(--border);
 
     border-radius: 24px;
 
@@ -330,8 +521,7 @@ button {
 
     height: 70px;
 
-    margin:
-        0 auto 20px;
+    margin: 0 auto 20px;
 
     border-radius: 20px;
 
@@ -394,11 +584,9 @@ button {
 
     height: 48px;
 
-    padding:
-        0 14px;
+    padding: 0 14px;
 
-    border:
-        1px solid var(--border);
+    border: 1px solid var(--border);
 
     background: var(--surface);
 
@@ -516,8 +704,7 @@ button {
 
     margin: auto;
 
-    padding:
-        40px 30px;
+    padding: 40px 30px;
 
 }
 
@@ -592,8 +779,7 @@ button {
 
     background: var(--surface);
 
-    border:
-        1px solid var(--border);
+    border: 1px solid var(--border);
 
     border-radius: var(--radius);
 
@@ -655,8 +841,7 @@ button {
 
     font-size: 12px;
 
-    padding:
-        6px 10px;
+    padding: 6px 10px;
 
     border-radius: 20px;
 
@@ -761,8 +946,7 @@ button {
 
 .add-greenhouse-card {
 
-    border:
-        2px dashed var(--border);
+    border: 2px dashed var(--border);
 
     min-height: 260px;
 
@@ -809,8 +993,7 @@ button {
 
     inset: 0;
 
-    background:
-        rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.5);
 
     display: none;
 
@@ -961,8 +1144,7 @@ button {
 
     gap: 8px;
 
-    padding:
-        9px 14px;
+    padding: 9px 14px;
 
     border-radius: 20px;
 
@@ -1006,8 +1188,7 @@ button {
 
     background: var(--surface);
 
-    border:
-        1px solid var(--border);
+    border: 1px solid var(--border);
 
     border-radius: var(--radius);
 
@@ -1085,8 +1266,7 @@ button {
 
     background: var(--primary-light);
 
-    padding:
-        5px 9px;
+    padding: 5px 9px;
 
     border-radius: 15px;
 
@@ -1207,8 +1387,7 @@ button {
 
     padding-top: 15px;
 
-    border-top:
-        1px solid var(--border);
+    border-top: 1px solid var(--border);
 
     display: flex;
 
@@ -1220,123 +1399,6 @@ button {
 
 }
 
-/* ========================================
-   CABECERA
-======================================== */
-
-.brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.menu-button {
-    width: 42px;
-    height: 42px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 0;
-
-    background: var(--primary-light);
-    color: var(--text);
-
-    border: none;
-    border-radius: 12px;
-
-    font-size: 22px;
-    line-height: 1;
-
-    cursor: pointer;
-}
-
-.menu-button:hover {
-    transform: scale(1.05);
-}
-
-
-/* ========================================
-   MENÚ DESPLEGABLE
-======================================== */
-
-.side-menu {
-    position: fixed;
-
-    top: 76px;
-    left: 20px;
-
-    width: 220px;
-
-    padding: 8px;
-
-    background: var(--surface);
-
-    border: 1px solid var(--border);
-    border-radius: 14px;
-
-    box-shadow: var(--shadow);
-
-    z-index: 9999;
-
-    display: none;
-}
-
-.side-menu.active {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-
-/* ========================================
-   OPCIONES DEL MENÚ
-======================================== */
-
-.side-menu-item {
-    width: 100%;
-    height: 44px;
-
-    display: flex;
-    align-items: center;
-
-    gap: 12px;
-
-    padding: 0 12px;
-
-    background: transparent;
-
-    border: none;
-    border-radius: 10px;
-
-    color: var(--text);
-
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 500;
-
-    text-decoration: none;
-
-    cursor: pointer;
-
-    text-align: left;
-}
-
-.side-menu-item:hover {
-    background: var(--surface-secondary);
-    color: var(--primary);
-}
-
-.side-menu-icon {
-    width: 24px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 18px;
-}
 
 /* =========================================================
    RESPONSIVE
@@ -1375,8 +1437,7 @@ button {
 
     .topbar {
 
-        padding:
-            0 16px;
+        padding: 0 16px;
 
     }
 
@@ -1384,8 +1445,7 @@ button {
     .greenhouses-page,
     .dashboard-page {
 
-        padding:
-            25px 16px;
+        padding: 25px 16px;
 
     }
 
@@ -1400,6 +1460,19 @@ button {
     .sensor-card {
 
         padding: 20px;
+
+    }
+
+
+    .side-menu {
+
+        left: 16px;
+
+        top: 76px;
+
+        width: calc(100% - 32px);
+
+        max-width: 220px;
 
     }
 
