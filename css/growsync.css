@@ -170,10 +170,6 @@ button {
 
 
 .theme-button {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-
     width: 45px;
     height: 45px;
 
@@ -190,7 +186,12 @@ button {
     justify-content: center;
 
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
 
+.theme-button.floating {
+    position: fixed;
+    top: 20px;
+    right: 20px;
     z-index: 1000;
 }
 
