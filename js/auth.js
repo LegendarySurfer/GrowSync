@@ -34,6 +34,9 @@ const themeButton =
 const createAccountButton =
     document.getElementById("createAccount");
 
+const forgotPassword =
+    document.getElementById("forgotPassword");
+
 
 // =========================================================
 // LOGIN
@@ -96,6 +99,13 @@ createAccountButton?.addEventListener("click", () => {
     window.location.href = "registro.html";
 });
 
+// =========================================================
+// RECUPERAR CONTRASEÑA
+// =========================================================
+
+forgotPassword?.addEventListener("click", () => {
+    window.location.href = "recuperar.html";
+});
 
 // =========================================================
 // MOSTRAR / OCULTAR CONTRASEÑA
