@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Recuperar contraseña - GrowSync</title>
+
+    <link rel="stylesheet" href="css/growsync.css">
+</head>
+
+<body>
+
+    <!-- BOTÓN TEMA -->
+    <button class="theme-button" id="themeButton">🌙</button>
+
+
+    <main class="auth-container">
+
+        <div class="auth-card">
+
+            <!-- LOGO -->
+            <div class="auth-logo">
+                🌱
+            </div>
+
+            <h1>Recuperar contraseña</h1>
+
+            <p class="auth-subtitle">
+                Introduce tu correo y te enviaremos un enlace
+                para crear una nueva contraseña.
+            </p>
+
+
+            <!-- FORMULARIO -->
+            <form id="recoverForm">
+
+                <div class="input-group">
+
+                    <label for="email">
+                        Correo electrónico
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="tu@email.com"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="primary-button"
+                >
+                    Enviar enlace
+                </button>
+
+            </form>
+
+
+            <!-- MENSAJE -->
+            <p
+                id="recoverMessage"
+                class="auth-message"
+            ></p>
+
+
+            <!-- VOLVER -->
+            <div class="auth-footer">
+
+                <a href="index.html">
+                    ← Volver al inicio de sesión
+                </a>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <script
+        type="module"
+        src="js/recuperar.js">
+    </script>
+
+</body>
+
+</html>
