@@ -109,7 +109,7 @@ function mostrarMensaje(
 
 
 // =========================================================
-// TRADUCIR ERRORES
+// ERRORES
 // =========================================================
 
 function traducirError(codigo) {
@@ -164,7 +164,6 @@ if (themeButton) {
         () => {
 
             document.body.classList.toggle("dark");
-
 
             const dark =
                 document.body.classList.contains("dark");
