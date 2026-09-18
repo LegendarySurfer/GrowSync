@@ -2,22 +2,32 @@
 <html lang="es">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Recuperar contraseña - GrowSync</title>
 
-    <link rel="stylesheet" href="css/growsync.css">
+    <link
+        rel="stylesheet"
+        href="css/growsync.css"
+    >
+
 </head>
+
 
 <body>
 
     <!-- =====================================================
-         BOTÓN DE TEMA
+         BOTÓN TEMA
          ===================================================== -->
 
     <button
-        class="theme-button"
+        class="theme-button floating"
         id="themeButton"
         type="button"
     >
@@ -26,85 +36,103 @@
 
 
     <!-- =====================================================
-         CONTENEDOR PRINCIPAL
+         PÁGINA RECUPERACIÓN
          ===================================================== -->
 
-    <main class="auth-container">
+    <main class="login-page">
 
-        <div class="auth-card">
+        <div class="login-container">
 
-            <!-- LOGO -->
-            <div class="auth-logo">
-                🌱
-            </div>
+            <div class="login-card">
 
 
-            <!-- TÍTULO -->
-            <h1>
-                Recuperar contraseña
-            </h1>
+                <!-- LOGO -->
 
-
-            <!-- DESCRIPCIÓN -->
-            <p class="auth-subtitle">
-                Introduce tu correo electrónico y te enviaremos
-                un enlace para restablecer tu contraseña.
-            </p>
-
-
-            <!-- =================================================
-                 FORMULARIO
-                 ================================================= -->
-
-            <form id="recoverForm">
-
-                <div class="input-group">
-
-                    <label for="email">
-                        Correo electrónico
-                    </label>
-
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        placeholder="tu@email.com"
-                        autocomplete="email"
-                        required
-                    >
-
+                <div class="login-logo">
+                    🌱
                 </div>
 
 
-                <button
-                    type="submit"
-                    class="primary-button"
-                >
-                    Enviar enlace
-                </button>
+                <!-- TÍTULO -->
 
-            </form>
+                <h1>
+                    Recuperar contraseña
+                </h1>
 
 
-            <!-- =================================================
-                 MENSAJE
-                 ================================================= -->
+                <!-- SUBTÍTULO -->
 
-            <p
-                id="recoverMessage"
-                class="auth-message"
-            ></p>
+                <p class="login-subtitle">
+
+                    Introduce tu correo electrónico y te
+                    enviaremos un enlace para restablecer
+                    tu contraseña.
+
+                </p>
 
 
-            <!-- =================================================
-                 VOLVER AL LOGIN
-                 ================================================= -->
+                <!-- =================================================
+                     FORMULARIO
+                     ================================================= -->
 
-            <div class="auth-footer">
+                <form id="recoverForm">
 
-                <a href="index.html">
-                    ← Volver al inicio de sesión
-                </a>
+
+                    <!-- CORREO -->
+
+                    <div class="input-group">
+
+                        <label for="email">
+                            Correo electrónico
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="tu@email.com"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- BOTÓN -->
+
+                    <button
+                        type="submit"
+                        class="primary-button login-button"
+                    >
+                        Enviar enlace
+                    </button>
+
+
+                </form>
+
+
+                <!-- =================================================
+                     MENSAJE
+                     ================================================= -->
+
+                <p
+                    id="recoverMessage"
+                    class="login-message"
+                ></p>
+
+
+                <!-- =================================================
+                     VOLVER
+                     ================================================= -->
+
+                <div class="login-links">
+
+                    <a href="index.html">
+                        ← Volver al inicio de sesión
+                    </a>
+
+                </div>
+
 
             </div>
 
@@ -119,8 +147,8 @@
 
     <script
         type="module"
-        src="js/recuperar.js">
-    </script>
+        src="js/recuperar.js"
+    ></script>
 
 </body>
 
