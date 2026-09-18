@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
 
     <meta charset="UTF-8">
@@ -21,36 +22,88 @@
 
 <body>
 
+    <!-- =========================
+         BARRA SUPERIOR
+    ========================== -->
+
     <header class="topbar">
 
         <div class="brand">
 
+            <!-- BOTÓN DEL MENÚ -->
+
             <button
-                class="back-button"
-                id="backButton"
+                type="button"
+                class="menu-button"
+                id="menuButton"
+                aria-label="Abrir menú"
             >
-                ←
+                🌱
             </button>
 
-            <span class="brand-icon">
-                🌱
-            </span>
 
             <span>
                 GrowSync
             </span>
 
+
+            <!-- MENÚ DESPLEGABLE -->
+
+            <div
+                class="side-menu"
+                id="sideMenu"
+            >
+
+                <a
+                    href="invernaderos.html"
+                    class="side-menu-item"
+                >
+
+                    <span class="side-menu-icon">
+                        🌱
+                    </span>
+
+                    <span>
+                        Invernaderos
+                    </span>
+
+                </a>
+
+
+                <button
+                    type="button"
+                    class="side-menu-item"
+                    id="settingsButton"
+                >
+
+                    <span class="side-menu-icon">
+                        ⚙️
+                    </span>
+
+                    <span>
+                        Ajustes
+                    </span>
+
+                </button>
+
+            </div>
+
         </div>
 
+
+        <!-- ACCIONES DE LA DERECHA -->
 
         <div class="topbar-actions">
 
             <button
+                type="button"
                 class="theme-button small"
                 id="themeButton"
+                aria-label="Cambiar tema"
             >
                 🌙
             </button>
+
 
             <div
                 class="user-avatar"
@@ -63,6 +116,10 @@
 
     </header>
 
+
+    <!-- =========================
+         CONTENIDO DEL DASHBOARD
+    ========================== -->
 
     <main class="dashboard-page">
 
@@ -77,9 +134,11 @@
                     INVERNADERO
                 </span>
 
+
                 <h1 id="greenhouseName">
                     Mi invernadero
                 </h1>
+
 
                 <div class="greenhouse-code">
 
@@ -105,7 +164,9 @@
         </section>
 
 
-        <!-- SENSORES -->
+        <!-- =========================
+             SENSORES
+        ========================== -->
 
         <section
             class="sensor-grid"
@@ -113,7 +174,9 @@
         >
 
 
-            <!-- TEMPERATURA -->
+            <!-- =========================
+                 TEMPERATURA
+            ========================== -->
 
             <article class="sensor-card">
 
@@ -139,6 +202,7 @@
 
                     </div>
 
+
                     <span class="sensor-status">
                         Online
                     </span>
@@ -160,6 +224,7 @@
 
 
                 <div class="sensor-chart">
+
                     <svg viewBox="0 0 300 60">
 
                         <polyline
@@ -170,6 +235,7 @@
                         />
 
                     </svg>
+
                 </div>
 
 
@@ -211,7 +277,9 @@
             </article>
 
 
-            <!-- HUMEDAD -->
+            <!-- =========================
+                 HUMEDAD AMBIENTE
+            ========================== -->
 
             <article class="sensor-card">
 
@@ -236,6 +304,7 @@
                         </div>
 
                     </div>
+
 
                     <span class="sensor-status">
                         Online
@@ -311,7 +380,9 @@
             </article>
 
 
-            <!-- HUMEDAD SUELO -->
+            <!-- =========================
+                 HUMEDAD DEL SUELO
+            ========================== -->
 
             <article class="sensor-card">
 
@@ -336,6 +407,7 @@
                         </div>
 
                     </div>
+
 
                     <span class="sensor-status">
                         Online
@@ -411,7 +483,9 @@
             </article>
 
 
-            <!-- LUMINOSIDAD -->
+            <!-- =========================
+                 LUMINOSIDAD
+            ========================== -->
 
             <article class="sensor-card">
 
@@ -436,6 +510,7 @@
                         </div>
 
                     </div>
+
 
                     <span class="sensor-status">
                         Online
@@ -511,7 +586,9 @@
             </article>
 
 
-            <!-- AGUA -->
+            <!-- =========================
+                 DEPÓSITO DE AGUA
+            ========================== -->
 
             <article class="sensor-card">
 
@@ -536,6 +613,7 @@
                         </div>
 
                     </div>
+
 
                     <span class="sensor-status">
                         Online
@@ -611,7 +689,9 @@
             </article>
 
 
-            <!-- BATERÍA -->
+            <!-- =========================
+                 BATERÍA
+            ========================== -->
 
             <article class="sensor-card">
 
@@ -636,6 +716,7 @@
                         </div>
 
                     </div>
+
 
                     <span class="sensor-status">
                         Online
@@ -711,7 +792,9 @@
             </article>
 
 
-            <!-- PRODUCCIÓN SOLAR -->
+            <!-- =========================
+                 PRODUCCIÓN SOLAR
+            ========================== -->
 
             <article class="sensor-card">
 
@@ -736,6 +819,7 @@
                         </div>
 
                     </div>
+
 
                     <span class="sensor-status">
                         Online
@@ -810,20 +894,34 @@
 
             </article>
 
+
         </section>
 
     </main>
 
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
 
     <script
         src="js/firebase.js"
         type="module"
     ></script>
 
+
     <script
         src="js/dashboard.js"
         type="module"
     ></script>
 
+
+    <script
+        src="js/menu.js"
+        type="module"
+    ></script>
+
+
 </body>
+
 </html>
