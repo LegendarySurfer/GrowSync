@@ -12,9 +12,22 @@
 
 <body>
 
-    <!-- BOTÓN TEMA -->
-    <button class="theme-button" id="themeButton">🌙</button>
+    <!-- =====================================================
+         BOTÓN DE TEMA
+         ===================================================== -->
 
+    <button
+        class="theme-button"
+        id="themeButton"
+        type="button"
+    >
+        🌙
+    </button>
+
+
+    <!-- =====================================================
+         CONTENEDOR PRINCIPAL
+         ===================================================== -->
 
     <main class="auth-container">
 
@@ -25,15 +38,24 @@
                 🌱
             </div>
 
-            <h1>Recuperar contraseña</h1>
 
+            <!-- TÍTULO -->
+            <h1>
+                Recuperar contraseña
+            </h1>
+
+
+            <!-- DESCRIPCIÓN -->
             <p class="auth-subtitle">
-                Introduce tu correo y te enviaremos un enlace
-                para crear una nueva contraseña.
+                Introduce tu correo electrónico y te enviaremos
+                un enlace para restablecer tu contraseña.
             </p>
 
 
-            <!-- FORMULARIO -->
+            <!-- =================================================
+                 FORMULARIO
+                 ================================================= -->
+
             <form id="recoverForm">
 
                 <div class="input-group">
@@ -45,6 +67,7 @@
                     <input
                         type="email"
                         id="email"
+                        name="email"
                         placeholder="tu@email.com"
                         autocomplete="email"
                         required
@@ -63,14 +86,20 @@
             </form>
 
 
-            <!-- MENSAJE -->
+            <!-- =================================================
+                 MENSAJE
+                 ================================================= -->
+
             <p
                 id="recoverMessage"
                 class="auth-message"
             ></p>
 
 
-            <!-- VOLVER -->
+            <!-- =================================================
+                 VOLVER AL LOGIN
+                 ================================================= -->
+
             <div class="auth-footer">
 
                 <a href="index.html">
@@ -83,6 +112,10 @@
 
     </main>
 
+
+    <!-- =====================================================
+         JAVASCRIPT
+         ===================================================== -->
 
     <script
         type="module"
