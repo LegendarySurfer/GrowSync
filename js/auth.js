@@ -90,47 +90,11 @@ if (loginForm) {
 
 // =========================================================
 // CREAR CUENTA
-// (versión mínima con prompt, mientras no haya página
-//  de registro propia)
 // =========================================================
 
-createAccountButton?.addEventListener(
-    "click",
-    async () => {
-
-        const email =
-            prompt("Correo electrónico:");
-
-        if (!email) return;
-
-        const password =
-            prompt("Contraseña (mínimo 6 caracteres):");
-
-        if (!password) return;
-
-        try {
-
-            await createUserWithEmailAndPassword(
-                auth,
-                email,
-                password
-            );
-
-            mostrarMensaje(
-                "Cuenta creada. Ya puedes iniciar sesión.",
-                false
-            );
-
-        } catch (error) {
-
-            mostrarMensaje(
-                traducirError(error.code)
-            );
-
-        }
-
-    }
-);
+createAccountButton?.addEventListener("click", () => {
+    window.location.href = "registro.html";
+});
 
 
 // =========================================================
