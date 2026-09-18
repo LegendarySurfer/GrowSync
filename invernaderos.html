@@ -29,83 +29,91 @@
 
     <header class="topbar">
 
-    <div class="brand">
-
-        <button
-            type="button"
-            class="menu-button"
-            id="menuButton"
-            aria-label="Abrir menú"
-        >
-            🌱
-        </button>
-
-        <span>GrowSync</span>
-
-        <div class="side-menu" id="sideMenu">
-
-            <a
-                href="invernaderos.html"
-                class="side-menu-item"
-            >
-                <span class="side-menu-icon">🌱</span>
-                <span>Invernaderos</span>
-            </a>
+        <div class="brand">
 
             <button
                 type="button"
-                class="side-menu-item"
-                id="settingsButton"
+                class="menu-button"
+                id="menuButton"
+                aria-label="Abrir menú"
             >
-                <span class="side-menu-icon">⚙️</span>
-                <span>Ajustes</span>
+                🌱
             </button>
 
+
+            <span>
+                GrowSync
+            </span>
+
+
+            <!-- MENÚ DESPLEGABLE -->
+
+            <div
+                class="side-menu"
+                id="sideMenu"
+            >
+
+                <a
+                    href="invernaderos.html"
+                    class="side-menu-item"
+                >
+
+                    <span class="side-menu-icon">
+                        🌱
+                    </span>
+
+                    <span>
+                        Invernaderos
+                    </span>
+
+                </a>
+
+
+                <button
+                    type="button"
+                    class="side-menu-item"
+                    id="settingsButton"
+                >
+
+                    <span class="side-menu-icon">
+                        ⚙️
+                    </span>
+
+                    <span>
+                        Ajustes
+                    </span>
+
+                </button>
+
+            </div>
+
         </div>
 
-    </div>
+
+        <!-- ACCIONES DERECHA -->
+
+        <div class="topbar-actions">
+
+            <button
+                type="button"
+                class="theme-button small"
+                id="themeButton"
+                aria-label="Cambiar tema"
+            >
+                🌙
+            </button>
 
 
-    <div class="topbar-actions">
+            <div
+                class="user-avatar"
+                id="userAvatar"
+            >
+                U
+            </div>
 
-        <button
-            type="button"
-            class="theme-button small"
-            id="themeButton"
-        >
-            🌙
-        </button>
-
-        <div
-            class="user-avatar"
-            id="userAvatar"
-        >
-            U
         </div>
 
-    </div>
-
-</header>
-
-
-
-    <!-- =====================================================
-         MENÚ DESPLEGABLE
-         ===================================================== -->
-
-    <nav class="side-menu" id="sideMenu">
-
-    <a href="invernaderos.html" class="side-menu-item">
-        <span class="side-menu-icon">🌱</span>
-        <span>Invernaderos</span>
-    </a>
-
-    <button type="button" class="side-menu-item" id="settingsButton">
-        <span class="side-menu-icon">⚙️</span>
-        <span>Ajustes</span>
-    </button>
-
-</nav>
+    </header>
 
 
 
@@ -116,11 +124,11 @@
     <main class="greenhouses-page">
 
 
+        <!-- CABECERA DE LA PÁGINA -->
+
         <section class="page-header">
 
-
             <div>
-
 
                 <span class="page-label">
                     MI CUENTA
@@ -136,7 +144,6 @@
                     Gestiona todos tus invernaderos desde un único lugar.
                 </p>
 
-
             </div>
 
 
@@ -147,7 +154,6 @@
             >
                 + Añadir invernadero
             </button>
-
 
         </section>
 
@@ -162,10 +168,7 @@
             id="greenhousesContainer"
         >
 
-            <!--
-                Los invernaderos se cargarán
-                mediante JavaScript.
-            -->
+            <!-- Los invernaderos se cargarán mediante JavaScript -->
 
         </section>
 
@@ -182,7 +185,6 @@
         class="modal-overlay"
         id="greenhouseModal"
     >
-
 
         <div class="modal">
 
@@ -212,18 +214,16 @@
             </p>
 
 
-
             <div class="modal-options">
 
 
-                <!-- Crear -->
+                <!-- CREAR -->
 
                 <button
                     type="button"
                     class="modal-option"
                     id="createGreenhouse"
                 >
-
 
                     <span class="option-icon">
                         ➕
@@ -243,19 +243,17 @@
 
                     </div>
 
-
                 </button>
 
 
 
-                <!-- Unirse -->
+                <!-- UNIRSE -->
 
                 <button
                     type="button"
                     class="modal-option"
                     id="joinGreenhouse"
                 >
-
 
                     <span class="option-icon">
                         🔗
@@ -275,15 +273,67 @@
 
                     </div>
 
-
                 </button>
 
 
             </div>
 
-
         </div>
 
+    </div>
+
+
+
+    <!-- =====================================================
+         MODAL DE MENSAJES
+         ===================================================== -->
+
+    <div
+        class="modal-overlay"
+        id="messageModal"
+    >
+
+        <div class="modal message-modal">
+
+
+            <button
+                type="button"
+                class="modal-close"
+                id="closeMessageModal"
+                aria-label="Cerrar"
+            >
+                ×
+            </button>
+
+
+            <div
+                class="modal-icon"
+                id="messageModalIcon"
+            >
+                ⚠️
+            </div>
+
+
+            <h2 id="messageModalTitle">
+                Invernadero ya añadido
+            </h2>
+
+
+            <p id="messageModalText">
+                Este invernadero ya está asociado a tu cuenta y no se puede añadir de nuevo.
+            </p>
+
+
+            <button
+                type="button"
+                class="primary-button"
+                id="messageModalButton"
+            >
+                Aceptar
+            </button>
+
+
+        </div>
 
     </div>
 
