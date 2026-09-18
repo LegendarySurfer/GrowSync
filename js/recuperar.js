@@ -133,6 +133,20 @@ function traducirError(codigo) {
 
 }
 
+// =========================================================
+// VOLVER AL LOGIN
+// =========================================================
+
+const backToLogin =
+    document.getElementById("backToLogin");
+
+
+backToLogin?.addEventListener("click", () => {
+
+    window.location.href = "index.html";
+
+});
+
 
 // =========================================================
 // TEMA
