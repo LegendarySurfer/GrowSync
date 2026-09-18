@@ -3,390 +3,231 @@
 // =========================================================
 
 import {
-    auth
+    auth,
+    database
 } from "./firebase.js";
 
 import {
-    onAuthStateChanged,
-    signOut
+    onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+import {
+    ref,
+    get,
+    set
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
 
 // =========================================================
 // ELEMENTOS
 // =========================================================
 
-const container =
-    document.getElementById(
-        "greenhousesContainer"
-    );
-
-const modal =
-    document.getElementById(
-        "greenhouseModal"
-    );
-
-const addButton =
-    document.getElementById(
-        "addGreenhouseButton"
-    );
-
-const closeModal =
-    document.getElementById(
-        "closeModal"
-    );
-
-const themeButton =
-    document.getElementById(
-        "themeButton"
-    );
-
-const userAvatar =
-    document.getElementById(
-        "userAvatar"
-    );
+const container = document.getElementById("greenhousesContainer");
+const modal = document.getElementById("greenhouseModal");
+const addButton = document.getElementById("addGreenhouseButton");
+const closeModal = document.getElementById("closeModal");
+const themeButton = document.getElementById("themeButton");
+const userAvatar = document.getElementById("userAvatar");
 
 
 // =========================================================
 // COMPROBAR SESIÓN
 // =========================================================
 
-onAuthStateChanged(
-    auth,
-    (user) => {
+let uidActual = null;
 
-        if (!user) {
+onAuthStateChanged(auth, (user) => {
 
-            /*
-             * Cuando Firebase esté conectado,
-             * si no hay sesión volveremos al login.
-             */
-
-            // window.location.href = "login.html";
-
-            return;
-        }
-
-
-        console.log(
-            "Usuario conectado:",
-            user.uid
-        );
-
+    if (!user) {
+        window.location.href = "login.html";
+        return;
     }
-);
+
+    uidActual = user.uid;
+
+    if (userAvatar) {
+        userAvatar.textContent = (user.email || "U")[0].toUpperCase();
+    }
+
+    cargarInvernaderos();
+
+});
 
 
 // =========================================================
-// DATOS TEMPORALES
+// CARGAR INVERNADEROS DEL USUARIO
 // =========================================================
 
-const greenhouses = [
+async function cargarInvernaderos() {
 
-    {
-        id: "GS-001245",
+    container.innerHTML = "<p>Cargando…</p>";
 
-        name:
-            "Invernadero Terraza",
+    const listaSnap = await get(
+        ref(database, `users/${uidActual}/greenhouses`)
+    );
 
-        location:
-            "Zaragoza",
+    const codigos = listaSnap.exists()
+        ? Object.keys(listaSnap.val())
+        : [];
 
-        temperature:
-            24.6,
+    const invernaderos = [];
 
-        humidity:
-            62
+    for (const codigo of codigos) {
 
-    },
+        const infoSnap = await get(ref(database, `greenhouses/${codigo}/info`));
+        const sensoresSnap = await get(ref(database, `greenhouses/${codigo}/sensores`));
 
-    {
-        id: "GS-008721",
+        const info = infoSnap.exists() ? infoSnap.val() : { nombre: codigo, ubicacion: "—" };
+        const sensores = sensoresSnap.exists() ? sensoresSnap.val() : {};
 
-        name:
-            "Invernadero Huerto",
-
-        location:
-            "Zaragoza",
-
-        temperature:
-            22.8,
-
-        humidity:
-            68
+        invernaderos.push({
+            id: codigo,
+            name: info.nombre,
+            location: info.ubicacion,
+            temperature: sensores.temperatura,
+            humidity: sensores.humedad
+        });
 
     }
 
-];
+    renderGreenhouses(invernaderos);
+
+}
 
 
 // =========================================================
 // MOSTRAR INVERNADEROS
 // =========================================================
 
-function renderGreenhouses() {
+function renderGreenhouses(greenhouses) {
 
     container.innerHTML = "";
 
+    if (greenhouses.length === 0) {
+        const vacio = document.createElement("p");
+        vacio.textContent = "Aún no tienes ningún invernadero. Crea uno o únete con un código.";
+        container.appendChild(vacio);
+    }
 
-    greenhouses.forEach(
-        (greenhouse) => {
+    greenhouses.forEach((greenhouse) => {
 
-            const card =
-                document.createElement(
-                    "article"
-                );
+        const card = document.createElement("article");
+        card.className = "greenhouse-card";
 
-            card.className =
-                "greenhouse-card";
+        const temp = greenhouse.temperature !== undefined
+            ? `${greenhouse.temperature}°C` : "— °C";
+        const hum = greenhouse.humidity !== undefined
+            ? `${greenhouse.humidity}%` : "— %";
 
-
-            card.innerHTML = `
-
-                <div class="greenhouse-top">
-
-                    <div class="greenhouse-icon">
-                        🌱
-                    </div>
-
-                    <span class="greenhouse-status">
-                        Online
-                    </span>
-
+        card.innerHTML = `
+            <div class="greenhouse-top">
+                <div class="greenhouse-icon">🌱</div>
+                <span class="greenhouse-status">Online</span>
+            </div>
+            <h2>${greenhouse.name}</h2>
+            <div class="greenhouse-location">📍 ${greenhouse.location}</div>
+            <div class="greenhouse-code">Código: <strong>${greenhouse.id}</strong></div>
+            <div class="greenhouse-data">
+                <div class="greenhouse-data-item">
+                    <span>Temperatura</span>
+                    <strong>${temp}</strong>
                 </div>
-
-
-                <h2>
-                    ${greenhouse.name}
-                </h2>
-
-
-                <div class="greenhouse-location">
-                    📍 ${greenhouse.location}
+                <div class="greenhouse-data-item">
+                    <span>Humedad</span>
+                    <strong>${hum}</strong>
                 </div>
+            </div>
+            <button class="primary-button greenhouse-open" data-id="${greenhouse.id}">
+                Abrir invernadero
+            </button>
+        `;
 
+        container.appendChild(card);
 
-                <div class="greenhouse-code">
+    });
 
-                    Código:
-
-                    <strong>
-                        ${greenhouse.id}
-                    </strong>
-
-                </div>
-
-
-                <div class="greenhouse-data">
-
-                    <div class="greenhouse-data-item">
-
-                        <span>
-                            Temperatura
-                        </span>
-
-                        <strong>
-                            ${greenhouse.temperature}°C
-                        </strong>
-
-                    </div>
-
-
-                    <div class="greenhouse-data-item">
-
-                        <span>
-                            Humedad
-                        </span>
-
-                        <strong>
-                            ${greenhouse.humidity}%
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <button
-                    class="primary-button greenhouse-open"
-                    data-id="${greenhouse.id}"
-                >
-                    Abrir invernadero
-                </button>
-
-            `;
-
-
-            container.appendChild(card);
-
-        }
-    );
-
-
-    /*
-     * TARJETA AÑADIR
-     */
-
-    const addCard =
-        document.createElement(
-            "article"
-        );
-
-    addCard.className =
-        "greenhouse-card add-greenhouse-card";
-
-
+    const addCard = document.createElement("article");
+    addCard.className = "greenhouse-card add-greenhouse-card";
     addCard.innerHTML = `
-
-        <div class="add-greenhouse-icon">
-            +
-        </div>
-
-        <strong>
-            Añadir invernadero
-        </strong>
-
-        <span>
-            Crear o unirse mediante código
-        </span>
-
+        <div class="add-greenhouse-icon">+</div>
+        <strong>Añadir invernadero</strong>
+        <span>Crear o unirse mediante código</span>
     `;
+    addCard.addEventListener("click", openModal);
+    container.appendChild(addCard);
 
-
-    addCard.addEventListener(
-        "click",
-        openModal
-    );
-
-
-    container.appendChild(
-        addCard
-    );
-
-
-    /*
-     * BOTONES ABRIR
-     */
-
-    document
-        .querySelectorAll(
-            ".greenhouse-open"
-        )
-        .forEach(
-            (button) => {
-
-                button.addEventListener(
-                    "click",
-                    () => {
-
-                        const id =
-                            button.dataset.id;
-
-
-                        localStorage.setItem(
-                            "selectedGreenhouse",
-                            id
-                        );
-
-
-                        window.location.href =
-                            "dashboard.html";
-
-                    }
-                );
-
-            }
-        );
+    document.querySelectorAll(".greenhouse-open").forEach((button) => {
+        button.addEventListener("click", () => {
+            localStorage.setItem("selectedGreenhouse", button.dataset.id);
+            window.location.href = "dashboard.html";
+        });
+    });
 
 }
-
-
-renderGreenhouses();
 
 
 // =========================================================
 // MODAL
 // =========================================================
 
-function openModal() {
+function openModal() { modal.classList.add("active"); }
+function closeModalFunction() { modal.classList.remove("active"); }
 
-    modal.classList.add(
-        "active"
-    );
-
-}
-
-
-function closeModalFunction() {
-
-    modal.classList.remove(
-        "active"
-    );
-
-}
-
-
-addButton?.addEventListener(
-    "click",
-    openModal
-);
-
-
-closeModal?.addEventListener(
-    "click",
-    closeModalFunction
-);
+addButton?.addEventListener("click", openModal);
+closeModal?.addEventListener("click", closeModalFunction);
 
 
 // =========================================================
-// CREAR
+// CREAR INVERNADERO
 // =========================================================
 
-document
-    .getElementById(
-        "createGreenhouse"
-    )
-    ?.addEventListener(
-        "click",
-        () => {
+document.getElementById("createGreenhouse")?.addEventListener("click", async () => {
 
-            alert(
-                "Aquí crearemos un nuevo invernadero."
-            );
+    const nombre = prompt("Nombre del invernadero:");
+    if (!nombre) return;
 
-        }
-    );
+    const ubicacion = prompt("Ubicación:") || "—";
+
+    const codigo = "GS-" + Math.floor(100000 + Math.random() * 900000);
+
+    await set(ref(database, `greenhouses/${codigo}/info`), {
+        nombre,
+        ubicacion,
+        propietario: uidActual
+    });
+
+    await set(ref(database, `users/${uidActual}/greenhouses/${codigo}`), true);
+
+    alert(`Invernadero creado. Su código es ${codigo}. Apunta este código, lo necesitarás para configurar el ESP32.`);
+
+    closeModalFunction();
+    cargarInvernaderos();
+
+});
 
 
 // =========================================================
-// UNIRSE
+// UNIRSE A UN INVERNADERO
 // =========================================================
 
-document
-    .getElementById(
-        "joinGreenhouse"
-    )
-    ?.addEventListener(
-        "click",
-        () => {
+document.getElementById("joinGreenhouse")?.addEventListener("click", async () => {
 
-            const code =
-                prompt(
-                    "Introduce el código del invernadero:"
-                );
+    const codigo = prompt("Introduce el código del invernadero (formato GS-000000):");
+    if (!codigo) return;
 
+    const infoSnap = await get(ref(database, `greenhouses/${codigo}/info`));
 
-            if (!code) {
-                return;
-            }
+    if (!infoSnap.exists()) {
+        alert("No existe ningún invernadero con ese código.");
+        return;
+    }
 
+    await set(ref(database, `users/${uidActual}/greenhouses/${codigo}`), true);
 
-            alert(
-                `Código introducido: ${code}`
-            );
+    closeModalFunction();
+    cargarInvernaderos();
 
-        }
-    );
+});
 
 
 // =========================================================
@@ -394,57 +235,18 @@ document
 // =========================================================
 
 function cargarTema() {
-
-    const tema =
-        localStorage.getItem(
-            "growsync-theme"
-        );
-
-
+    const tema = localStorage.getItem("growsync-theme");
     if (tema === "dark") {
-
-        document.body.classList.add(
-            "dark"
-        );
-
-        themeButton.textContent =
-            "☀️";
-
+        document.body.classList.add("dark");
+        themeButton.textContent = "☀️";
     }
-
 }
 
-
-themeButton?.addEventListener(
-    "click",
-    () => {
-
-        document.body.classList.toggle(
-            "dark"
-        );
-
-
-        const dark =
-            document.body.classList.contains(
-                "dark"
-            );
-
-
-        localStorage.setItem(
-            "growsync-theme",
-            dark
-                ? "dark"
-                : "light"
-        );
-
-
-        themeButton.textContent =
-            dark
-                ? "☀️"
-                : "🌙";
-
-    }
-);
-
+themeButton?.addEventListener("click", () => {
+    document.body.classList.toggle("dark");
+    const dark = document.body.classList.contains("dark");
+    localStorage.setItem("growsync-theme", dark ? "dark" : "light");
+    themeButton.textContent = dark ? "☀️" : "🌙";
+});
 
 cargarTema();
