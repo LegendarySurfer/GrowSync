@@ -1543,6 +1543,35 @@ button {
 }
 
 /* =========================================================
+   MODAL DE MENSAJES
+   ========================================================= */
+
+.message-modal {
+    text-align: center;
+}
+
+
+.message-modal .modal-icon {
+    margin-bottom: 18px;
+}
+
+
+.message-modal h2 {
+    margin-bottom: 10px;
+}
+
+
+.message-modal p {
+    margin-bottom: 24px;
+    line-height: 1.6;
+}
+
+
+.message-modal .primary-button {
+    min-width: 120px;
+}
+
+/* =========================================================
    RESPONSIVE
    ========================================================= */
 
