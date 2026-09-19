@@ -27,30 +27,63 @@ const userAvatar = document.getElementById("userAvatar");
 const backButton = document.getElementById("backButton");
 const themeButton = document.getElementById("themeButton");
 
-// Estado general del sistema
-const systemStatus = document.getElementById("systemStatus");
-const systemStatusText = document.getElementById("systemStatusText");
-
-// Un elemento por sensor:
-// [id del <strong>, campo en Firebase, unidad]
-const SENSORES = [
-    ["temperature", "temperatura", "°C"],
-    ["humidity", "humedad", "%"],
-    ["soil", "suelo", "%"],
-    ["light", "luz", "lux"],
-    ["water", "agua", "%"],
-    ["battery", "bateria", "%"],
-    ["solar", "solar", "W"]
-];
-
 
 // =========================================================
-// CONFIGURACIÓN ONLINE
+// TIEMPO MÁXIMO SIN RECIBIR DATOS
 // =========================================================
 
-// Tiempo máximo que consideramos que el ESP32 está conectado.
-// 2 minutos = 120000 milisegundos.
+// Si un sensor lleva más de 2 minutos sin actualizarse,
+// se considera OFFLINE.
+
 const TIEMPO_MAXIMO_SIN_DATOS = 2 * 60 * 1000;
+
+
+// =========================================================
+// SENSORES
+// =========================================================
+//
+// id       = nombre utilizado en el HTML
+// campo    = nombre que utiliza Firebase
+// unidad   = unidad que mostramos
+//
+
+const SENSORES = [
+    {
+        id: "temperature",
+        campo: "temperatura",
+        unidad: "°C"
+    },
+    {
+        id: "humidity",
+        campo: "humedad",
+        unidad: "%"
+    },
+    {
+        id: "soil",
+        campo: "suelo",
+        unidad: "%"
+    },
+    {
+        id: "light",
+        campo: "luz",
+        unidad: "lux"
+    },
+    {
+        id: "water",
+        campo: "agua",
+        unidad: "%"
+    },
+    {
+        id: "battery",
+        campo: "bateria",
+        unidad: "%"
+    },
+    {
+        id: "solar",
+        campo: "solar",
+        unidad: "W"
+    }
+];
 
 
 // =========================================================
@@ -71,12 +104,13 @@ if (!codigo) {
 onAuthStateChanged(auth, (user) => {
 
     if (!user) {
-        window.location.href = "login.html";
+        window.location.href = "index.html";
         return;
     }
 
     if (userAvatar) {
-        userAvatar.textContent = (user.email || "U")[0].toUpperCase();
+        userAvatar.textContent =
+            (user.email || "U")[0].toUpperCase();
     }
 
     cargarDatos();
@@ -85,7 +119,7 @@ onAuthStateChanged(auth, (user) => {
 
 
 // =========================================================
-// CARGAR DATOS EN VIVO
+// CARGAR DATOS
 // =========================================================
 
 function cargarDatos() {
@@ -100,10 +134,13 @@ function cargarDatos() {
 
             const info = snap.exists()
                 ? snap.val()
-                : { nombre: "Invernadero" };
+                : {
+                    nombre: "Invernadero"
+                };
 
             if (greenhouseName) {
-                greenhouseName.textContent = info.nombre;
+                greenhouseName.textContent =
+                    info.nombre || "Invernadero";
             }
 
             if (greenhouseCode) {
@@ -115,7 +152,7 @@ function cargarDatos() {
 
 
     // -----------------------------------------------------
-    // SENSORES
+    // DATOS DE LOS SENSORES
     // -----------------------------------------------------
 
     onValue(
@@ -126,37 +163,14 @@ function cargarDatos() {
                 ? snap.val()
                 : {};
 
-            actualizarSensores(datos);
+            SENSORES.forEach((sensor) => {
 
-        }
-    );
+                actualizarSensor(
+                    sensor,
+                    datos[sensor.campo]
+                );
 
-
-    // -----------------------------------------------------
-    // ESTADO DEL ESP32
-    // -----------------------------------------------------
-
-    onValue(
-        ref(database, `greenhouses/${codigo}/estado/ultimaConexion`),
-        (snap) => {
-
-            if (!snap.exists()) {
-
-                actualizarEstadoSistema("sin-datos");
-
-                return;
-            }
-
-            const ultimaConexion = obtenerTimestamp(snap.val());
-
-            if (!ultimaConexion) {
-
-                actualizarEstadoSistema("sin-datos");
-
-                return;
-            }
-
-            comprobarConexion(ultimaConexion);
+            });
 
         }
     );
@@ -165,161 +179,238 @@ function cargarDatos() {
 
 
 // =========================================================
-// ACTUALIZAR SENSORES
+// ACTUALIZAR SENSOR
 // =========================================================
 
-function actualizarSensores(datos) {
+function actualizarSensor(sensor, datos) {
 
-    SENSORES.forEach(([elementId, campo]) => {
+    const valorElement =
+        document.getElementById(sensor.id);
 
-        const el = document.getElementById(elementId);
+    const tarjeta =
+        document.querySelector(
+            `[data-sensor="${sensor.id}"]`
+        );
 
-        if (!el) return;
-
-        if (datos[campo] === undefined || datos[campo] === null) {
-
-            el.textContent = "—";
-
-        } else {
-
-            el.textContent = datos[campo];
-
-        }
-
-    });
-
-}
-
-
-// =========================================================
-// COMPROBAR CONEXIÓN
-// =========================================================
-
-function comprobarConexion(ultimaConexion) {
-
-    const ahora = Date.now();
-
-    const diferencia = ahora - ultimaConexion;
+    if (!valorElement || !tarjeta) {
+        return;
+    }
 
 
     // -----------------------------------------------------
-    // ESP32 ONLINE
+    // ELEMENTOS DE ESTADO
+    // -----------------------------------------------------
+
+    const estadoElement =
+        tarjeta.querySelector(".sensor-status");
+
+    const puntoEstado =
+        tarjeta.querySelector(".sensor-status-dot");
+
+    const ultimaActualizacionElement =
+        tarjeta.querySelector(".sensor-last-update");
+
+
+    // -----------------------------------------------------
+    // COMPROBAR SI EXISTEN DATOS
     // -----------------------------------------------------
 
     if (
-        diferencia >= 0 &&
-        diferencia <= TIEMPO_MAXIMO_SIN_DATOS
+        !datos ||
+        datos.valor === undefined ||
+        datos.ultimaConexion === undefined
     ) {
 
-        actualizarEstadoSistema("online");
-
-        mostrarSensores();
+        ponerSensorOffline(
+            valorElement,
+            estadoElement,
+            puntoEstado,
+            ultimaActualizacionElement
+        );
 
         return;
     }
 
 
     // -----------------------------------------------------
-    // ESP32 OFFLINE
+    // COMPROBAR FECHA
     // -----------------------------------------------------
 
-    actualizarEstadoSistema("offline");
+    const ultimaConexion =
+        convertirTimestamp(datos.ultimaConexion);
 
-    ocultarSensores();
+    if (!ultimaConexion) {
 
-}
+        ponerSensorOffline(
+            valorElement,
+            estadoElement,
+            puntoEstado,
+            ultimaActualizacionElement
+        );
+
+        return;
+    }
 
 
-// =========================================================
-// ACTUALIZAR ESTADO VISUAL
-// =========================================================
+    const ahora = Date.now();
 
-function actualizarEstadoSistema(estado) {
-
-    if (!systemStatus || !systemStatusText) return;
+    const tiempoSinDatos =
+        ahora - ultimaConexion;
 
 
-    // Limpiamos estados anteriores
+    // -----------------------------------------------------
+    // SENSOR OFFLINE
+    // -----------------------------------------------------
 
-    systemStatus.classList.remove(
-        "online",
-        "offline",
-        "no-data"
+    if (
+        tiempoSinDatos >
+        TIEMPO_MAXIMO_SIN_DATOS
+    ) {
+
+        ponerSensorOffline(
+            valorElement,
+            estadoElement,
+            puntoEstado,
+            ultimaActualizacionElement,
+            ultimaConexion
+        );
+
+        return;
+    }
+
+
+    // -----------------------------------------------------
+    // SENSOR ONLINE
+    // -----------------------------------------------------
+
+    ponerSensorOnline(
+        valorElement,
+        estadoElement,
+        puntoEstado,
+        ultimaActualizacionElement,
+        datos.valor,
+        sensor.unidad,
+        ultimaConexion
     );
 
+}
 
-    // -----------------------------------------------------
-    // ONLINE
-    // -----------------------------------------------------
 
-    if (estado === "online") {
+// =========================================================
+// SENSOR ONLINE
+// =========================================================
 
-        systemStatus.classList.add("online");
+function ponerSensorOnline(
+    valorElement,
+    estadoElement,
+    puntoEstado,
+    ultimaActualizacionElement,
+    valor,
+    unidad,
+    ultimaConexion
+) {
 
-        systemStatusText.textContent = "Sistema online";
+    valorElement.textContent =
+        `${valor} ${unidad}`;
 
-        return;
+
+    if (estadoElement) {
+
+        estadoElement.textContent =
+            "Online";
+
+        estadoElement.classList.remove(
+            "offline"
+        );
+
+        estadoElement.classList.add(
+            "online"
+        );
     }
 
 
-    // -----------------------------------------------------
-    // OFFLINE
-    // -----------------------------------------------------
+    if (puntoEstado) {
 
-    if (estado === "offline") {
+        puntoEstado.classList.remove(
+            "offline"
+        );
 
-        systemStatus.classList.add("offline");
-
-        systemStatusText.textContent = "Sistema offline";
-
-        return;
+        puntoEstado.classList.add(
+            "online"
+        );
     }
 
 
-    // -----------------------------------------------------
-    // SIN DATOS
-    // -----------------------------------------------------
+    if (ultimaActualizacionElement) {
 
-    systemStatus.classList.add("no-data");
-
-    systemStatusText.textContent = "Sin conexión";
+        ultimaActualizacionElement.textContent =
+            `Actualizado ${tiempoTranscurrido(ultimaConexion)}`;
+    }
 
 }
 
 
 // =========================================================
-// OCULTAR DATOS DE LOS SENSORES
+// SENSOR OFFLINE
 // =========================================================
 
-function ocultarSensores() {
+function ponerSensorOffline(
+    valorElement,
+    estadoElement,
+    puntoEstado,
+    ultimaActualizacionElement,
+    ultimaConexion = null
+) {
 
-    SENSORES.forEach(([elementId]) => {
+    // No mostramos un dato que ya no sabemos
+    // si es actual.
 
-        const el = document.getElementById(elementId);
-
-        if (!el) return;
-
-        el.textContent = "—";
-
-    });
-
-}
+    valorElement.textContent = "—";
 
 
-// =========================================================
-// MOSTRAR DATOS DE LOS SENSORES
-// =========================================================
-//
-// Cuando vuelve a estar online, el listener de Firebase
-// ya habrá recibido los datos actuales.
-//
+    if (estadoElement) {
 
-function mostrarSensores() {
+        estadoElement.textContent =
+            "Offline";
 
-    // No necesitamos hacer nada aquí.
-    //
-    // El listener de "sensores" ya mantiene los valores
-    // actualizados automáticamente.
+        estadoElement.classList.remove(
+            "online"
+        );
+
+        estadoElement.classList.add(
+            "offline"
+        );
+    }
+
+
+    if (puntoEstado) {
+
+        puntoEstado.classList.remove(
+            "online"
+        );
+
+        puntoEstado.classList.add(
+            "offline"
+        );
+    }
+
+
+    if (ultimaActualizacionElement) {
+
+        if (ultimaConexion) {
+
+            ultimaActualizacionElement.textContent =
+                `Sin datos desde ${tiempoTranscurrido(ultimaConexion)}`;
+
+        } else {
+
+            ultimaActualizacionElement.textContent =
+                "Sin datos recibidos";
+
+        }
+
+    }
+
 }
 
 
@@ -327,34 +418,33 @@ function mostrarSensores() {
 // CONVERTIR TIMESTAMP
 // =========================================================
 
-function obtenerTimestamp(valor) {
+function convertirTimestamp(timestamp) {
 
-    // Firebase puede devolver un número directamente.
+    if (timestamp === null ||
+        timestamp === undefined) {
 
-    if (typeof valor === "number") {
-
-        return valor;
+        return null;
     }
 
 
-    // Si llega como texto numérico.
+    // Firebase normalmente devolverá
+    // un timestamp numérico en milisegundos.
 
-    if (typeof valor === "string") {
+    if (typeof timestamp === "number") {
 
-        const numero = Number(valor);
-
-        if (!Number.isNaN(numero)) {
-
-            return numero;
-        }
+        return timestamp;
+    }
 
 
-        // También permitimos una fecha ISO.
+    // Por si en algún momento utilizamos
+    // una fecha ISO.
 
-        const fecha = Date.parse(valor);
+    if (typeof timestamp === "string") {
+
+        const fecha =
+            Date.parse(timestamp);
 
         if (!Number.isNaN(fecha)) {
-
             return fecha;
         }
 
@@ -366,64 +456,185 @@ function obtenerTimestamp(valor) {
 
 
 // =========================================================
-// COMPROBAR PERIÓDICAMENTE SI SIGUE ONLINE
+// TIEMPO TRANSCURRIDO
+// =========================================================
+
+function tiempoTranscurrido(timestamp) {
+
+    if (!timestamp) {
+        return "—";
+    }
+
+
+    const segundos =
+        Math.floor(
+            (Date.now() - timestamp) / 1000
+        );
+
+
+    if (segundos < 5) {
+        return "ahora mismo";
+    }
+
+
+    if (segundos < 60) {
+        return `hace ${segundos} s`;
+    }
+
+
+    const minutos =
+        Math.floor(segundos / 60);
+
+
+    if (minutos < 60) {
+
+        return `hace ${minutos} min`;
+    }
+
+
+    const horas =
+        Math.floor(minutos / 60);
+
+
+    return `hace ${horas} h`;
+}
+
+
+// =========================================================
+// COMPROBAR ESTADO PERIÓDICAMENTE
 // =========================================================
 //
-// Esto es importante.
+// Firebase solo nos avisa cuando cambia un dato.
 //
-// Firebase solo ejecuta onValue cuando cambia
-// "ultimaConexion". Si el ESP32 deja de enviar datos,
-// necesitamos comprobar el tiempo nosotros mismos.
-//
-// Por eso revisamos el estado cada 10 segundos.
+// Por eso comprobamos cada 10 segundos si alguno
+// de los sensores ha superado los 2 minutos.
 //
 
 setInterval(() => {
 
-    if (!codigo) return;
-
-    onValue(
-        ref(database, `greenhouses/${codigo}/estado/ultimaConexion`),
-        (snap) => {
-
-            if (!snap.exists()) {
-
-                actualizarEstadoSistema("sin-datos");
-                ocultarSensores();
-
-                return;
-            }
-
-            const ultimaConexion = obtenerTimestamp(snap.val());
-
-            if (!ultimaConexion) {
-
-                actualizarEstadoSistema("sin-datos");
-                ocultarSensores();
-
-                return;
-            }
-
-            comprobarConexion(ultimaConexion);
-
-        },
-        {
-            onlyOnce: true
-        }
-    );
+    comprobarSensores();
 
 }, 10000);
+
+
+// =========================================================
+// COMPROBAR SENSORES
+// =========================================================
+
+function comprobarSensores() {
+
+    SENSORES.forEach((sensor) => {
+
+        const tarjeta =
+            document.querySelector(
+                `[data-sensor="${sensor.id}"]`
+            );
+
+        if (!tarjeta) {
+            return;
+        }
+
+
+        const ultimaConexion =
+            tarjeta.dataset.ultimaConexion;
+
+        if (!ultimaConexion) {
+            return;
+        }
+
+
+        const tiempo =
+            Number(ultimaConexion);
+
+
+        if (
+            Date.now() - tiempo >
+            TIEMPO_MAXIMO_SIN_DATOS
+        ) {
+
+            const valorElement =
+                document.getElementById(sensor.id);
+
+            const estadoElement =
+                tarjeta.querySelector(".sensor-status");
+
+            const puntoEstado =
+                tarjeta.querySelector(
+                    ".sensor-status-dot"
+                );
+
+            const ultimaActualizacionElement =
+                tarjeta.querySelector(
+                    ".sensor-last-update"
+                );
+
+
+            ponerSensorOffline(
+                valorElement,
+                estadoElement,
+                puntoEstado,
+                ultimaActualizacionElement,
+                tiempo
+            );
+
+        }
+
+    });
+
+}
+
+
+// =========================================================
+// GUARDAR ÚLTIMA CONEXIÓN EN LA TARJETA
+// =========================================================
+//
+// Guardamos el timestamp en data-ultima-conexion
+// para poder comprobarlo cada 10 segundos.
+//
+
+const observer =
+    new MutationObserver(() => {
+
+        SENSORES.forEach((sensor) => {
+
+            const tarjeta =
+                document.querySelector(
+                    `[data-sensor="${sensor.id}"]`
+                );
+
+            if (!tarjeta) {
+                return;
+            }
+
+            // Si todavía no tiene timestamp,
+            // no hacemos nada aquí.
+
+        });
+
+    });
+
+observer.observe(
+    document.body,
+    {
+        childList: true,
+        subtree: true
+    }
+);
 
 
 // =========================================================
 // VOLVER
 // =========================================================
 
-backButton?.addEventListener("click", () => {
+backButton?.addEventListener(
+    "click",
+    () => {
 
-    window.location.href = "invernaderos.html";
+        window.location.href =
+            "invernaderos.html";
 
-});
+    }
+);
 
 
 // =========================================================
@@ -432,11 +643,16 @@ backButton?.addEventListener("click", () => {
 
 function cargarTema() {
 
-    const tema = localStorage.getItem("growsync-theme");
+    const tema =
+        localStorage.getItem(
+            "growsync-theme"
+        );
 
     if (tema === "dark") {
 
-        document.body.classList.add("dark");
+        document.body.classList.add(
+            "dark"
+        );
 
         if (themeButton) {
             themeButton.textContent = "☀️";
@@ -447,22 +663,33 @@ function cargarTema() {
 }
 
 
-themeButton?.addEventListener("click", () => {
+themeButton?.addEventListener(
+    "click",
+    () => {
 
-    document.body.classList.toggle("dark");
+        document.body.classList.toggle(
+            "dark"
+        );
 
-    const dark = document.body.classList.contains("dark");
+        const dark =
+            document.body.classList.contains(
+                "dark"
+            );
 
-    localStorage.setItem(
-        "growsync-theme",
-        dark ? "dark" : "light"
-    );
+        localStorage.setItem(
+            "growsync-theme",
+            dark ? "dark" : "light"
+        );
 
-    themeButton.textContent = dark
-        ? "☀️"
-        : "🌙";
+        if (themeButton) {
 
-});
+            themeButton.textContent =
+                dark ? "☀️" : "🌙";
+
+        }
+
+    }
+);
 
 
 cargarTema();
