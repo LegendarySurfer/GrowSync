@@ -1480,6 +1480,68 @@ button {
 
 }
 
+/* =========================================================
+   ESTADO DEL SISTEMA
+   ========================================================= */
+
+.system-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+
+/* Punto */
+
+.system-status .status-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+
+/* ONLINE */
+
+.system-status.online {
+    color: #2e8b57;
+    background: rgba(46, 139, 87, 0.10);
+}
+
+.system-status.online .status-dot {
+    background: #2e8b57;
+    box-shadow: 0 0 8px rgba(46, 139, 87, 0.5);
+}
+
+
+/* OFFLINE */
+
+.system-status.offline {
+    color: #d93025;
+    background: rgba(217, 48, 37, 0.10);
+}
+
+.system-status.offline .status-dot {
+    background: #d93025;
+    box-shadow: 0 0 8px rgba(217, 48, 37, 0.5);
+}
+
+
+/* SIN DATOS */
+
+.system-status.no-data {
+    color: #777;
+    background: rgba(120, 120, 120, 0.10);
+}
+
+.system-status.no-data .status-dot {
+    background: #888;
+}
 
 /* OPCIONES */
 
