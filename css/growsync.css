@@ -1531,6 +1531,58 @@ button {
     box-shadow: 0 0 8px rgba(217, 48, 37, 0.5);
 }
 
+/* =========================================================
+   ESTADO DE LOS SENSORES
+   ========================================================= */
+
+.sensor-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.sensor-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+
+/* ONLINE */
+
+.sensor-status.online {
+    color: #2e8b57;
+}
+
+.sensor-status-dot.online {
+    background: #2e8b57;
+    box-shadow: 0 0 7px rgba(46, 139, 87, 0.5);
+}
+
+
+/* OFFLINE */
+
+.sensor-status.offline {
+    color: #d93025;
+}
+
+.sensor-status-dot.offline {
+    background: #d93025;
+    box-shadow: 0 0 7px rgba(217, 48, 37, 0.5);
+}
+
+
+/* ÚLTIMA ACTUALIZACIÓN */
+
+.sensor-last-update {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
 
 /* SIN DATOS */
 
