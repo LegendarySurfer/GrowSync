@@ -2,10 +2,7 @@
 // GROWSYNC - INVERNADEROS
 // =========================================================
 
-import {
-    auth,
-    database
-} from "./firebase.js";
+import { auth, database } from "./firebase.js";
 
 import {
     onAuthStateChanged
@@ -14,78 +11,89 @@ import {
 import {
     ref,
     get,
-    set
+    set,
+    onValue
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
 
 // =========================================================
-// ELEMENTOS
+// CONFIGURACIÓN
 // =========================================================
 
-const container = document.getElementById("greenhousesContainer");
-
-const modal = document.getElementById("greenhouseModal");
-
-const addButton = document.getElementById("addGreenhouseButton");
-
-const closeModal = document.getElementById("closeModal");
-
-const themeButton = document.getElementById("themeButton");
-
-const userAvatar = document.getElementById("userAvatar");
+const TIEMPO_MAXIMO_SIN_DATOS = 2 * 60 * 1000;
 
 
 // =========================================================
-// ELEMENTOS MODAL MENSAJES
+// ELEMENTOS HTML
 // =========================================================
 
-const messageModal = document.getElementById("messageModal");
+const container =
+    document.getElementById(
+        "greenhousesContainer"
+    );
 
-const closeMessageModal =
-    document.getElementById("closeMessageModal");
+const modal =
+    document.getElementById(
+        "greenhouseModal"
+    );
 
-const messageModalButton =
-    document.getElementById("messageModalButton");
+const addButton =
+    document.getElementById(
+        "addGreenhouseButton"
+    );
 
-const messageModalIcon =
-    document.getElementById("messageModalIcon");
+const closeModal =
+    document.getElementById(
+        "closeModal"
+    );
 
-const messageModalTitle =
-    document.getElementById("messageModalTitle");
+const themeButton =
+    document.getElementById(
+        "themeButton"
+    );
 
-const messageModalText =
-    document.getElementById("messageModalText");
+const userAvatar =
+    document.getElementById(
+        "userAvatar"
+    );
 
 
 // =========================================================
-// USUARIO ACTUAL
+// VARIABLES
 // =========================================================
 
 let uidActual = null;
 
+let listaInvernaderos = [];
+
 
 // =========================================================
-// COMPROBAR SESIÓN
+// AUTENTICACIÓN
 // =========================================================
 
 onAuthStateChanged(auth, (user) => {
 
     if (!user) {
 
-        window.location.href = "index.html";
+        window.location.href =
+            "index.html";
 
         return;
-
     }
 
 
-    uidActual = user.uid;
+    uidActual =
+        user.uid;
 
+
+    // Avatar
 
     if (userAvatar) {
 
         userAvatar.textContent =
-            (user.email || "U")[0].toUpperCase();
+            (user.email || "U")
+                .charAt(0)
+                .toUpperCase();
 
     }
 
@@ -96,7 +104,7 @@ onAuthStateChanged(auth, (user) => {
 
 
 // =========================================================
-// CARGAR INVERNADEROS DEL USUARIO
+// CARGAR INVERNADEROS
 // =========================================================
 
 async function cargarInvernaderos() {
@@ -106,88 +114,260 @@ async function cargarInvernaderos() {
     }
 
 
-    container.innerHTML = "<p>Cargando…</p>";
+    if (!container) {
+        return;
+    }
+
+
+    container.innerHTML =
+        "<p>Cargando invernaderos...</p>";
 
 
     try {
 
-        const listaSnap = await get(
+        // -----------------------------------------
+        // INVERNADEROS DEL USUARIO
+        // -----------------------------------------
+
+        const listaRef =
             ref(
                 database,
                 `users/${uidActual}/greenhouses`
-            )
-        );
+            );
 
 
-        const codigos = listaSnap.exists()
-            ? Object.keys(listaSnap.val())
-            : [];
+        const listaSnap =
+            await get(listaRef);
+
+
+        if (!listaSnap.exists()) {
+
+            renderGreenhouses([]);
+
+            return;
+        }
+
+
+        const datosUsuario =
+            listaSnap.val();
+
+
+        const codigos =
+            Object.keys(datosUsuario);
+
+
+        if (codigos.length === 0) {
+
+            renderGreenhouses([]);
+
+            return;
+        }
 
 
         const invernaderos = [];
 
 
+        // -----------------------------------------
+        // CARGAR CADA INVERNADERO
+        // -----------------------------------------
+
         for (const codigo of codigos) {
 
-            const infoSnap = await get(
-                ref(
-                    database,
-                    `greenhouses/${codigo}/info`
-                )
-            );
+            try {
+
+                // Información
+
+                const infoSnap =
+                    await get(
+                        ref(
+                            database,
+                            `greenhouses/${codigo}/info`
+                        )
+                    );
 
 
-            const sensoresSnap = await get(
-                ref(
-                    database,
-                    `greenhouses/${codigo}/sensores`
-                )
-            );
+                // Sensores
+
+                const sensoresSnap =
+                    await get(
+                        ref(
+                            database,
+                            `greenhouses/${codigo}/sensores`
+                        )
+                    );
 
 
-            const info = infoSnap.exists()
-                ? infoSnap.val()
-                : {
-                    nombre: codigo,
-                    ubicacion: "—"
-                };
+                // Estado
+
+                const estadoSnap =
+                    await get(
+                        ref(
+                            database,
+                            `greenhouses/${codigo}/estado`
+                        )
+                    );
 
 
-            const sensores = sensoresSnap.exists()
-                ? sensoresSnap.val()
-                : {};
+                const info =
+                    infoSnap.exists()
+                        ? infoSnap.val()
+                        : {};
 
 
-            invernaderos.push({
+                const sensores =
+                    sensoresSnap.exists()
+                        ? sensoresSnap.val()
+                        : {};
 
-                id: codigo,
 
-                name: info.nombre,
+                const estado =
+                    estadoSnap.exists()
+                        ? estadoSnap.val()
+                        : {};
 
-                location: info.ubicacion,
 
-                temperature: sensores.temperatura,
+                // -----------------------------------------
+                // ESTADO ONLINE / OFFLINE
+                // -----------------------------------------
 
-                humidity: sensores.humedad
+                const ultimaConexion =
+                    convertirTimestamp(
+                        estado.ultimaConexion
+                    );
 
-            });
+
+                const online =
+                    ultimaConexion !== null &&
+                    Date.now() -
+                        ultimaConexion <=
+                        TIEMPO_MAXIMO_SIN_DATOS;
+
+
+                // -----------------------------------------
+                // TEMPERATURA
+                // -----------------------------------------
+
+                const temperatura =
+                    obtenerValorSensor(
+                        sensores.temperatura
+                    );
+
+
+                // -----------------------------------------
+                // HUMEDAD
+                // -----------------------------------------
+
+                const humedad =
+                    obtenerValorSensor(
+                        sensores.humedad
+                    );
+
+
+                // -----------------------------------------
+                // GUARDAR
+                // -----------------------------------------
+
+                invernaderos.push({
+
+                    id:
+                        codigo,
+
+                    name:
+                        info.nombre ||
+                        codigo,
+
+                    location:
+                        info.ubicacion ||
+                        "—",
+
+                    temperature:
+                        temperatura,
+
+                    humidity:
+                        humedad,
+
+                    online:
+                        online,
+
+                    ultimaConexion:
+                        ultimaConexion
+
+                });
+
+            }
+            catch (error) {
+
+                console.error(
+                    `Error cargando ${codigo}:`,
+                    error
+                );
+
+
+                // Aunque haya un error en los datos,
+                // seguimos mostrando el invernadero.
+
+                invernaderos.push({
+
+                    id:
+                        codigo,
+
+                    name:
+                        codigo,
+
+                    location:
+                        "—",
+
+                    temperature:
+                        undefined,
+
+                    humidity:
+                        undefined,
+
+                    online:
+                        false,
+
+                    ultimaConexion:
+                        null
+
+                });
+
+            }
 
         }
 
 
-        renderGreenhouses(invernaderos);
+        listaInvernaderos =
+            invernaderos;
 
 
-    } catch (error) {
+        renderGreenhouses(
+            invernaderos
+        );
+
+    }
+    catch (error) {
 
         console.error(
-            "Error al cargar los invernaderos:",
+            "Error cargando invernaderos:",
             error
         );
 
 
-        container.innerHTML =
-            "<p>No se han podido cargar los invernaderos.</p>";
+        container.innerHTML = `
+
+            <div class="greenhouse-error">
+
+                <strong>
+                    No se han podido cargar los invernaderos.
+                </strong>
+
+                <p>
+                    Comprueba la conexión con Firebase.
+                </p>
+
+            </div>
+
+        `;
 
     }
 
@@ -203,22 +383,40 @@ function renderGreenhouses(greenhouses) {
     container.innerHTML = "";
 
 
+    // =====================================================
+    // NO HAY INVERNADEROS
+    // =====================================================
+
     if (greenhouses.length === 0) {
 
         const vacio =
-            document.createElement("p");
+            document.createElement(
+                "p"
+            );
+
 
         vacio.textContent =
             "Aún no tienes ningún invernadero. Crea uno o únete con un código.";
 
-        container.appendChild(vacio);
+
+        container.appendChild(
+            vacio
+        );
+
     }
 
+
+    // =====================================================
+    // INVERNADEROS
+    // =====================================================
 
     greenhouses.forEach((greenhouse) => {
 
         const card =
-            document.createElement("article");
+            document.createElement(
+                "article"
+            );
+
 
         card.className =
             "greenhouse-card";
@@ -229,13 +427,15 @@ function renderGreenhouses(greenhouses) {
         // -----------------------------------------
 
         const temp =
-            greenhouse.online && greenhouse.temperature !== undefined
+            greenhouse.online &&
+            greenhouse.temperature !== undefined
                 ? `${greenhouse.temperature}°C`
                 : "— °C";
 
 
         const hum =
-            greenhouse.online && greenhouse.humidity !== undefined
+            greenhouse.online &&
+            greenhouse.humidity !== undefined
                 ? `${greenhouse.humidity}%`
                 : "— %";
 
@@ -269,9 +469,13 @@ function renderGreenhouses(greenhouses) {
                 </div>
 
 
-                <span class="greenhouse-status ${estadoClase}">
+                <span
+                    class="greenhouse-status ${estadoClase}"
+                >
 
-                    <span class="greenhouse-status-dot"></span>
+                    <span
+                        class="greenhouse-status-dot"
+                    ></span>
 
                     ${estadoTexto}
 
@@ -355,108 +559,21 @@ function renderGreenhouses(greenhouses) {
         `;
 
 
-        container.appendChild(card);
+        container.appendChild(
+            card
+        );
 
     });
 
-
-    // =====================================================
-    // BOTÓN ABRIR
-    // =====================================================
-
-    document
-        .querySelectorAll(".greenhouse-open")
-        .forEach((button) => {
-
-            button.addEventListener("click", () => {
-
-                localStorage.setItem(
-                    "selectedGreenhouse",
-                    button.dataset.id
-                );
-
-                window.location.href =
-                    "dashboard.html";
-
-            });
-
-        });
-
-
-    // =====================================================
-    // BOTÓN ELIMINAR
-    // =====================================================
-
-    document
-        .querySelectorAll(".greenhouse-delete")
-        .forEach((button) => {
-
-            button.addEventListener("click", async () => {
-
-                const codigo =
-                    button.dataset.id;
-
-
-                const confirmar =
-                    confirm(
-                        `¿Seguro que quieres eliminar el invernadero ${codigo} de tu cuenta?`
-                    );
-
-
-                if (!confirmar) {
-                    return;
-                }
-
-
-                try {
-
-                    await set(
-                        ref(
-                            database,
-                            `users/${uidActual}/greenhouses/${codigo}`
-                        ),
-                        null
-                    );
-
-
-                    mostrarMensaje(
-                        "🗑️",
-                        "Invernadero eliminado",
-                        "El invernadero se ha eliminado de tu cuenta."
-                    );
-
-
-                    cargarInvernaderos();
-
-                }
-                catch (error) {
-
-                    console.error(
-                        "Error eliminando invernadero:",
-                        error
-                    );
-
-
-                    mostrarMensaje(
-                        "⚠️",
-                        "Error",
-                        "No se ha podido eliminar el invernadero."
-                    );
-
-                }
-
-            });
-
-        });
-
-}
 
     // =====================================================
     // TARJETA AÑADIR
     // =====================================================
 
     const addCard =
-        document.createElement("article");
+        document.createElement(
+            "article"
+        );
 
 
     addCard.className =
@@ -469,11 +586,9 @@ function renderGreenhouses(greenhouses) {
             +
         </div>
 
-
         <strong>
             Añadir invernadero
         </strong>
-
 
         <span>
             Crear o unirse mediante código
@@ -488,24 +603,32 @@ function renderGreenhouses(greenhouses) {
     );
 
 
-    container.appendChild(addCard);
+    container.appendChild(
+        addCard
+    );
 
 
     // =====================================================
-    // BOTONES ABRIR INVERNADERO
+    // BOTONES ABRIR
     // =====================================================
 
     document
-        .querySelectorAll(".greenhouse-open")
+        .querySelectorAll(
+            ".greenhouse-open"
+        )
         .forEach((button) => {
 
             button.addEventListener(
                 "click",
                 () => {
 
+                    const codigo =
+                        button.dataset.id;
+
+
                     localStorage.setItem(
                         "selectedGreenhouse",
-                        button.dataset.id
+                        codigo
                     );
 
 
@@ -517,100 +640,140 @@ function renderGreenhouses(greenhouses) {
 
         });
 
+
+    // =====================================================
+    // BOTONES ELIMINAR
+    // =====================================================
+
+    document
+        .querySelectorAll(
+            ".greenhouse-delete"
+        )
+        .forEach((button) => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    eliminarInvernadero(
+                        button.dataset.id
+                    );
+
+                }
+            );
+
+        });
+
 }
 
 
 // =========================================================
-// MODAL AÑADIR
+// OBTENER VALOR DE SENSOR
 // =========================================================
 
-function openModal() {
+function obtenerValorSensor(sensor) {
 
-    modal?.classList.add("active");
+    if (
+        sensor === undefined ||
+        sensor === null
+    ) {
+
+        return undefined;
+
+    }
+
+
+    // Nueva estructura:
+    //
+    // temperatura:
+    //   valor: 24
+    //   ultimaConexion: 123456789
+
+    if (
+        typeof sensor === "object" &&
+        sensor.valor !== undefined
+    ) {
+
+        return sensor.valor;
+
+    }
+
+
+    // Compatibilidad con estructura antigua:
+    //
+    // temperatura: 24
+
+    if (
+        typeof sensor !== "object"
+    ) {
+
+        return sensor;
+
+    }
+
+
+    return undefined;
 
 }
 
 
-function closeModalFunction() {
-
-    modal?.classList.remove("active");
-
-}
-
-
-addButton?.addEventListener(
-    "click",
-    openModal
-);
-
-
-closeModal?.addEventListener(
-    "click",
-    closeModalFunction
-);
-
-
 // =========================================================
-// MODAL DE MENSAJES
+// ELIMINAR INVERNADERO
 // =========================================================
 
-function mostrarMensaje(
-    titulo,
-    mensaje,
-    icono = "⚠️"
+async function eliminarInvernadero(
+    codigo
 ) {
 
-    if (!messageModal) {
+    const confirmar =
+        confirm(
+            `¿Seguro que quieres eliminar el invernadero ${codigo} de tu cuenta?`
+        );
+
+
+    if (!confirmar) {
         return;
     }
 
 
-    if (messageModalIcon) {
+    try {
 
-        messageModalIcon.textContent =
-            icono;
+        await set(
+            ref(
+                database,
+                `users/${uidActual}/greenhouses/${codigo}`
+            ),
+            null
+        );
+
+
+        mostrarMensaje(
+            "🗑️",
+            "Invernadero eliminado",
+            "El invernadero se ha eliminado de tu cuenta."
+        );
+
+
+        cargarInvernaderos();
 
     }
+    catch (error) {
+
+        console.error(
+            "Error eliminando invernadero:",
+            error
+        );
 
 
-    if (messageModalTitle) {
-
-        messageModalTitle.textContent =
-            titulo;
+        mostrarMensaje(
+            "⚠️",
+            "Error",
+            "No se ha podido eliminar el invernadero."
+        );
 
     }
-
-
-    if (messageModalText) {
-
-        messageModalText.textContent =
-            mensaje;
-
-    }
-
-
-    messageModal.classList.add("active");
 
 }
-
-
-function cerrarMensaje() {
-
-    messageModal?.classList.remove("active");
-
-}
-
-
-closeMessageModal?.addEventListener(
-    "click",
-    cerrarMensaje
-);
-
-
-messageModalButton?.addEventListener(
-    "click",
-    cerrarMensaje
-);
 
 
 // =========================================================
@@ -644,11 +807,14 @@ document
                 "GS-" +
                 Math.floor(
                     100000 +
-                    Math.random() * 900000
+                    Math.random() *
+                    900000
                 );
 
 
             try {
+
+                // Información
 
                 await set(
                     ref(
@@ -656,12 +822,21 @@ document
                         `greenhouses/${codigo}/info`
                     ),
                     {
-                        nombre,
-                        ubicacion,
-                        propietario: uidActual
+
+                        nombre:
+                            nombre,
+
+                        ubicacion:
+                            ubicacion,
+
+                        propietario:
+                            uidActual
+
                     }
                 );
 
+
+                // Asociación con el usuario
 
                 await set(
                     ref(
@@ -673,30 +848,29 @@ document
 
 
                 mostrarMensaje(
+                    "✅",
                     "Invernadero creado",
-                    `El invernadero se ha creado correctamente. Su código es ${codigo}.`,
-                    "✅"
+                    `El código de tu invernadero es ${codigo}.`
                 );
 
 
                 closeModalFunction();
 
-
                 cargarInvernaderos();
 
-
-            } catch (error) {
+            }
+            catch (error) {
 
                 console.error(
-                    "Error al crear el invernadero:",
+                    "Error creando invernadero:",
                     error
                 );
 
 
                 mostrarMensaje(
-                    "No se ha podido crear",
-                    "Ha ocurrido un error al crear el invernadero. Inténtalo de nuevo.",
-                    "❌"
+                    "⚠️",
+                    "Error",
+                    "No se ha podido crear el invernadero."
                 );
 
             }
@@ -706,7 +880,7 @@ document
 
 
 // =========================================================
-// UNIRSE A UN INVERNADERO
+// UNIRSE A INVERNADERO
 // =========================================================
 
 document
@@ -715,128 +889,394 @@ document
         "click",
         async () => {
 
-            const codigoIntroducido =
+            let codigo =
                 prompt(
                     "Introduce el código del invernadero (formato GS-000000):"
                 );
 
 
-            if (!codigoIntroducido) {
+            if (!codigo) {
                 return;
             }
 
 
-            // =================================================
-            // NORMALIZAR CÓDIGO
-            // =================================================
-
-            const codigo =
-                codigoIntroducido
+            codigo =
+                codigo
                     .trim()
                     .toUpperCase();
 
 
-            // =================================================
-            // COMPROBAR SI YA ESTÁ AÑADIDO
-            // =================================================
-
-            const usuarioGreenhouseRef =
-                ref(
-                    database,
-                    `users/${uidActual}/greenhouses/${codigo}`
-                );
-
-
-            const usuarioGreenhouseSnap =
-                await get(
-                    usuarioGreenhouseRef
-                );
-
-
-            if (usuarioGreenhouseSnap.exists()) {
-
-                mostrarMensaje(
-                    "Invernadero ya añadido",
-                    "Este invernadero ya está asociado a tu cuenta y no se puede añadir de nuevo.",
-                    "⚠️"
-                );
-
-
-                return;
-
-            }
-
-
-            // =================================================
-            // COMPROBAR SI EXISTE EL INVERNADERO
-            // =================================================
-
-            const infoSnap =
-                await get(
-                    ref(
-                        database,
-                        `greenhouses/${codigo}/info`
-                    )
-                );
-
-
-            if (!infoSnap.exists()) {
-
-                mostrarMensaje(
-                    "Invernadero no encontrado",
-                    "No existe ningún invernadero con ese código. Comprueba que el código sea correcto.",
-                    "🔎"
-                );
-
-
-                return;
-
-            }
-
-
-            // =================================================
-            // AÑADIR AL USUARIO
-            // =================================================
-
             try {
 
+                // -----------------------------------------
+                // COMPROBAR SI YA ESTÁ AÑADIDO
+                // -----------------------------------------
+
+                const usuarioSnap =
+                    await get(
+                        ref(
+                            database,
+                            `users/${uidActual}/greenhouses/${codigo}`
+                        )
+                    );
+
+
+                if (
+                    usuarioSnap.exists()
+                ) {
+
+                    mostrarMensaje(
+                        "⚠️",
+                        "Invernadero ya añadido",
+                        "Este invernadero ya está asociado a tu cuenta."
+                    );
+
+                    return;
+
+                }
+
+
+                // -----------------------------------------
+                // COMPROBAR SI EXISTE
+                // -----------------------------------------
+
+                const infoSnap =
+                    await get(
+                        ref(
+                            database,
+                            `greenhouses/${codigo}/info`
+                        )
+                    );
+
+
+                if (
+                    !infoSnap.exists()
+                ) {
+
+                    mostrarMensaje(
+                        "❌",
+                        "Invernadero no encontrado",
+                        "No existe ningún invernadero con ese código."
+                    );
+
+                    return;
+
+                }
+
+
+                // -----------------------------------------
+                // AÑADIR AL USUARIO
+                // -----------------------------------------
+
                 await set(
-                    usuarioGreenhouseRef,
+                    ref(
+                        database,
+                        `users/${uidActual}/greenhouses/${codigo}`
+                    ),
                     true
                 );
 
 
                 mostrarMensaje(
+                    "✅",
                     "Invernadero añadido",
-                    "El invernadero se ha añadido correctamente a tu cuenta.",
-                    "✅"
+                    "El invernadero se ha añadido correctamente a tu cuenta."
                 );
 
 
                 closeModalFunction();
 
-
                 cargarInvernaderos();
 
-
-            } catch (error) {
+            }
+            catch (error) {
 
                 console.error(
-                    "Error al unirse al invernadero:",
+                    "Error uniéndose al invernadero:",
                     error
                 );
 
 
                 mostrarMensaje(
-                    "No se ha podido añadir",
-                    "Ha ocurrido un error al añadir el invernadero. Inténtalo de nuevo.",
-                    "❌"
+                    "⚠️",
+                    "Error",
+                    "No se ha podido añadir el invernadero."
                 );
 
             }
 
         }
     );
+
+
+// =========================================================
+// MODAL AÑADIR
+// =========================================================
+
+function openModal() {
+
+    if (modal) {
+
+        modal.classList.add(
+            "active"
+        );
+
+    }
+
+}
+
+
+function closeModalFunction() {
+
+    if (modal) {
+
+        modal.classList.remove(
+            "active"
+        );
+
+    }
+
+}
+
+
+addButton?.addEventListener(
+    "click",
+    openModal
+);
+
+
+closeModal?.addEventListener(
+    "click",
+    closeModalFunction
+);
+
+
+// =========================================================
+// MODAL MENSAJES
+// =========================================================
+
+const messageModal =
+    document.getElementById(
+        "messageModal"
+    );
+
+const closeMessageModal =
+    document.getElementById(
+        "closeMessageModal"
+    );
+
+const messageModalIcon =
+    document.getElementById(
+        "messageModalIcon"
+    );
+
+const messageModalTitle =
+    document.getElementById(
+        "messageModalTitle"
+    );
+
+const messageModalText =
+    document.getElementById(
+        "messageModalText"
+    );
+
+const messageModalButton =
+    document.getElementById(
+        "messageModalButton"
+    );
+
+
+function mostrarMensaje(
+    icono,
+    titulo,
+    texto
+) {
+
+    if (!messageModal) {
+        return;
+    }
+
+
+    if (messageModalIcon) {
+
+        messageModalIcon.textContent =
+            icono;
+
+    }
+
+
+    if (messageModalTitle) {
+
+        messageModalTitle.textContent =
+            titulo;
+
+    }
+
+
+    if (messageModalText) {
+
+        messageModalText.textContent =
+            texto;
+
+    }
+
+
+    messageModal.classList.add(
+        "active"
+    );
+
+}
+
+
+function cerrarMensaje() {
+
+    if (messageModal) {
+
+        messageModal.classList.remove(
+            "active"
+        );
+
+    }
+
+}
+
+
+closeMessageModal?.addEventListener(
+    "click",
+    cerrarMensaje
+);
+
+
+messageModalButton?.addEventListener(
+    "click",
+    cerrarMensaje
+);
+
+
+// =========================================================
+// CONVERTIR TIMESTAMP
+// =========================================================
+
+function convertirTimestamp(
+    timestamp
+) {
+
+    if (
+        timestamp === undefined ||
+        timestamp === null
+    ) {
+
+        return null;
+
+    }
+
+
+    if (
+        typeof timestamp === "number"
+    ) {
+
+        return timestamp;
+
+    }
+
+
+    if (
+        typeof timestamp === "string"
+    ) {
+
+        const fecha =
+            Date.parse(timestamp);
+
+
+        if (!Number.isNaN(fecha)) {
+
+            return fecha;
+
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+// =========================================================
+// ACTUALIZAR ESTADOS AUTOMÁTICAMENTE
+// =========================================================
+
+setInterval(
+    () => {
+
+        if (
+            listaInvernaderos.length === 0
+        ) {
+            return;
+        }
+
+
+        let necesitaActualizar =
+            false;
+
+
+        listaInvernaderos.forEach(
+            (greenhouse) => {
+
+                if (
+                    !greenhouse.ultimaConexion
+                ) {
+
+                    if (
+                        greenhouse.online
+                    ) {
+
+                        greenhouse.online =
+                            false;
+
+                        necesitaActualizar =
+                            true;
+
+                    }
+
+                    return;
+                }
+
+
+                const online =
+                    Date.now() -
+                        greenhouse.ultimaConexion <=
+                    TIEMPO_MAXIMO_SIN_DATOS;
+
+
+                if (
+                    online !==
+                    greenhouse.online
+                ) {
+
+                    greenhouse.online =
+                        online;
+
+                    necesitaActualizar =
+                        true;
+
+                }
+
+            }
+        );
+
+
+        if (necesitaActualizar) {
+
+            renderGreenhouses(
+                listaInvernaderos
+            );
+
+        }
+
+    },
+    10000
+);
 
 
 // =========================================================
@@ -852,14 +1292,20 @@ function cargarTema() {
 
 
     if (
-        tema === "dark" &&
-        themeButton
+        tema === "dark"
     ) {
 
-        document.body.classList.add("dark");
+        document.body.classList.add(
+            "dark"
+        );
 
-        themeButton.textContent =
-            "☀️";
+
+        if (themeButton) {
+
+            themeButton.textContent =
+                "☀️";
+
+        }
 
     }
 
@@ -889,10 +1335,14 @@ themeButton?.addEventListener(
         );
 
 
-        themeButton.textContent =
-            dark
-                ? "☀️"
-                : "🌙";
+        if (themeButton) {
+
+            themeButton.textContent =
+                dark
+                    ? "☀️"
+                    : "🌙";
+
+        }
 
     }
 );
