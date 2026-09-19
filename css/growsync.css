@@ -1399,6 +1399,139 @@ button {
 
 }
 
+/* =====================================================
+   ESTADO DEL INVERNADERO
+   ===================================================== */
+
+.greenhouse-status {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 5px 9px;
+
+    border-radius: 20px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+}
+
+
+.greenhouse-status-dot {
+
+    width: 8px;
+
+    height: 8px;
+
+    border-radius: 50%;
+
+    display: inline-block;
+}
+
+
+/* ONLINE */
+
+.greenhouse-status.online {
+
+    color: #2e8b57;
+
+    background: rgba(46, 139, 87, 0.10);
+}
+
+
+.greenhouse-status.online
+.greenhouse-status-dot {
+
+    background: #2e8b57;
+
+    box-shadow:
+        0 0 7px rgba(46, 139, 87, 0.5);
+}
+
+
+/* OFFLINE */
+
+.greenhouse-status.offline {
+
+    color: #d93025;
+
+    background: rgba(217, 48, 37, 0.10);
+}
+
+
+.greenhouse-status.offline
+.greenhouse-status-dot {
+
+    background: #d93025;
+
+    box-shadow:
+        0 0 7px rgba(217, 48, 37, 0.5);
+}
+
+
+/* =====================================================
+   ACCIONES DEL INVERNADERO
+   ===================================================== */
+
+.greenhouse-actions {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    margin-top: 18px;
+}
+
+
+/* BOTÓN ELIMINAR */
+
+.delete-button {
+
+    width: 100%;
+
+    min-height: 42px;
+
+    border: 1px solid rgba(217, 48, 37, 0.25);
+
+    border-radius: 10px;
+
+    background: rgba(217, 48, 37, 0.08);
+
+    color: #d93025;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.delete-button:hover {
+
+    background: rgba(217, 48, 37, 0.15);
+
+    transform: translateY(-1px);
+}
+
+
+.delete-button:active {
+
+    transform: translateY(0);
+}
+
 /* =========================================================
    MENÚ
    ========================================================= */
