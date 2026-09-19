@@ -21,19 +21,27 @@ import {
 // ELEMENTOS
 // =========================================================
 
-const greenhouseName = document.getElementById("greenhouseName");
-const greenhouseCode = document.getElementById("greenhouseCode");
-const userAvatar = document.getElementById("userAvatar");
-const backButton = document.getElementById("backButton");
-const themeButton = document.getElementById("themeButton");
+const greenhouseName =
+    document.getElementById("greenhouseName");
+
+const greenhouseCode =
+    document.getElementById("greenhouseCode");
+
+const userAvatar =
+    document.getElementById("userAvatar");
+
+const backButton =
+    document.getElementById("backButton");
+
+const themeButton =
+    document.getElementById("themeButton");
 
 
 // =========================================================
-// TIEMPO MÁXIMO SIN RECIBIR DATOS
+// CONFIGURACIÓN
 // =========================================================
 
-// Si un sensor lleva más de 2 minutos sin actualizarse,
-// se considera OFFLINE.
+// Tiempo máximo que puede pasar un sensor sin enviar datos.
 
 const TIEMPO_MAXIMO_SIN_DATOS = 2 * 60 * 1000;
 
@@ -41,48 +49,51 @@ const TIEMPO_MAXIMO_SIN_DATOS = 2 * 60 * 1000;
 // =========================================================
 // SENSORES
 // =========================================================
-//
-// id       = nombre utilizado en el HTML
-// campo    = nombre que utiliza Firebase
-// unidad   = unidad que mostramos
-//
 
 const SENSORES = [
+
     {
         id: "temperature",
         campo: "temperatura",
         unidad: "°C"
     },
+
     {
         id: "humidity",
         campo: "humedad",
         unidad: "%"
     },
+
     {
         id: "soil",
         campo: "suelo",
         unidad: "%"
     },
+
     {
         id: "light",
         campo: "luz",
         unidad: "lux"
     },
+
     {
         id: "water",
         campo: "agua",
         unidad: "%"
     },
+
     {
         id: "battery",
         campo: "bateria",
         unidad: "%"
     },
+
     {
         id: "solar",
         campo: "solar",
         unidad: "W"
     }
+
 ];
 
 
@@ -90,10 +101,15 @@ const SENSORES = [
 // INVERNADERO SELECCIONADO
 // =========================================================
 
-const codigo = localStorage.getItem("selectedGreenhouse");
+const codigo =
+    localStorage.getItem("selectedGreenhouse");
+
 
 if (!codigo) {
-    window.location.href = "invernaderos.html";
+
+    window.location.href =
+        "invernaderos.html";
+
 }
 
 
@@ -104,14 +120,22 @@ if (!codigo) {
 onAuthStateChanged(auth, (user) => {
 
     if (!user) {
-        window.location.href = "index.html";
+
+        window.location.href =
+            "index.html";
+
         return;
+
     }
 
+
     if (userAvatar) {
+
         userAvatar.textContent =
             (user.email || "U")[0].toUpperCase();
+
     }
+
 
     cargarDatos();
 
@@ -124,27 +148,40 @@ onAuthStateChanged(auth, (user) => {
 
 function cargarDatos() {
 
+
     // -----------------------------------------------------
     // INFORMACIÓN DEL INVERNADERO
     // -----------------------------------------------------
 
     onValue(
-        ref(database, `greenhouses/${codigo}/info`),
+        ref(
+            database,
+            `greenhouses/${codigo}/info`
+        ),
+
         (snap) => {
 
-            const info = snap.exists()
-                ? snap.val()
-                : {
-                    nombre: "Invernadero"
-                };
+            const info =
+                snap.exists()
+                    ? snap.val()
+                    : {
+                        nombre: "Invernadero"
+                    };
+
 
             if (greenhouseName) {
+
                 greenhouseName.textContent =
                     info.nombre || "Invernadero";
+
             }
 
+
             if (greenhouseCode) {
-                greenhouseCode.textContent = codigo;
+
+                greenhouseCode.textContent =
+                    codigo;
+
             }
 
         }
@@ -156,12 +193,18 @@ function cargarDatos() {
     // -----------------------------------------------------
 
     onValue(
-        ref(database, `greenhouses/${codigo}/sensores`),
+        ref(
+            database,
+            `greenhouses/${codigo}/sensores`
+        ),
+
         (snap) => {
 
-            const datos = snap.exists()
-                ? snap.val()
-                : {};
+            const datos =
+                snap.exists()
+                    ? snap.val()
+                    : {};
+
 
             SENSORES.forEach((sensor) => {
 
@@ -182,29 +225,55 @@ function cargarDatos() {
 // ACTUALIZAR SENSOR
 // =========================================================
 
-function actualizarSensor(sensor, datos) {
+function actualizarSensor(
+    sensor,
+    datos
+) {
 
     const valorElement =
         document.getElementById(sensor.id);
+
 
     const tarjeta =
         document.querySelector(
             `[data-sensor="${sensor.id}"]`
         );
 
+
     if (!valorElement || !tarjeta) {
+
         return;
+
     }
 
+
     const estadoElement =
-        tarjeta.querySelector(".sensor-status");
+        tarjeta.querySelector(
+            ".sensor-status"
+        );
+
 
     const puntoEstado =
-        tarjeta.querySelector(".sensor-status-dot");
+        tarjeta.querySelector(
+            ".sensor-status-dot"
+        );
+
+
+    const estadoTexto =
+        tarjeta.querySelector(
+            ".sensor-status-text"
+        );
+
 
     const ultimaActualizacionElement =
-        tarjeta.querySelector(".sensor-last-update");
+        tarjeta.querySelector(
+            ".sensor-last-update"
+        );
 
+
+    // -----------------------------------------------------
+    // NO HAY DATOS
+    // -----------------------------------------------------
 
     if (
         !datos ||
@@ -218,15 +287,23 @@ function actualizarSensor(sensor, datos) {
             valorElement,
             estadoElement,
             puntoEstado,
+            estadoTexto,
             ultimaActualizacionElement
         );
 
         return;
+
     }
 
 
+    // -----------------------------------------------------
+    // CONVERTIR TIMESTAMP
+    // -----------------------------------------------------
+
     const ultimaConexion =
-        convertirTimestamp(datos.ultimaConexion);
+        convertirTimestamp(
+            datos.ultimaConexion
+        );
 
 
     if (!ultimaConexion) {
@@ -237,17 +314,26 @@ function actualizarSensor(sensor, datos) {
             valorElement,
             estadoElement,
             puntoEstado,
+            estadoTexto,
             ultimaActualizacionElement
         );
 
         return;
+
     }
 
 
-    // Guardamos la última conexión en la tarjeta.
+    // -----------------------------------------------------
+    // GUARDAR ÚLTIMA CONEXIÓN
+    // -----------------------------------------------------
+
     tarjeta.dataset.ultimaConexion =
         ultimaConexion;
 
+
+    // -----------------------------------------------------
+    // COMPROBAR SI ESTÁ ONLINE
+    // -----------------------------------------------------
 
     const tiempoSinDatos =
         Date.now() - ultimaConexion;
@@ -262,116 +348,25 @@ function actualizarSensor(sensor, datos) {
             valorElement,
             estadoElement,
             puntoEstado,
+            estadoTexto,
             ultimaActualizacionElement,
             ultimaConexion
         );
 
         return;
-    }
 
-
-    ponerSensorOnline(
-        valorElement,
-        estadoElement,
-        puntoEstado,
-        ultimaActualizacionElement,
-        datos.valor,
-        sensor.unidad,
-        ultimaConexion
-    );
-}
-
-
-    // -----------------------------------------------------
-    // ELEMENTOS DE ESTADO
-    // -----------------------------------------------------
-
-    const estadoElement =
-        tarjeta.querySelector(".sensor-status");
-
-    const puntoEstado =
-        tarjeta.querySelector(".sensor-status-dot");
-
-    const ultimaActualizacionElement =
-        tarjeta.querySelector(".sensor-last-update");
-
-
-    // -----------------------------------------------------
-    // COMPROBAR SI EXISTEN DATOS
-    // -----------------------------------------------------
-
-    if (
-        !datos ||
-        datos.valor === undefined ||
-        datos.ultimaConexion === undefined
-    ) {
-
-        ponerSensorOffline(
-            valorElement,
-            estadoElement,
-            puntoEstado,
-            ultimaActualizacionElement
-        );
-
-        return;
     }
 
 
     // -----------------------------------------------------
-    // COMPROBAR FECHA
-    // -----------------------------------------------------
-
-    const ultimaConexion =
-        convertirTimestamp(datos.ultimaConexion);
-
-    if (!ultimaConexion) {
-
-        ponerSensorOffline(
-            valorElement,
-            estadoElement,
-            puntoEstado,
-            ultimaActualizacionElement
-        );
-
-        return;
-    }
-
-
-    const ahora = Date.now();
-
-    const tiempoSinDatos =
-        ahora - ultimaConexion;
-
-
-    // -----------------------------------------------------
-    // SENSOR OFFLINE
-    // -----------------------------------------------------
-
-    if (
-        tiempoSinDatos >
-        TIEMPO_MAXIMO_SIN_DATOS
-    ) {
-
-        ponerSensorOffline(
-            valorElement,
-            estadoElement,
-            puntoEstado,
-            ultimaActualizacionElement,
-            ultimaConexion
-        );
-
-        return;
-    }
-
-
-    // -----------------------------------------------------
-    // SENSOR ONLINE
+    // ONLINE
     // -----------------------------------------------------
 
     ponerSensorOnline(
         valorElement,
         estadoElement,
         puntoEstado,
+        estadoTexto,
         ultimaActualizacionElement,
         datos.valor,
         sensor.unidad,
@@ -389,20 +384,27 @@ function ponerSensorOnline(
     valorElement,
     estadoElement,
     puntoEstado,
+    estadoTexto,
     ultimaActualizacionElement,
     valor,
     unidad,
     ultimaConexion
 ) {
 
-    valorElement.textContent =
-        `${valor} ${unidad}`;
 
+    // -----------------------------------------------------
+    // VALOR
+    // -----------------------------------------------------
+
+    valorElement.textContent =
+        valor;
+
+
+    // -----------------------------------------------------
+    // ESTADO
+    // -----------------------------------------------------
 
     if (estadoElement) {
-
-        estadoElement.textContent =
-            "Online";
 
         estadoElement.classList.remove(
             "offline"
@@ -411,6 +413,7 @@ function ponerSensorOnline(
         estadoElement.classList.add(
             "online"
         );
+
     }
 
 
@@ -423,13 +426,27 @@ function ponerSensorOnline(
         puntoEstado.classList.add(
             "online"
         );
+
     }
 
+
+    if (estadoTexto) {
+
+        estadoTexto.textContent =
+            "Online";
+
+    }
+
+
+    // -----------------------------------------------------
+    // ÚLTIMA ACTUALIZACIÓN
+    // -----------------------------------------------------
 
     if (ultimaActualizacionElement) {
 
         ultimaActualizacionElement.textContent =
             `Actualizado ${tiempoTranscurrido(ultimaConexion)}`;
+
     }
 
 }
@@ -443,20 +460,25 @@ function ponerSensorOffline(
     valorElement,
     estadoElement,
     puntoEstado,
+    estadoTexto,
     ultimaActualizacionElement,
     ultimaConexion = null
 ) {
 
-    // No mostramos un dato que ya no sabemos
-    // si es actual.
 
-    valorElement.textContent = "—";
+    // -----------------------------------------------------
+    // OCULTAR VALOR ANTIGUO
+    // -----------------------------------------------------
 
+    valorElement.textContent =
+        "—";
+
+
+    // -----------------------------------------------------
+    // ESTADO
+    // -----------------------------------------------------
 
     if (estadoElement) {
-
-        estadoElement.textContent =
-            "Offline";
 
         estadoElement.classList.remove(
             "online"
@@ -465,6 +487,7 @@ function ponerSensorOffline(
         estadoElement.classList.add(
             "offline"
         );
+
     }
 
 
@@ -477,8 +500,21 @@ function ponerSensorOffline(
         puntoEstado.classList.add(
             "offline"
         );
+
     }
 
+
+    if (estadoTexto) {
+
+        estadoTexto.textContent =
+            "Offline";
+
+    }
+
+
+    // -----------------------------------------------------
+    // ÚLTIMA ACTUALIZACIÓN
+    // -----------------------------------------------------
 
     if (ultimaActualizacionElement) {
 
@@ -505,38 +541,49 @@ function ponerSensorOffline(
 
 function convertirTimestamp(timestamp) {
 
-    if (timestamp === null ||
-        timestamp === undefined) {
+    if (
+        timestamp === null ||
+        timestamp === undefined
+    ) {
 
         return null;
+
     }
 
 
-    // Firebase normalmente devolverá
-    // un timestamp numérico en milisegundos.
+    // Firebase normalmente utilizará
+    // milisegundos desde 1970.
 
-    if (typeof timestamp === "number") {
+    if (
+        typeof timestamp === "number"
+    ) {
 
         return timestamp;
+
     }
 
 
-    // Por si en algún momento utilizamos
-    // una fecha ISO.
+    // También permitimos fechas ISO.
 
-    if (typeof timestamp === "string") {
+    if (
+        typeof timestamp === "string"
+    ) {
 
         const fecha =
             Date.parse(timestamp);
 
+
         if (!Number.isNaN(fecha)) {
+
             return fecha;
+
         }
 
     }
 
 
     return null;
+
 }
 
 
@@ -547,7 +594,9 @@ function convertirTimestamp(timestamp) {
 function tiempoTranscurrido(timestamp) {
 
     if (!timestamp) {
+
         return "—";
+
     }
 
 
@@ -558,48 +607,59 @@ function tiempoTranscurrido(timestamp) {
 
 
     if (segundos < 5) {
+
         return "ahora mismo";
+
     }
 
 
     if (segundos < 60) {
+
         return `hace ${segundos} s`;
+
     }
 
 
     const minutos =
-        Math.floor(segundos / 60);
+        Math.floor(
+            segundos / 60
+        );
 
 
     if (minutos < 60) {
 
         return `hace ${minutos} min`;
+
     }
 
 
     const horas =
-        Math.floor(minutos / 60);
+        Math.floor(
+            minutos / 60
+        );
 
 
     return `hace ${horas} h`;
+
 }
 
 
 // =========================================================
-// COMPROBAR ESTADO PERIÓDICAMENTE
+// COMPROBAR SENSORES PERIÓDICAMENTE
 // =========================================================
 //
-// Firebase solo nos avisa cuando cambia un dato.
+// Firebase avisa cuando cambia un dato.
 //
-// Por eso comprobamos cada 10 segundos si alguno
-// de los sensores ha superado los 2 minutos.
+// Pero si un sensor deja de enviar datos,
+// Firebase no genera un nuevo evento.
+//
+// Por eso comprobamos cada 10 segundos.
 //
 
-setInterval(() => {
-
-    comprobarSensores();
-
-}, 10000);
+setInterval(
+    comprobarSensores,
+    10000
+);
 
 
 // =========================================================
@@ -615,16 +675,22 @@ function comprobarSensores() {
                 `[data-sensor="${sensor.id}"]`
             );
 
+
         if (!tarjeta) {
+
             return;
+
         }
 
 
         const ultimaConexion =
             tarjeta.dataset.ultimaConexion;
 
+
         if (!ultimaConexion) {
+
             return;
+
         }
 
 
@@ -638,15 +704,28 @@ function comprobarSensores() {
         ) {
 
             const valorElement =
-                document.getElementById(sensor.id);
+                document.getElementById(
+                    sensor.id
+                );
+
 
             const estadoElement =
-                tarjeta.querySelector(".sensor-status");
+                tarjeta.querySelector(
+                    ".sensor-status"
+                );
+
 
             const puntoEstado =
                 tarjeta.querySelector(
                     ".sensor-status-dot"
                 );
+
+
+            const estadoTexto =
+                tarjeta.querySelector(
+                    ".sensor-status-text"
+                );
+
 
             const ultimaActualizacionElement =
                 tarjeta.querySelector(
@@ -658,6 +737,7 @@ function comprobarSensores() {
                 valorElement,
                 estadoElement,
                 puntoEstado,
+                estadoTexto,
                 ultimaActualizacionElement,
                 tiempo
             );
@@ -667,44 +747,6 @@ function comprobarSensores() {
     });
 
 }
-
-
-// =========================================================
-// GUARDAR ÚLTIMA CONEXIÓN EN LA TARJETA
-// =========================================================
-//
-// Guardamos el timestamp en data-ultima-conexion
-// para poder comprobarlo cada 10 segundos.
-//
-
-const observer =
-    new MutationObserver(() => {
-
-        SENSORES.forEach((sensor) => {
-
-            const tarjeta =
-                document.querySelector(
-                    `[data-sensor="${sensor.id}"]`
-                );
-
-            if (!tarjeta) {
-                return;
-            }
-
-            // Si todavía no tiene timestamp,
-            // no hacemos nada aquí.
-
-        });
-
-    });
-
-observer.observe(
-    document.body,
-    {
-        childList: true,
-        subtree: true
-    }
-);
 
 
 // =========================================================
@@ -733,14 +775,19 @@ function cargarTema() {
             "growsync-theme"
         );
 
+
     if (tema === "dark") {
 
         document.body.classList.add(
             "dark"
         );
 
+
         if (themeButton) {
-            themeButton.textContent = "☀️";
+
+            themeButton.textContent =
+                "☀️";
+
         }
 
     }
@@ -756,20 +803,27 @@ themeButton?.addEventListener(
             "dark"
         );
 
+
         const dark =
             document.body.classList.contains(
                 "dark"
             );
 
+
         localStorage.setItem(
             "growsync-theme",
-            dark ? "dark" : "light"
+            dark
+                ? "dark"
+                : "light"
         );
+
 
         if (themeButton) {
 
             themeButton.textContent =
-                dark ? "☀️" : "🌙";
+                dark
+                    ? "☀️"
+                    : "🌙";
 
         }
 
