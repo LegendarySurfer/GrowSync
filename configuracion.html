@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrowSync - Configuración</title>
+    <link rel="stylesheet" href="css/growsync.css">
+</head>
+
+<body>
+
+    <!-- ===================================================
+         CABECERA (idéntica a invernaderos.html)
+         =================================================== -->
+
+    <header class="topbar">
+
+        <div class="brand">
+
+            <button type="button" class="menu-button" id="menuButton" aria-label="Abrir menú">
+                🌱
+            </button>
+
+            <span>GrowSync</span>
+
+            <div class="side-menu" id="sideMenu">
+
+                <a href="invernaderos.html" class="side-menu-item">
+                    <span class="side-menu-icon">🌱</span>
+                    <span>Invernaderos</span>
+                </a>
+
+                <button type="button" class="side-menu-item" id="settingsButton">
+                    <span class="side-menu-icon">⚙️</span>
+                    <span>Ajustes</span>
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="topbar-actions">
+            <button type="button" class="theme-button small" id="themeButton" aria-label="Cambiar tema">
+                🌙
+            </button>
+            <div class="user-avatar" id="userAvatar">U</div>
+        </div>
+
+    </header>
+
+
+    <!-- ===================================================
+         CONTENIDO
+         =================================================== -->
+
+    <main class="settings-page">
+
+        <section class="page-header">
+            <div>
+                <span class="page-label">MI CUENTA</span>
+                <h1>Ajustes</h1>
+                <p>Gestiona el correo y la seguridad de tu cuenta.</p>
+            </div>
+        </section>
+
+        <section class="settings-grid">
+
+            <!-- CORREO ACTUAL / CAMBIAR CORREO -->
+            <article class="settings-card">
+
+                <h2>Correo electrónico</h2>
+                <p>
+                    Correo actual: <strong id="currentEmail">—</strong>
+                </p>
+
+                <form id="changeEmailForm">
+
+                    <div class="input-group">
+                        <label for="currentPasswordEmail">Contraseña actual</label>
+                        <input
+                            type="password"
+                            id="currentPasswordEmail"
+                            placeholder="Confírmala para poder cambiar el correo"
+                            autocomplete="current-password"
+                            required
+                        >
+                    </div>
+
+                    <div class="input-group">
+                        <label for="newEmail">Nuevo correo electrónico</label>
+                        <input
+                            type="email"
+                            id="newEmail"
+                            placeholder="nuevo@correo.com"
+                            autocomplete="email"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="primary-button login-button">
+                        Actualizar correo
+                    </button>
+
+                </form>
+
+                <p class="login-message" id="emailMessage"></p>
+
+            </article>
+
+
+            <!-- ELIMINAR CUENTA -->
+            <article class="settings-card danger">
+
+                <h2>Eliminar cuenta</h2>
+                <p>
+                    Esta acción borra tu acceso a GrowSync de forma permanente.
+                    No elimina los invernaderos en sí (otras personas podrían
+                    seguir usándolos si comparten el código).
+                </p>
+
+                <form id="deleteAccountForm">
+
+                    <div class="input-group">
+                        <label for="currentPasswordDelete">Contraseña actual</label>
+                        <input
+                            type="password"
+                            id="currentPasswordDelete"
+                            placeholder="Confirma tu contraseña"
+                            autocomplete="current-password"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="danger-button">
+                        Eliminar mi cuenta
+                    </button>
+
+                </form>
+
+                <p class="login-message" id="deleteMessage"></p>
+
+            </article>
+
+        </section>
+
+    </main>
+
+
+    <script src="js/firebase.js" type="module"></script>
+    <script src="js/configuracion.js" type="module"></script>
+    <script src="js/menu.js" type="module"></script>
+
+</body>
+</html>
