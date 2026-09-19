@@ -153,10 +153,21 @@
             </div>
 
 
-           <div class="system-status" id="systemStatus">
+            <!-- ESTADO GENERAL DEL SISTEMA -->
+
+            <div
+                class="system-status"
+                id="systemStatus"
+            >
+
                 <span class="status-dot"></span>
-                <span id="systemStatusText">Comprobando sistema...</span>
+
+                <span id="systemStatusText">
+                    Comprobando sistema...
+                </span>
+
             </div>
+
         </section>
 
 
@@ -174,13 +185,16 @@
                  TEMPERATURA
             ========================== -->
 
-            <article class="sensor-card">
+            <article
+                class="sensor-card"
+                data-sensor="temperature"
+            >
 
                 <div class="sensor-header">
 
                     <div class="sensor-title">
 
-                        <div class="sensor-icon temperature">
+                        <div class="sensor-icon">
                             🌡️
                         </div>
 
@@ -199,8 +213,16 @@
                     </div>
 
 
-                    <span class="sensor-status">
-                        Online
+                    <!-- ESTADO DEL SENSOR -->
+
+                    <span class="sensor-status offline">
+
+                        <span class="sensor-status-dot offline"></span>
+
+                        <span class="sensor-status-text">
+                            Offline
+                        </span>
+
                     </span>
 
                 </div>
@@ -209,7 +231,7 @@
                 <div class="sensor-value">
 
                     <strong id="temperature">
-                        24.6
+                        —
                     </strong>
 
                     <span>
@@ -260,12 +282,12 @@
 
                 <div class="sensor-footer">
 
-                    <span>
-                        Actualizado ahora
+                    <span class="sensor-last-update">
+                        Sin datos recibidos
                     </span>
 
-                    <span>
-                        ✓
+                    <span class="sensor-footer-icon">
+                        —
                     </span>
 
                 </div>
@@ -273,11 +295,15 @@
             </article>
 
 
+
             <!-- =========================
                  HUMEDAD AMBIENTE
             ========================== -->
 
-            <article class="sensor-card">
+            <article
+                class="sensor-card"
+                data-sensor="humidity"
+            >
 
                 <div class="sensor-header">
 
@@ -302,8 +328,14 @@
                     </div>
 
 
-                    <span class="sensor-status">
-                        Online
+                    <span class="sensor-status offline">
+
+                        <span class="sensor-status-dot offline"></span>
+
+                        <span class="sensor-status-text">
+                            Offline
+                        </span>
+
                     </span>
 
                 </div>
@@ -312,7 +344,7 @@
                 <div class="sensor-value">
 
                     <strong id="humidity">
-                        62
+                        —
                     </strong>
 
                     <span>
@@ -363,12 +395,12 @@
 
                 <div class="sensor-footer">
 
-                    <span>
-                        Actualizado ahora
+                    <span class="sensor-last-update">
+                        Sin datos recibidos
                     </span>
 
-                    <span>
-                        ✓
+                    <span class="sensor-footer-icon">
+                        —
                     </span>
 
                 </div>
@@ -376,11 +408,15 @@
             </article>
 
 
+
             <!-- =========================
                  HUMEDAD DEL SUELO
             ========================== -->
 
-            <article class="sensor-card">
+            <article
+                class="sensor-card"
+                data-sensor="soil"
+            >
 
                 <div class="sensor-header">
 
@@ -405,8 +441,14 @@
                     </div>
 
 
-                    <span class="sensor-status">
-                        Online
+                    <span class="sensor-status offline">
+
+                        <span class="sensor-status-dot offline"></span>
+
+                        <span class="sensor-status-text">
+                            Offline
+                        </span>
+
                     </span>
 
                 </div>
@@ -415,7 +457,7 @@
                 <div class="sensor-value">
 
                     <strong id="soil">
-                        48
+                        —
                     </strong>
 
                     <span>
@@ -466,12 +508,12 @@
 
                 <div class="sensor-footer">
 
-                    <span>
-                        Actualizado ahora
+                    <span class="sensor-last-update">
+                        Sin datos recibidos
                     </span>
 
-                    <span>
-                        ✓
+                    <span class="sensor-footer-icon">
+                        —
                     </span>
 
                 </div>
@@ -479,11 +521,15 @@
             </article>
 
 
+
             <!-- =========================
                  LUMINOSIDAD
             ========================== -->
 
-            <article class="sensor-card">
+            <article
+                class="sensor-card"
+                data-sensor="light"
+            >
 
                 <div class="sensor-header">
 
@@ -508,8 +554,14 @@
                     </div>
 
 
-                    <span class="sensor-status">
-                        Online
+                    <span class="sensor-status offline">
+
+                        <span class="sensor-status-dot offline"></span>
+
+                        <span class="sensor-status-text">
+                            Offline
+                        </span>
+
                     </span>
 
                 </div>
@@ -518,7 +570,7 @@
                 <div class="sensor-value">
 
                     <strong id="light">
-                        8.420
+                        —
                     </strong>
 
                     <span>
@@ -569,12 +621,12 @@
 
                 <div class="sensor-footer">
 
-                    <span>
-                        Actualizado ahora
+                    <span class="sensor-last-update">
+                        Sin datos recibidos
                     </span>
 
-                    <span>
-                        ✓
+                    <span class="sensor-footer-icon">
+                        —
                     </span>
 
                 </div>
@@ -582,11 +634,15 @@
             </article>
 
 
+
             <!-- =========================
                  DEPÓSITO DE AGUA
             ========================== -->
 
-            <article class="sensor-card">
+            <article
+                class="sensor-card"
+                data-sensor="water"
+            >
 
                 <div class="sensor-header">
 
@@ -611,8 +667,14 @@
                     </div>
 
 
-                    <span class="sensor-status">
-                        Online
+                    <span class="sensor-status offline">
+
+                        <span class="sensor-status-dot offline"></span>
+
+                        <span class="sensor-status-text">
+                            Offline
+                        </span>
+
                     </span>
 
                 </div>
@@ -621,7 +683,7 @@
                 <div class="sensor-value">
 
                     <strong id="water">
-                        76
+                        —
                     </strong>
 
                     <span>
@@ -672,12 +734,12 @@
 
                 <div class="sensor-footer">
 
-                    <span>
-                        Actualizado ahora
+                    <span class="sensor-last-update">
+                        Sin datos recibidos
                     </span>
 
-                    <span>
-                        ✓
+                    <span class="sensor-footer-icon">
+                        —
                     </span>
 
                 </div>
@@ -685,11 +747,15 @@
             </article>
 
 
+
             <!-- =========================
                  BATERÍA
             ========================== -->
 
-            <article class="sensor-card">
+            <article
+                class="sensor-card"
+                data-sensor="battery"
+            >
 
                 <div class="sensor-header">
 
@@ -714,8 +780,14 @@
                     </div>
 
 
-                    <span class="sensor-status">
-                        Online
+                    <span class="sensor-status offline">
+
+                        <span class="sensor-status-dot offline"></span>
+
+                        <span class="sensor-status-text">
+                            Offline
+                        </span>
+
                     </span>
 
                 </div>
@@ -724,7 +796,7 @@
                 <div class="sensor-value">
 
                     <strong id="battery">
-                        87
+                        —
                     </strong>
 
                     <span>
@@ -775,12 +847,12 @@
 
                 <div class="sensor-footer">
 
-                    <span>
-                        Actualizado ahora
+                    <span class="sensor-last-update">
+                        Sin datos recibidos
                     </span>
 
-                    <span>
-                        ✓
+                    <span class="sensor-footer-icon">
+                        —
                     </span>
 
                 </div>
@@ -788,11 +860,15 @@
             </article>
 
 
+
             <!-- =========================
                  PRODUCCIÓN SOLAR
             ========================== -->
 
-            <article class="sensor-card">
+            <article
+                class="sensor-card"
+                data-sensor="solar"
+            >
 
                 <div class="sensor-header">
 
@@ -817,8 +893,14 @@
                     </div>
 
 
-                    <span class="sensor-status">
-                        Online
+                    <span class="sensor-status offline">
+
+                        <span class="sensor-status-dot offline"></span>
+
+                        <span class="sensor-status-text">
+                            Offline
+                        </span>
+
                     </span>
 
                 </div>
@@ -827,7 +909,7 @@
                 <div class="sensor-value">
 
                     <strong id="solar">
-                        142
+                        —
                     </strong>
 
                     <span>
@@ -878,12 +960,12 @@
 
                 <div class="sensor-footer">
 
-                    <span>
-                        Actualizado ahora
+                    <span class="sensor-last-update">
+                        Sin datos recibidos
                     </span>
 
-                    <span>
-                        ✓
+                    <span class="sensor-footer-icon">
+                        —
                     </span>
 
                 </div>
