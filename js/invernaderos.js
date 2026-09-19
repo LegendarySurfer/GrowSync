@@ -208,13 +208,10 @@ function renderGreenhouses(greenhouses) {
         const vacio =
             document.createElement("p");
 
-
         vacio.textContent =
             "Aún no tienes ningún invernadero. Crea uno o únete con un código.";
 
-
         container.appendChild(vacio);
-
     }
 
 
@@ -223,22 +220,45 @@ function renderGreenhouses(greenhouses) {
         const card =
             document.createElement("article");
 
-
         card.className =
             "greenhouse-card";
 
 
+        // -----------------------------------------
+        // DATOS
+        // -----------------------------------------
+
         const temp =
-            greenhouse.temperature !== undefined
+            greenhouse.online && greenhouse.temperature !== undefined
                 ? `${greenhouse.temperature}°C`
                 : "— °C";
 
 
         const hum =
-            greenhouse.humidity !== undefined
+            greenhouse.online && greenhouse.humidity !== undefined
                 ? `${greenhouse.humidity}%`
                 : "— %";
 
+
+        // -----------------------------------------
+        // ESTADO
+        // -----------------------------------------
+
+        const estadoClase =
+            greenhouse.online
+                ? "online"
+                : "offline";
+
+
+        const estadoTexto =
+            greenhouse.online
+                ? "Online"
+                : "Offline";
+
+
+        // -----------------------------------------
+        // TARJETA
+        // -----------------------------------------
 
         card.innerHTML = `
 
@@ -248,8 +268,13 @@ function renderGreenhouses(greenhouses) {
                     🌱
                 </div>
 
-                <span class="greenhouse-status">
-                    Online
+
+                <span class="greenhouse-status ${estadoClase}">
+
+                    <span class="greenhouse-status-dot"></span>
+
+                    ${estadoTexto}
+
                 </span>
 
             </div>
@@ -306,12 +331,26 @@ function renderGreenhouses(greenhouses) {
             </div>
 
 
-            <button
-                class="primary-button greenhouse-open"
-                data-id="${greenhouse.id}"
-            >
-                Abrir invernadero
-            </button>
+            <div class="greenhouse-actions">
+
+                <button
+                    type="button"
+                    class="primary-button greenhouse-open"
+                    data-id="${greenhouse.id}"
+                >
+                    Abrir invernadero
+                </button>
+
+
+                <button
+                    type="button"
+                    class="delete-button greenhouse-delete"
+                    data-id="${greenhouse.id}"
+                >
+                    🗑️ Eliminar
+                </button>
+
+            </div>
 
         `;
 
@@ -320,6 +359,97 @@ function renderGreenhouses(greenhouses) {
 
     });
 
+
+    // =====================================================
+    // BOTÓN ABRIR
+    // =====================================================
+
+    document
+        .querySelectorAll(".greenhouse-open")
+        .forEach((button) => {
+
+            button.addEventListener("click", () => {
+
+                localStorage.setItem(
+                    "selectedGreenhouse",
+                    button.dataset.id
+                );
+
+                window.location.href =
+                    "dashboard.html";
+
+            });
+
+        });
+
+
+    // =====================================================
+    // BOTÓN ELIMINAR
+    // =====================================================
+
+    document
+        .querySelectorAll(".greenhouse-delete")
+        .forEach((button) => {
+
+            button.addEventListener("click", async () => {
+
+                const codigo =
+                    button.dataset.id;
+
+
+                const confirmar =
+                    confirm(
+                        `¿Seguro que quieres eliminar el invernadero ${codigo} de tu cuenta?`
+                    );
+
+
+                if (!confirmar) {
+                    return;
+                }
+
+
+                try {
+
+                    await set(
+                        ref(
+                            database,
+                            `users/${uidActual}/greenhouses/${codigo}`
+                        ),
+                        null
+                    );
+
+
+                    mostrarMensaje(
+                        "🗑️",
+                        "Invernadero eliminado",
+                        "El invernadero se ha eliminado de tu cuenta."
+                    );
+
+
+                    cargarInvernaderos();
+
+                }
+                catch (error) {
+
+                    console.error(
+                        "Error eliminando invernadero:",
+                        error
+                    );
+
+
+                    mostrarMensaje(
+                        "⚠️",
+                        "Error",
+                        "No se ha podido eliminar el invernadero."
+                    );
+
+                }
+
+            });
+
+        });
+
+}
 
     // =====================================================
     // TARJETA AÑADIR
