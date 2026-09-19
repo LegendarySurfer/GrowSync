@@ -4,11 +4,8 @@ const settingsButton = document.getElementById("settingsButton");
 
 
 menuButton?.addEventListener("click", (event) => {
-
     event.stopPropagation();
-
     sideMenu?.classList.toggle("active");
-
 });
 
 
@@ -19,16 +16,12 @@ document.addEventListener("click", (event) => {
         !sideMenu.contains(event.target) &&
         !menuButton?.contains(event.target)
     ) {
-
         sideMenu.classList.remove("active");
-
     }
 
 });
 
 
 settingsButton?.addEventListener("click", () => {
-
-    // De momento no hacemos nada
-
+    window.location.href = "configuracion.html";
 });
