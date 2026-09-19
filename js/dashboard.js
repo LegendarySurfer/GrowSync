@@ -196,6 +196,91 @@ function actualizarSensor(sensor, datos) {
         return;
     }
 
+    const estadoElement =
+        tarjeta.querySelector(".sensor-status");
+
+    const puntoEstado =
+        tarjeta.querySelector(".sensor-status-dot");
+
+    const ultimaActualizacionElement =
+        tarjeta.querySelector(".sensor-last-update");
+
+
+    if (
+        !datos ||
+        datos.valor === undefined ||
+        datos.ultimaConexion === undefined
+    ) {
+
+        tarjeta.dataset.ultimaConexion = "";
+
+        ponerSensorOffline(
+            valorElement,
+            estadoElement,
+            puntoEstado,
+            ultimaActualizacionElement
+        );
+
+        return;
+    }
+
+
+    const ultimaConexion =
+        convertirTimestamp(datos.ultimaConexion);
+
+
+    if (!ultimaConexion) {
+
+        tarjeta.dataset.ultimaConexion = "";
+
+        ponerSensorOffline(
+            valorElement,
+            estadoElement,
+            puntoEstado,
+            ultimaActualizacionElement
+        );
+
+        return;
+    }
+
+
+    // Guardamos la última conexión en la tarjeta.
+    tarjeta.dataset.ultimaConexion =
+        ultimaConexion;
+
+
+    const tiempoSinDatos =
+        Date.now() - ultimaConexion;
+
+
+    if (
+        tiempoSinDatos >
+        TIEMPO_MAXIMO_SIN_DATOS
+    ) {
+
+        ponerSensorOffline(
+            valorElement,
+            estadoElement,
+            puntoEstado,
+            ultimaActualizacionElement,
+            ultimaConexion
+        );
+
+        return;
+    }
+
+
+    ponerSensorOnline(
+        valorElement,
+        estadoElement,
+        puntoEstado,
+        ultimaActualizacionElement,
+        datos.valor,
+        sensor.unidad,
+        ultimaConexion
+    );
+}
+
 
     // -----------------------------------------------------
     // ELEMENTOS DE ESTADO
