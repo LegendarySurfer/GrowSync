@@ -224,13 +224,12 @@ async function cargarConfiguracionSensores(uid, miRol, info) {
     // deja los 7 sensores de siempre como añadidos y activos.
     if (!configSnap.exists() && miRol === "administrador") {
 
-        const todos = {};
-        SENSORES.forEach((s) => { todos[s.campo] = { activo: true }; });
-
-        await set(
-            ref(database, `greenhouses/${codigoInvernadero}/sensoresConfig`),
-            todos
-        );
+        for (const s of SENSORES) {
+            await set(
+                ref(database, `greenhouses/${codigoInvernadero}/sensoresConfig/${s.campo}`),
+                { activo: true }
+            );
+        }
 
         configSnap = await get(
             ref(database, `greenhouses/${codigoInvernadero}/sensoresConfig`)
