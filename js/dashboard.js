@@ -194,6 +194,8 @@ async function cargarRolYControles(uid, miEmail) {
 
         configurarControles(miRol);
 
+        cargarConfiguracionSensores(uid, miRol, info);
+
     } catch (error) {
 
         console.error("Error obteniendo el rol:", error);
@@ -202,6 +204,67 @@ async function cargarRolYControles(uid, miEmail) {
         configurarControles("lector");
 
     }
+
+}
+
+
+// =========================================================
+// QUÉ SENSORES SE MUESTRAN (según lo que haya añadido
+// el administrador en Ajustes)
+// =========================================================
+
+async function cargarConfiguracionSensores(uid, miRol, info) {
+
+    let configSnap = await get(
+        ref(database, `greenhouses/${codigoInvernadero}/sensoresConfig`)
+    );
+
+    // Migración: invernaderos de antes de este sistema.
+    // Si nadie lo ha configurado nunca, un administrador
+    // deja los 7 sensores de siempre como añadidos y activos.
+    if (!configSnap.exists() && miRol === "administrador") {
+
+        const todos = {};
+        SENSORES.forEach((s) => { todos[s.campo] = { activo: true }; });
+
+        await set(
+            ref(database, `greenhouses/${codigoInvernadero}/sensoresConfig`),
+            todos
+        );
+
+        configSnap = await get(
+            ref(database, `greenhouses/${codigoInvernadero}/sensoresConfig`)
+        );
+
+    }
+
+    aplicarConfiguracionSensores(configSnap.exists() ? configSnap.val() : {});
+
+    // En vivo: si el administrador añade/quita/activa un sensor
+    // desde Ajustes mientras esta pantalla está abierta.
+    onValue(
+        ref(database, `greenhouses/${codigoInvernadero}/sensoresConfig`),
+        (snap) => {
+            aplicarConfiguracionSensores(snap.exists() ? snap.val() : {});
+        }
+    );
+
+}
+
+
+function aplicarConfiguracionSensores(config) {
+
+    SENSORES.forEach((sensor) => {
+
+        const tarjeta = document.querySelector(`[data-sensor="${sensor.id}"]`);
+        if (!tarjeta) return;
+
+        const entrada = config[sensor.campo];
+        const visible = !!entrada && entrada.activo !== false;
+
+        tarjeta.hidden = !visible;
+
+    });
 
 }
 
