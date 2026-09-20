@@ -746,6 +746,14 @@ async function eliminarInvernadero(
             null
         );
 
+        await set(
+            ref(
+                database,
+                `greenhouses/${codigo}/miembros/${uidActual}`
+            ),
+            null
+        );
+
 
         mostrarMensaje(
             "🗑️",
@@ -836,7 +844,22 @@ document
                 );
 
 
-                // Asociación con el usuario
+                // El creador entra como administrador
+
+                await set(
+                    ref(
+                        database,
+                        `greenhouses/${codigo}/miembros/${uidActual}`
+                    ),
+                    {
+                        rol: "administrador",
+                        email: auth.currentUser.email
+                    }
+                );
+
+
+                // Asociación con el usuario (solo marca pertenencia;
+                // el rol de verdad vive en greenhouses/.../miembros)
 
                 await set(
                     ref(
@@ -966,7 +989,21 @@ document
 
                 // -----------------------------------------
                 // AÑADIR AL USUARIO
+                // (rol por defecto: lector, solo puede ver.
+                //  Un administrador puede subirle el rol
+                //  luego desde Ajustes)
                 // -----------------------------------------
+
+                await set(
+                    ref(
+                        database,
+                        `greenhouses/${codigo}/miembros/${uidActual}`
+                    ),
+                    {
+                        rol: "lector",
+                        email: auth.currentUser.email
+                    }
+                );
 
                 await set(
                     ref(
