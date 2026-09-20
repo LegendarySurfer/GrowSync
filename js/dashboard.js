@@ -10,7 +10,9 @@ import {
 
 import {
     ref,
-    onValue
+    onValue,
+    get,
+    set
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
 
@@ -145,7 +147,150 @@ onAuthStateChanged(auth, (user) => {
 
     cargarSensores();
 
+    cargarRolYControles(
+        user.uid,
+        user.email
+    );
+
 });
+
+
+// =========================================================
+// ROL DEL USUARIO EN ESTE INVERNADERO
+// =========================================================
+
+const CONTROLES = ["riego", "luz", "ventilacion"];
+
+async function cargarRolYControles(uid, miEmail) {
+
+    try {
+
+        const infoSnap = await get(
+            ref(database, `greenhouses/${codigoInvernadero}/info`)
+        );
+
+        const info = infoSnap.exists() ? infoSnap.val() : {};
+
+        let miembrosSnap = await get(
+            ref(database, `greenhouses/${codigoInvernadero}/miembros`)
+        );
+
+        // Migración: invernaderos creados antes del sistema de roles
+        if (!miembrosSnap.exists() && info.propietario === uid) {
+
+            await set(
+                ref(database, `greenhouses/${codigoInvernadero}/miembros/${uid}`),
+                { rol: "administrador", email: miEmail }
+            );
+
+            miembrosSnap = await get(
+                ref(database, `greenhouses/${codigoInvernadero}/miembros`)
+            );
+
+        }
+
+        const miembros = miembrosSnap.exists() ? miembrosSnap.val() : {};
+        const miRol = miembros[uid]?.rol || "lector";
+
+        configurarControles(miRol);
+
+    } catch (error) {
+
+        console.error("Error obteniendo el rol:", error);
+
+        // Si algo falla, por seguridad se trata como solo lectura
+        configurarControles("lector");
+
+    }
+
+}
+
+
+function esControlador(rol) {
+    return rol === "administrador" || rol === "gestor";
+}
+
+
+function configurarControles(miRol) {
+
+    const nota = document.getElementById("controlsReadonlyNote");
+    const puedeControlar = esControlador(miRol);
+
+    if (nota) nota.hidden = puedeControlar;
+
+    CONTROLES.forEach((control) => {
+
+        const boton = document.getElementById(`toggle${capitalizar(control)}`);
+        if (!boton) return;
+
+        boton.disabled = !puedeControlar;
+
+        boton.addEventListener("click", async () => {
+
+            const activo = boton.dataset.on === "true";
+            const nuevoEstado = !activo;
+
+            try {
+
+                await set(
+                    ref(database, `greenhouses/${codigoInvernadero}/controles/${control}/activo`),
+                    nuevoEstado
+                );
+
+            } catch (error) {
+
+                console.error(`Error cambiando ${control}:`, error);
+                alert("No se ha podido cambiar el estado. Comprueba tu rol o tu conexión.");
+
+            }
+
+        });
+
+        // Estado en vivo (por si el ESP32 u otra persona lo cambia)
+        onValue(
+            ref(database, `greenhouses/${codigoInvernadero}/controles/${control}/activo`),
+            (snap) => {
+                const activo = snap.exists() && snap.val() === true;
+                actualizarBotonControl(control, activo);
+            }
+        );
+
+    });
+
+}
+
+
+function actualizarBotonControl(control, activo) {
+
+    const boton = document.getElementById(`toggle${capitalizar(control)}`);
+    const estadoTexto = document.getElementById(`estado${capitalizar(control)}`);
+
+    if (boton) {
+        boton.dataset.on = activo ? "true" : "false";
+        boton.textContent = activo ? "Desactivar" : "Activar";
+    }
+
+    if (estadoTexto) {
+
+        const nombres = {
+            riego: ["Apagado", "Regando"],
+            luz: ["Apagada", "Encendida"],
+            ventilacion: ["Apagada", "En marcha"]
+        };
+
+        const [apagadoTxt, encendidoTxt] = nombres[control] || ["Apagado", "Encendido"];
+
+        estadoTexto.textContent = activo ? encendidoTxt : apagadoTxt;
+        estadoTexto.classList.toggle("on", activo);
+
+    }
+
+}
+
+
+function capitalizar(texto) {
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
+}
 
 
 // =========================================================
