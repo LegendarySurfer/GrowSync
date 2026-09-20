@@ -154,13 +154,12 @@ async function renderGreenhouseCard(codigo, uid, miEmail) {
 
     if (!sensoresConfigSnap.exists() && esAdmin) {
 
-        const todos = {};
-        SENSOR_CATALOG.forEach((s) => { todos[s.id] = { activo: true }; });
-
-        await set(
-            ref(database, `greenhouses/${codigo}/sensoresConfig`),
-            todos
-        );
+        for (const s of SENSOR_CATALOG) {
+            await set(
+                ref(database, `greenhouses/${codigo}/sensoresConfig/${s.id}`),
+                { activo: true }
+            );
+        }
 
         sensoresConfigSnap = await get(
             ref(database, `greenhouses/${codigo}/sensoresConfig`)
