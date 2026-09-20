@@ -37,6 +37,16 @@ const deleteMessage = document.getElementById("deleteMessage");
 
 const ROLES = ["administrador", "gestor", "lector"];
 
+const SENSOR_CATALOG = [
+    { id: "temperatura", nombre: "Temperatura" },
+    { id: "humedad", nombre: "Humedad ambiente" },
+    { id: "suelo", nombre: "Humedad del suelo" },
+    { id: "luz", nombre: "Luminosidad" },
+    { id: "agua", nombre: "Depósito de agua" },
+    { id: "bateria", nombre: "Batería" },
+    { id: "solar", nombre: "Producción solar" }
+];
+
 
 // =========================================================
 // SESIÓN
@@ -129,6 +139,36 @@ async function renderGreenhouseCard(codigo, uid, miEmail) {
     const miembros = miembrosSnap.exists() ? miembrosSnap.val() : {};
     const miRol = miembros[uid]?.rol || "lector";
     const esAdmin = miRol === "administrador";
+    const puedeActivar = esAdmin || miRol === "gestor";
+
+
+    // -----------------------------------------------------
+    // SENSORES: migración de invernaderos antiguos.
+    // Si nunca se configuró, se asume que los 7 de siempre
+    // estaban añadidos y activos (comportamiento anterior).
+    // -----------------------------------------------------
+
+    let sensoresConfigSnap = await get(
+        ref(database, `greenhouses/${codigo}/sensoresConfig`)
+    );
+
+    if (!sensoresConfigSnap.exists() && esAdmin) {
+
+        const todos = {};
+        SENSOR_CATALOG.forEach((s) => { todos[s.id] = { activo: true }; });
+
+        await set(
+            ref(database, `greenhouses/${codigo}/sensoresConfig`),
+            todos
+        );
+
+        sensoresConfigSnap = await get(
+            ref(database, `greenhouses/${codigo}/sensoresConfig`)
+        );
+
+    }
+
+    const sensoresConfig = sensoresConfigSnap.exists() ? sensoresConfigSnap.val() : {};
 
     const filas = Object.entries(miembros).map(([memberUid, datos]) => {
 
@@ -157,18 +197,79 @@ async function renderGreenhouseCard(codigo, uid, miEmail) {
 
     }).join("");
 
+    const filasSensores = SENSOR_CATALOG.map((sensor) => {
+
+        const config = sensoresConfig[sensor.id];
+        const añadido = !!config;
+        const activo = añadido && config.activo !== false;
+
+        if (!añadido) {
+
+            return `
+                <tr>
+                    <td>${sensor.nombre}</td>
+                    <td style="color: var(--text-light);">No añadido</td>
+                    <td>
+                        ${esAdmin
+                            ? `<button type="button" class="primary-button add-sensor" style="width:auto; padding:8px 12px; font-size:12px;" data-codigo="${codigo}" data-sensor="${sensor.id}">Añadir</button>`
+                            : ""}
+                    </td>
+                </tr>
+            `;
+
+        }
+
+        return `
+            <tr>
+                <td>${sensor.nombre}</td>
+                <td>
+                    <label style="display:inline-flex; align-items:center; gap:8px; cursor:${puedeActivar ? "pointer" : "default"};">
+                        <input
+                            type="checkbox"
+                            class="sensor-toggle"
+                            data-codigo="${codigo}"
+                            data-sensor="${sensor.id}"
+                            ${activo ? "checked" : ""}
+                            ${puedeActivar ? "" : "disabled"}
+                        >
+                        ${activo ? "Activo" : "Inactivo"}
+                    </label>
+                </td>
+                <td>
+                    ${esAdmin
+                        ? `<button type="button" class="delete-button remove-sensor" data-codigo="${codigo}" data-sensor="${sensor.id}">Quitar</button>`
+                        : ""}
+                </td>
+            </tr>
+        `;
+
+    }).join("");
+
+
     const card = document.createElement("article");
     card.className = "settings-card";
 
     card.innerHTML = `
         <h2>${info.nombre || codigo}</h2>
         <p>Código: <strong>${codigo}</strong> · Tu rol: <strong>${capitalizar(miRol)}</strong></p>
+
+        <p style="margin-top: 18px; margin-bottom: 8px; font-weight: 600; font-size: 14px;">Miembros</p>
         <div style="overflow-x:auto;">
             <table class="members-table">
                 <thead>
                     <tr><th>Miembro</th><th>Rol</th><th></th></tr>
                 </thead>
                 <tbody>${filas}</tbody>
+            </table>
+        </div>
+
+        <p style="margin-top: 22px; margin-bottom: 8px; font-weight: 600; font-size: 14px;">Sensores</p>
+        <div style="overflow-x:auto;">
+            <table class="members-table">
+                <thead>
+                    <tr><th>Sensor</th><th>Estado</th><th></th></tr>
+                </thead>
+                <tbody>${filasSensores}</tbody>
             </table>
         </div>
     `;
@@ -188,6 +289,36 @@ function capitalizar(texto) {
 // =========================================================
 
 membersContainer?.addEventListener("change", async (event) => {
+
+    if (event.target.classList.contains("sensor-toggle")) {
+
+        const checkbox = event.target;
+        const codigo = checkbox.dataset.codigo;
+        const sensorId = checkbox.dataset.sensor;
+        const nuevoEstado = checkbox.checked;
+
+        try {
+
+            await set(
+                ref(database, `greenhouses/${codigo}/sensoresConfig/${sensorId}/activo`),
+                nuevoEstado
+            );
+
+            // Actualiza el texto "Activo/Inactivo" junto al checkbox
+            checkbox.parentElement.lastChild.textContent =
+                " " + (nuevoEstado ? "Activo" : "Inactivo");
+
+        } catch (error) {
+
+            console.error("Error activando/desactivando sensor:", error);
+            alert("No se ha podido cambiar el estado del sensor.");
+            checkbox.checked = !nuevoEstado;
+
+        }
+
+        return;
+
+    }
 
     if (!event.target.classList.contains("role-select")) return;
 
@@ -231,6 +362,49 @@ membersContainer?.addEventListener("change", async (event) => {
 // =========================================================
 
 membersContainer?.addEventListener("click", async (event) => {
+
+    if (event.target.classList.contains("add-sensor")) {
+
+        const codigo = event.target.dataset.codigo;
+        const sensorId = event.target.dataset.sensor;
+
+        try {
+            await set(
+                ref(database, `greenhouses/${codigo}/sensoresConfig/${sensorId}`),
+                { activo: true }
+            );
+            cargarInvernaderosYMiembros();
+        } catch (error) {
+            console.error("Error añadiendo sensor:", error);
+            alert("No se ha podido añadir el sensor.");
+        }
+
+        return;
+
+    }
+
+    if (event.target.classList.contains("remove-sensor")) {
+
+        const codigo = event.target.dataset.codigo;
+        const sensorId = event.target.dataset.sensor;
+
+        const confirmar = confirm("¿Quitar este sensor del invernadero? Dejará de verse en el dashboard.");
+        if (!confirmar) return;
+
+        try {
+            await set(
+                ref(database, `greenhouses/${codigo}/sensoresConfig/${sensorId}`),
+                null
+            );
+            cargarInvernaderosYMiembros();
+        } catch (error) {
+            console.error("Error quitando sensor:", error);
+            alert("No se ha podido quitar el sensor.");
+        }
+
+        return;
+
+    }
 
     if (!event.target.classList.contains("remove-member")) return;
 
