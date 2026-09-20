@@ -1,3 +1,62 @@
-<!-- =================================================
+        <!-- =================================================
              CONTROLES (riego, luz, ventilación)
              ================================================= -->
+
+        <section style="margin-top: 35px;">
+
+            <h2 style="margin-bottom: 16px;">Controles</h2>
+
+            <div class="controls-grid" id="controlsGrid">
+
+                <article class="control-card">
+                    <div class="control-icon">💧</div>
+                    <h3>Riego</h3>
+                    <p class="control-state" id="estadoRiego">Apagado</p>
+                    <button
+                        type="button"
+                        class="control-toggle"
+                        id="toggleRiego"
+                        data-control="riego"
+                        data-on="false"
+                    >
+                        Activar
+                    </button>
+                </article>
+
+                <article class="control-card">
+                    <div class="control-icon">💡</div>
+                    <h3>Iluminación</h3>
+                    <p class="control-state" id="estadoLuz">Apagada</p>
+                    <button
+                        type="button"
+                        class="control-toggle"
+                        id="toggleLuz"
+                        data-control="luz"
+                        data-on="false"
+                    >
+                        Activar
+                    </button>
+                </article>
+
+                <article class="control-card">
+                    <div class="control-icon">🌬️</div>
+                    <h3>Ventilación</h3>
+                    <p class="control-state" id="estadoVentilacion">Apagada</p>
+                    <button
+                        type="button"
+                        class="control-toggle"
+                        id="toggleVentilacion"
+                        data-control="ventilacion"
+                        data-on="false"
+                    >
+                        Activar
+                    </button>
+                </article>
+
+                <p class="controls-readonly-note" id="controlsReadonlyNote" hidden>
+                    Tu rol es de solo lectura: puedes ver el estado, pero no puedes activar ni desactivar nada.
+                </p>
+
+            </div>
+
+        </section>
