@@ -7,8 +7,7 @@ import {
 } from "./firebase.js";
 
 import {
-    signInWithEmailAndPassword,
-    createUserWithEmailAndPassword
+    signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
 
