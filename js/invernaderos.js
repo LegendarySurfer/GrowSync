@@ -104,6 +104,44 @@ onAuthStateChanged(auth, (user) => {
 
 
 // =========================================================
+// TEMPERATURA EXTERIOR (Open-Meteo, gratis, sin clave)
+// =========================================================
+
+async function obtenerTemperaturaExterior(ubicacion) {
+
+    if (!ubicacion || ubicacion === "—") return null;
+
+    try {
+
+        const geoRes = await fetch(
+            `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(ubicacion)}&count=1&language=es`
+        );
+        const geoData = await geoRes.json();
+
+        if (!geoData.results || geoData.results.length === 0) {
+            return null;
+        }
+
+        const { latitude, longitude } = geoData.results[0];
+
+        const climaRes = await fetch(
+            `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m`
+        );
+        const climaData = await climaRes.json();
+
+        return climaData?.current?.temperature_2m ?? null;
+
+    } catch (error) {
+
+        console.error("Error obteniendo temperatura exterior:", error);
+        return null;
+
+    }
+
+}
+
+
+// =========================================================
 // CARGAR INVERNADEROS
 // =========================================================
 
@@ -264,6 +302,16 @@ async function cargarInvernaderos() {
 
 
                 // -----------------------------------------
+                // TEMPERATURA EXTERIOR (de internet)
+                // -----------------------------------------
+
+                const exterior =
+                    await obtenerTemperaturaExterior(
+                        info.ubicacion
+                    );
+
+
+                // -----------------------------------------
                 // GUARDAR
                 // -----------------------------------------
 
@@ -285,6 +333,9 @@ async function cargarInvernaderos() {
 
                     humidity:
                         humedad,
+
+                    exterior:
+                        exterior,
 
                     online:
                         online,
@@ -321,6 +372,9 @@ async function cargarInvernaderos() {
                         undefined,
 
                     humidity:
+                        undefined,
+
+                    exterior:
                         undefined,
 
                     online:
@@ -440,6 +494,13 @@ function renderGreenhouses(greenhouses) {
                 : "— %";
 
 
+        const ext =
+            greenhouse.exterior !== null &&
+            greenhouse.exterior !== undefined
+                ? `${greenhouse.exterior}°C`
+                : "— °C";
+
+
         // -----------------------------------------
         // ESTADO
         // -----------------------------------------
@@ -528,6 +589,19 @@ function renderGreenhouses(greenhouses) {
 
                     <strong>
                         ${hum}
+                    </strong>
+
+                </div>
+
+
+                <div class="greenhouse-data-item">
+
+                    <span>
+                        Exterior
+                    </span>
+
+                    <strong>
+                        ${ext}
                     </strong>
 
                 </div>
