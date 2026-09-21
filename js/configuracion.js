@@ -139,7 +139,6 @@ async function renderGreenhouseCard(codigo, uid, miEmail) {
     const miembros = miembrosSnap.exists() ? miembrosSnap.val() : {};
     const miRol = miembros[uid]?.rol || "lector";
     const esAdmin = miRol === "administrador";
-    const puedeActivar = esAdmin || miRol === "gestor";
 
 
     // -----------------------------------------------------
@@ -198,9 +197,7 @@ async function renderGreenhouseCard(codigo, uid, miEmail) {
 
     const filasSensores = SENSOR_CATALOG.map((sensor) => {
 
-        const config = sensoresConfig[sensor.id];
-        const añadido = !!config;
-        const activo = añadido && config.activo !== false;
+        const añadido = !!sensoresConfig[sensor.id];
 
         if (!añadido) {
 
@@ -221,19 +218,7 @@ async function renderGreenhouseCard(codigo, uid, miEmail) {
         return `
             <tr>
                 <td>${sensor.nombre}</td>
-                <td>
-                    <label style="display:inline-flex; align-items:center; gap:8px; cursor:${puedeActivar ? "pointer" : "default"};">
-                        <input
-                            type="checkbox"
-                            class="sensor-toggle"
-                            data-codigo="${codigo}"
-                            data-sensor="${sensor.id}"
-                            ${activo ? "checked" : ""}
-                            ${puedeActivar ? "" : "disabled"}
-                        >
-                        ${activo ? "Activo" : "Inactivo"}
-                    </label>
-                </td>
+                <td>Añadido</td>
                 <td>
                     ${esAdmin
                         ? `<button type="button" class="delete-button remove-sensor" data-codigo="${codigo}" data-sensor="${sensor.id}">Quitar</button>`
@@ -288,36 +273,6 @@ function capitalizar(texto) {
 // =========================================================
 
 membersContainer?.addEventListener("change", async (event) => {
-
-    if (event.target.classList.contains("sensor-toggle")) {
-
-        const checkbox = event.target;
-        const codigo = checkbox.dataset.codigo;
-        const sensorId = checkbox.dataset.sensor;
-        const nuevoEstado = checkbox.checked;
-
-        try {
-
-            await set(
-                ref(database, `greenhouses/${codigo}/sensoresConfig/${sensorId}/activo`),
-                nuevoEstado
-            );
-
-            // Actualiza el texto "Activo/Inactivo" junto al checkbox
-            checkbox.parentElement.lastChild.textContent =
-                " " + (nuevoEstado ? "Activo" : "Inactivo");
-
-        } catch (error) {
-
-            console.error("Error activando/desactivando sensor:", error);
-            alert("No se ha podido cambiar el estado del sensor.");
-            checkbox.checked = !nuevoEstado;
-
-        }
-
-        return;
-
-    }
 
     if (!event.target.classList.contains("role-select")) return;
 
