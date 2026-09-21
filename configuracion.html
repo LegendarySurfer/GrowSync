@@ -66,80 +66,14 @@
 
        <!-- ===================================================
      INVERNADEROS Y MIEMBROS
+     Este contenedor lo rellena configuracion.js con el
+     desplegable de invernaderos y la tabla de miembros
+     (y sensores) del invernadero seleccionado.
      =================================================== -->
 
-<section class="members-section">
-
-    <div class="members-header">
-
-        <div>
-            <span class="page-label">GESTIÓN</span>
-
-            <h2>Invernaderos y miembros</h2>
-
-            <p>
-                Selecciona un invernadero para gestionar
-                sus usuarios y roles.
-            </p>
-        </div>
-
-    </div>
-
-
-    <!-- SELECTOR DE INVERNADERO -->
-
-    <div class="greenhouse-selector">
-
-        <label for="greenhouseSelect">
-            Invernadero
-        </label>
-
-        <select id="greenhouseSelect">
-            <option value="">
-                Cargando invernaderos...
-            </option>
-        </select>
-
-    </div>
-
-
-    <!-- TABLA -->
-
-    <div class="members-table-container">
-
-        <table class="members-table">
-
-            <thead>
-
-                <tr>
-
-                    <th>Usuario</th>
-
-                    <th>Rol</th>
-
-                    <th>Acciones</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody id="membersTableBody">
-
-                <tr>
-
-                    <td colspan="3" class="table-message">
-                        Cargando miembros...
-                    </td>
-
-                </tr>
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-</section>
+<div id="greenhousesMembersContainer">
+    <p class="table-message">Cargando invernaderos...</p>
+</div>
 
             <!-- CORREO ACTUAL / CAMBIAR CORREO -->
             <article class="settings-card">
@@ -216,8 +150,6 @@
                 <p class="login-message" id="deleteMessage"></p>
 
             </article>
-
-        </section>
 
     </main>
 
