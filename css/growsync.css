@@ -944,6 +944,96 @@ button {
 
 
 /* =========================================================
+   INVERNADEROS Y MIEMBROS (Ajustes)
+   ========================================================= */
+
+.members-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 25px;
+    box-shadow: var(--shadow);
+    margin-bottom: 22px;
+}
+
+.members-header {
+    margin-bottom: 20px;
+}
+
+.members-header p {
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.greenhouse-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-width: 360px;
+    margin-bottom: 20px;
+}
+
+.greenhouse-selector label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.greenhouse-selector select {
+    height: 42px;
+    padding: 0 12px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.members-table-container {
+    overflow-x: auto;
+}
+
+.table-message {
+    text-align: center;
+    color: var(--text-light);
+    font-size: 13px;
+    padding: 18px 10px;
+}
+
+.member-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.member-avatar {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.member-user strong {
+    display: block;
+    font-size: 14px;
+}
+
+.member-user small {
+    display: block;
+    color: var(--text-light);
+    font-size: 11px;
+}
+
+
+/* =========================================================
    TABLA DE MIEMBROS (Ajustes)
    ========================================================= */
 
