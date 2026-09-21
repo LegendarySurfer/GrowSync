@@ -859,6 +859,81 @@ async function eliminarInvernadero(
 
 
 // =========================================================
+// GENERAR CÓDIGO ÚNICO DE INVERNADERO
+// =========================================================
+//
+// El código (formato GS-000000) es el identificador único
+// del invernadero en toda la base de datos. Se genera al
+// azar y se comprueba contra Firebase para asegurarnos de
+// que no colisiona con uno ya existente antes de usarlo.
+//
+// (Esta misma comprobación es la que reutilizaremos cuando
+// el propio ESP32 sea quien proponga el código, para
+// validar que sigue siendo único antes de registrarlo).
+
+const INTENTOS_MAXIMOS_CODIGO = 15;
+
+
+function generarCandidatoCodigo() {
+
+    return (
+        "GS-" +
+        Math.floor(
+            100000 +
+            Math.random() *
+            900000
+        )
+    );
+
+}
+
+
+async function codigoYaExiste(codigo) {
+
+    const snap =
+        await get(
+            ref(
+                database,
+                `greenhouses/${codigo}`
+            )
+        );
+
+    return snap.exists();
+
+}
+
+
+async function generarCodigoUnico() {
+
+    for (
+        let intento = 0;
+        intento < INTENTOS_MAXIMOS_CODIGO;
+        intento++
+    ) {
+
+        const candidato =
+            generarCandidatoCodigo();
+
+
+        const existe =
+            await codigoYaExiste(candidato);
+
+
+        if (!existe) {
+            return candidato;
+        }
+
+    }
+
+
+    throw new Error(
+        "No se ha podido generar un código de invernadero único. Inténtalo de nuevo."
+    );
+
+}
+
+
+// =========================================================
 // CREAR INVERNADERO
 // =========================================================
 
@@ -885,13 +960,30 @@ document
                 ) || "—";
 
 
-            const codigo =
-                "GS-" +
-                Math.floor(
-                    100000 +
-                    Math.random() *
-                    900000
+            let codigo;
+
+            try {
+
+                codigo =
+                    await generarCodigoUnico();
+
+            }
+            catch (error) {
+
+                console.error(
+                    "Error generando código único:",
+                    error
                 );
+
+                mostrarMensaje(
+                    "⚠️",
+                    "Error",
+                    "No se ha podido generar un código de invernadero único. Inténtalo de nuevo."
+                );
+
+                return;
+
+            }
 
 
             try {
