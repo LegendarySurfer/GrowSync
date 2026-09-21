@@ -64,27 +64,82 @@
             </div>
         </section>
 
-        <!-- ===================================================
-             INVERNADEROS Y MIEMBROS
-             =================================================== -->
+       <!-- ===================================================
+     INVERNADEROS Y MIEMBROS
+     =================================================== -->
 
-        <section style="margin-bottom: 35px;">
+<section class="members-section">
 
-            <h2 style="margin-bottom: 6px;">Invernaderos y miembros</h2>
-            <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 20px;">
-                Solo un administrador puede cambiar roles o quitar personas.
-                Lector solo puede ver. Gestor puede ver y activar/desactivar.
-                Administrador puede todo.
+    <div class="members-header">
+
+        <div>
+            <span class="page-label">GESTIÓN</span>
+
+            <h2>Invernaderos y miembros</h2>
+
+            <p>
+                Selecciona un invernadero para gestionar
+                sus usuarios y roles.
             </p>
+        </div>
 
-            <div id="greenhousesMembersContainer">
-                <p>Cargando...</p>
-            </div>
-
-        </section>
+    </div>
 
 
-        <section class="settings-grid">
+    <!-- SELECTOR DE INVERNADERO -->
+
+    <div class="greenhouse-selector">
+
+        <label for="greenhouseSelect">
+            Invernadero
+        </label>
+
+        <select id="greenhouseSelect">
+            <option value="">
+                Cargando invernaderos...
+            </option>
+        </select>
+
+    </div>
+
+
+    <!-- TABLA -->
+
+    <div class="members-table-container">
+
+        <table class="members-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Usuario</th>
+
+                    <th>Rol</th>
+
+                    <th>Acciones</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="membersTableBody">
+
+                <tr>
+
+                    <td colspan="3" class="table-message">
+                        Cargando miembros...
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
 
             <!-- CORREO ACTUAL / CAMBIAR CORREO -->
             <article class="settings-card">
