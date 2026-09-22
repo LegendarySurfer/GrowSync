@@ -859,26 +859,50 @@ async function eliminarInvernadero(
 
 
 // =========================================================
-// COMPROBAR CÓDIGO DE INVERNADERO
+// COMPROBAR CÓDIGO DE DISPOSITIVO (ESP32)
 // =========================================================
 //
-// El código (formato GS-000000) es el identificador único
-// del invernadero y ahora lo genera el propio ESP32 (no la
-// página web). Aquí solo comprobamos contra Firebase que el
-// código que ha introducido el usuario no esté ya en uso
-// antes de crear el invernadero con él.
+// El código lo genera el propio ESP32 y, en cuanto tiene
+// conexión a internet, se anuncia en Firebase bajo
+// `devices/{codigo}` con estado "disponible". La web NO debe
+// aceptar un código inventado por el usuario: solo códigos
+// que existan ahí y que todavía no estén vinculados a ningún
+// invernadero.
+//
+// Estructura esperada (la escribe el firmware):
+//   devices/{codigo} = { estado: "disponible", creadoEn: <timestamp> }
+//
+// Cuando se crea el invernadero, la web marca el dispositivo
+// como "vinculado" para que ese código no se pueda reutilizar.
 
-async function codigoYaExiste(codigo) {
+async function obtenerDispositivo(codigo) {
 
     const snap =
         await get(
             ref(
                 database,
-                `greenhouses/${codigo}`
+                `devices/${codigo}`
             )
         );
 
-    return snap.exists();
+    if (!snap.exists()) {
+        return null;
+    }
+
+    return snap.val();
+
+}
+
+
+async function vincularDispositivo(codigo) {
+
+    await set(
+        ref(
+            database,
+            `devices/${codigo}/estado`
+        ),
+        "vinculado"
+    );
 
 }
 
@@ -940,18 +964,18 @@ document
             }
 
 
-            let existe;
+            let dispositivo;
 
             try {
 
-                existe =
-                    await codigoYaExiste(codigo);
+                dispositivo =
+                    await obtenerDispositivo(codigo);
 
             }
             catch (error) {
 
                 console.error(
-                    "Error comprobando el código:",
+                    "Error comprobando el dispositivo:",
                     error
                 );
 
@@ -966,12 +990,25 @@ document
             }
 
 
-            if (existe) {
+            if (!dispositivo) {
 
                 mostrarMensaje(
                     "⚠️",
-                    "Código ya en uso",
-                    "Ese código ya está asociado a un invernadero. Comprueba que lo has copiado bien desde tu ESP32, o utiliza \"Unirme a un invernadero\" si ya existe."
+                    "Código no reconocido",
+                    "Ese código no corresponde a ningún ESP32 registrado. Comprueba que tu dispositivo esté encendido, conectado a internet, y que hayas copiado bien el código."
+                );
+
+                return;
+
+            }
+
+
+            if (dispositivo.estado !== "disponible") {
+
+                mostrarMensaje(
+                    "⚠️",
+                    "Dispositivo ya vinculado",
+                    "Este ESP32 ya está vinculado a un invernadero. Si es el tuyo, utiliza \"Unirme a un invernadero\" en vez de crear uno nuevo."
                 );
 
                 return;
@@ -1027,6 +1064,12 @@ document
                     ),
                     true
                 );
+
+
+                // Marcar el dispositivo como vinculado para
+                // que este código ya no aparezca como disponible
+
+                await vincularDispositivo(codigo);
 
 
                 mostrarMensaje(
