@@ -859,34 +859,14 @@ async function eliminarInvernadero(
 
 
 // =========================================================
-// GENERAR CÓDIGO ÚNICO DE INVERNADERO
+// COMPROBAR CÓDIGO DE INVERNADERO
 // =========================================================
 //
 // El código (formato GS-000000) es el identificador único
-// del invernadero en toda la base de datos. Se genera al
-// azar y se comprueba contra Firebase para asegurarnos de
-// que no colisiona con uno ya existente antes de usarlo.
-//
-// (Esta misma comprobación es la que reutilizaremos cuando
-// el propio ESP32 sea quien proponga el código, para
-// validar que sigue siendo único antes de registrarlo).
-
-const INTENTOS_MAXIMOS_CODIGO = 15;
-
-
-function generarCandidatoCodigo() {
-
-    return (
-        "GS-" +
-        Math.floor(
-            100000 +
-            Math.random() *
-            900000
-        )
-    );
-
-}
-
+// del invernadero y ahora lo genera el propio ESP32 (no la
+// página web). Aquí solo comprobamos contra Firebase que el
+// código que ha introducido el usuario no esté ya en uso
+// antes de crear el invernadero con él.
 
 async function codigoYaExiste(codigo) {
 
@@ -899,36 +879,6 @@ async function codigoYaExiste(codigo) {
         );
 
     return snap.exists();
-
-}
-
-
-async function generarCodigoUnico() {
-
-    for (
-        let intento = 0;
-        intento < INTENTOS_MAXIMOS_CODIGO;
-        intento++
-    ) {
-
-        const candidato =
-            generarCandidatoCodigo();
-
-
-        const existe =
-            await codigoYaExiste(candidato);
-
-
-        if (!existe) {
-            return candidato;
-        }
-
-    }
-
-
-    throw new Error(
-        "No se ha podido generar un código de invernadero único. Inténtalo de nuevo."
-    );
 
 }
 
@@ -960,25 +910,68 @@ document
                 ) || "—";
 
 
-            let codigo;
+            let codigo =
+                prompt(
+                    "Código de tu ESP32 (lo genera el propio dispositivo, formato GS-000000):"
+                );
+
+
+            if (!codigo) {
+                return;
+            }
+
+
+            codigo =
+                codigo
+                    .trim()
+                    .toUpperCase();
+
+
+            if (!codigo) {
+
+                mostrarMensaje(
+                    "⚠️",
+                    "Código no válido",
+                    "Tienes que introducir el código que te ha dado tu ESP32."
+                );
+
+                return;
+
+            }
+
+
+            let existe;
 
             try {
 
-                codigo =
-                    await generarCodigoUnico();
+                existe =
+                    await codigoYaExiste(codigo);
 
             }
             catch (error) {
 
                 console.error(
-                    "Error generando código único:",
+                    "Error comprobando el código:",
                     error
                 );
 
                 mostrarMensaje(
                     "⚠️",
                     "Error",
-                    "No se ha podido generar un código de invernadero único. Inténtalo de nuevo."
+                    "No se ha podido comprobar el código. Inténtalo de nuevo."
+                );
+
+                return;
+
+            }
+
+
+            if (existe) {
+
+                mostrarMensaje(
+                    "⚠️",
+                    "Código ya en uso",
+                    "Ese código ya está asociado a un invernadero. Comprueba que lo has copiado bien desde tu ESP32, o utiliza \"Unirme a un invernadero\" si ya existe."
                 );
 
                 return;
@@ -1039,7 +1032,7 @@ document
                 mostrarMensaje(
                     "✅",
                     "Invernadero creado",
-                    `El código de tu invernadero es ${codigo}.`
+                    `El invernadero se ha creado correctamente con el código ${codigo}.`
                 );
 
 
