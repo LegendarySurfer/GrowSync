@@ -794,10 +794,6 @@ function obtenerValorSensor(sensor) {
 // =========================================================
 // ELIMINAR INVERNADERO
 // =========================================================
-
-Aquí tienes la función adaptada respetando exactamente tu estructura y el estilo de código que usas con el SDK de Firebase (Modular set / ref):
-
-JavaScript
 async function eliminarInvernadero(codigo) {
 
     const confirmar = confirm(
