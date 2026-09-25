@@ -719,25 +719,27 @@ function renderGreenhouses(greenhouses) {
     // BOTONES ELIMINAR
     // =====================================================
 
-    document
-        .querySelectorAll(
-            ".greenhouse-delete"
-        )
-        .forEach((button) => {
+document
+    .querySelectorAll(
+        ".greenhouse-delete"
+    )
+    .forEach((button) => {
 
-            button.addEventListener(
-                "click",
-                () => {
+        button.addEventListener(
+            "click",
+            async () => {
 
-                    (
-                        button.dataset.id
-                    );
+                const codigo =
+                    button.dataset.id;
 
-                }
-            );
+                await eliminarInvernadero(
+                    codigo
+                );
 
-        });
+            }
+        );
 
+    });
 }
 
 
