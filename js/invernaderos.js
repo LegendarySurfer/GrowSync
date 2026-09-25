@@ -729,7 +729,7 @@ function renderGreenhouses(greenhouses) {
                 "click",
                 () => {
 
-                    eliminarInvernadero(
+                    (
                         button.dataset.id
                     );
 
@@ -795,23 +795,22 @@ function obtenerValorSensor(sensor) {
 // ELIMINAR INVERNADERO
 // =========================================================
 
-async function eliminarInvernadero(
-    codigo
-) {
+Aquí tienes la función adaptada respetando exactamente tu estructura y el estilo de código que usas con el SDK de Firebase (Modular set / ref):
 
-    const confirmar =
-        confirm(
-            `¿Seguro que quieres eliminar el invernadero ${codigo} de tu cuenta?`
-        );
+JavaScript
+async function eliminarInvernadero(codigo) {
 
+    const confirmar = confirm(
+        `¿Seguro que quieres eliminar el invernadero ${codigo} de tu cuenta?`
+    );
 
     if (!confirmar) {
         return;
     }
 
-
     try {
 
+        // 1. Eliminar la relación en el usuario actual
         await set(
             ref(
                 database,
@@ -820,6 +819,7 @@ async function eliminarInvernadero(
             null
         );
 
+        // 2. Eliminar al usuario de la lista de miembros del invernadero
         await set(
             ref(
                 database,
@@ -828,13 +828,29 @@ async function eliminarInvernadero(
             null
         );
 
+        // 3. Eliminar el nodo principal del invernadero para limpiarlo por completo
+        await set(
+            ref(
+                database,
+                `greenhouses/${codigo}`
+            ),
+            null
+        );
+
+        // 4. Marcar el dispositivo ESP32 como "disponible" otra vez para que se pueda volver a registrar
+        await set(
+            ref(
+                database,
+                `devices/${codigo}/estado`
+            ),
+            "disponible"
+        );
 
         mostrarMensaje(
             "🗑️",
             "Invernadero eliminado",
-            "El invernadero se ha eliminado de tu cuenta."
+            "El invernadero se ha eliminado y el dispositivo queda libre para volver a registrarlo."
         );
-
 
         cargarInvernaderos();
 
@@ -845,7 +861,6 @@ async function eliminarInvernadero(
             "Error eliminando invernadero:",
             error
         );
-
 
         mostrarMensaje(
             "⚠️",
