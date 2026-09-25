@@ -127,7 +127,9 @@ onAuthStateChanged(auth, (user) => {
     }
 
 
-    // Avatar
+    // =====================================================
+    // AVATAR
+    // =====================================================
 
     if (userAvatar) {
 
@@ -139,7 +141,9 @@ onAuthStateChanged(auth, (user) => {
     }
 
 
-    // Cargar información
+    // =====================================================
+    // CARGAR INFORMACIÓN
+    // =====================================================
 
     cargarInformacionInvernadero();
 
@@ -159,49 +163,110 @@ onAuthStateChanged(auth, (user) => {
 // ROL DEL USUARIO EN ESTE INVERNADERO
 // =========================================================
 
-const CONTROLES = ["riego", "luz", "ventilacion"];
+const CONTROLES = [
+    "riego",
+    "luz",
+    "ventilacion"
+];
+
 
 async function cargarRolYControles(uid, miEmail) {
 
     try {
 
-        const infoSnap = await get(
-            ref(database, `greenhouses/${codigoInvernadero}/info`)
-        );
+        const infoSnap =
+            await get(
+                ref(
+                    database,
+                    `greenhouses/${codigoInvernadero}/info`
+                )
+            );
 
-        const info = infoSnap.exists() ? infoSnap.val() : {};
 
-        let miembrosSnap = await get(
-            ref(database, `greenhouses/${codigoInvernadero}/miembros`)
-        );
+        const info =
+            infoSnap.exists()
+                ? infoSnap.val()
+                : {};
 
-        // Migración: invernaderos creados antes del sistema de roles
-        if (!miembrosSnap.exists() && info.propietario === uid) {
+
+        let miembrosSnap =
+            await get(
+                ref(
+                    database,
+                    `greenhouses/${codigoInvernadero}/miembros`
+                )
+            );
+
+
+        // =================================================
+        // MIGRACIÓN DE ROLES
+        // =================================================
+
+        if (
+            !miembrosSnap.exists() &&
+            info.propietario === uid
+        ) {
 
             await set(
-                ref(database, `greenhouses/${codigoInvernadero}/miembros/${uid}`),
-                { rol: "administrador", email: miEmail }
+                ref(
+                    database,
+                    `greenhouses/${codigoInvernadero}/miembros/${uid}`
+                ),
+                {
+                    rol: "administrador",
+                    email: miEmail
+                }
             );
 
-            miembrosSnap = await get(
-                ref(database, `greenhouses/${codigoInvernadero}/miembros`)
-            );
+
+            miembrosSnap =
+                await get(
+                    ref(
+                        database,
+                        `greenhouses/${codigoInvernadero}/miembros`
+                    )
+                );
 
         }
 
-        const miembros = miembrosSnap.exists() ? miembrosSnap.val() : {};
-        const miRol = miembros[uid]?.rol || "lector";
 
-        configurarControles(miRol);
+        const miembros =
+            miembrosSnap.exists()
+                ? miembrosSnap.val()
+                : {};
 
-        cargarConfiguracionSensores(uid, miRol, info);
 
-    } catch (error) {
+        const miRol =
+            miembros[uid]?.rol ||
+            "lector";
 
-        console.error("Error obteniendo el rol:", error);
 
-        // Si algo falla, por seguridad se trata como solo lectura
-        configurarControles("lector");
+        configurarControles(
+            miRol
+        );
+
+
+        cargarConfiguracionSensores(
+            uid,
+            miRol,
+            info
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Error obteniendo el rol:",
+            error
+        );
+
+
+        // Por seguridad, si algo falla,
+        // el usuario queda en modo lectura.
+
+        configurarControles(
+            "lector"
+        );
 
     }
 
@@ -209,112 +274,251 @@ async function cargarRolYControles(uid, miEmail) {
 
 
 // =========================================================
-// QUÉ SENSORES SE MUESTRAN (según lo que haya añadido
-// el administrador en Ajustes)
+// CONFIGURACIÓN DE SENSORES
 // =========================================================
 
-async function cargarConfiguracionSensores(uid, miRol, info) {
+async function cargarConfiguracionSensores(
+    uid,
+    miRol,
+    info
+) {
 
-    let configSnap = await get(
-        ref(database, `greenhouses/${codigoInvernadero}/sensoresConfig`)
-    );
+    let configSnap =
+        await get(
+            ref(
+                database,
+                `greenhouses/${codigoInvernadero}/sensoresConfig`
+            )
+        );
 
-    // Migración: invernaderos de antes de este sistema.
-    // Si nadie lo ha configurado nunca, un administrador
-    // deja los 7 sensores de siempre como añadidos y activos.
-    if (!configSnap.exists() && miRol === "administrador") {
 
-        for (const s of SENSORES) {
+    // =====================================================
+    // MIGRACIÓN
+    // =====================================================
+
+    // Si el invernadero es antiguo y nunca ha tenido
+    // configuración de sensores, activamos los sensores
+    // existentes actualmente en el sistema.
+
+    if (
+        !configSnap.exists() &&
+        miRol === "administrador"
+    ) {
+
+        for (const sensor of SENSORES) {
+
             await set(
-                ref(database, `greenhouses/${codigoInvernadero}/sensoresConfig/${s.campo}`),
-                { activo: true }
+                ref(
+                    database,
+                    `greenhouses/${codigoInvernadero}/sensoresConfig/${sensor.campo}`
+                ),
+                {
+                    activo: true
+                }
             );
+
         }
 
-        configSnap = await get(
-            ref(database, `greenhouses/${codigoInvernadero}/sensoresConfig`)
-        );
+
+        configSnap =
+            await get(
+                ref(
+                    database,
+                    `greenhouses/${codigoInvernadero}/sensoresConfig`
+                )
+            );
 
     }
 
-    aplicarConfiguracionSensores(configSnap.exists() ? configSnap.val() : {});
 
-    // En vivo: si el administrador añade/quita/activa un sensor
-    // desde Ajustes mientras esta pantalla está abierta.
+    aplicarConfiguracionSensores(
+        configSnap.exists()
+            ? configSnap.val()
+            : {}
+    );
+
+
+    // =====================================================
+    // ACTUALIZACIÓN EN TIEMPO REAL
+    // =====================================================
+
     onValue(
-        ref(database, `greenhouses/${codigoInvernadero}/sensoresConfig`),
+        ref(
+            database,
+            `greenhouses/${codigoInvernadero}/sensoresConfig`
+        ),
+
         (snap) => {
-            aplicarConfiguracionSensores(snap.exists() ? snap.val() : {});
+
+            aplicarConfiguracionSensores(
+                snap.exists()
+                    ? snap.val()
+                    : {}
+            );
+
         }
+
     );
 
 }
 
+
+// =========================================================
+// APLICAR CONFIGURACIÓN DE SENSORES
+// =========================================================
 
 function aplicarConfiguracionSensores(config) {
 
     SENSORES.forEach((sensor) => {
 
-        const tarjeta = document.querySelector(`[data-sensor="${sensor.id}"]`);
-        if (!tarjeta) return;
+        const tarjeta =
+            document.querySelector(
+                `[data-sensor="${sensor.id}"]`
+            );
 
-        const entrada = config[sensor.campo];
-        const visible = !!entrada && entrada.activo !== false;
 
-        tarjeta.hidden = !visible;
+        if (!tarjeta) {
+            return;
+        }
+
+
+        const entrada =
+            config[sensor.campo];
+
+
+        const visible =
+            !!entrada &&
+            entrada.activo !== false;
+
+
+        tarjeta.hidden =
+            !visible;
 
     });
 
 }
 
 
+// =========================================================
+// COMPROBAR SI PUEDE CONTROLAR
+// =========================================================
+
 function esControlador(rol) {
-    return rol === "administrador" || rol === "gestor";
+
+    return (
+        rol === "administrador" ||
+        rol === "gestor"
+    );
+
 }
 
 
+// =========================================================
+// CONFIGURAR CONTROLES
+// =========================================================
+
 function configurarControles(miRol) {
 
-    const nota = document.getElementById("controlsReadonlyNote");
-    const puedeControlar = esControlador(miRol);
+    const nota =
+        document.getElementById(
+            "controlsReadonlyNote"
+        );
 
-    if (nota) nota.hidden = puedeControlar;
+
+    const puedeControlar =
+        esControlador(miRol);
+
+
+    if (nota) {
+
+        nota.hidden =
+            puedeControlar;
+
+    }
+
 
     CONTROLES.forEach((control) => {
 
-        const boton = document.getElementById(`toggle${capitalizar(control)}`);
-        if (!boton) return;
+        const boton =
+            document.getElementById(
+                `toggle${capitalizar(control)}`
+            );
 
-        boton.disabled = !puedeControlar;
 
-        boton.addEventListener("click", async () => {
+        if (!boton) {
+            return;
+        }
 
-            const activo = boton.dataset.on === "true";
-            const nuevoEstado = !activo;
 
-            try {
+        boton.disabled =
+            !puedeControlar;
 
-                await set(
-                    ref(database, `greenhouses/${codigoInvernadero}/controles/${control}/activo`),
-                    nuevoEstado
+
+        boton.addEventListener(
+            "click",
+            async () => {
+
+                const activo =
+                    boton.dataset.on === "true";
+
+
+                const nuevoEstado =
+                    !activo;
+
+
+                try {
+
+                    await set(
+                        ref(
+                            database,
+                            `greenhouses/${codigoInvernadero}/controles/${control}/activo`
+                        ),
+                        nuevoEstado
+                    );
+
+                }
+                catch (error) {
+
+                    console.error(
+                        `Error cambiando ${control}:`,
+                        error
+                    );
+
+
+                    alert(
+                        "No se ha podido cambiar el estado. Comprueba tu rol o tu conexión."
+                    );
+
+                }
+
+            }
+        );
+
+
+        // =================================================
+        // ESTADO EN TIEMPO REAL
+        // =================================================
+
+        onValue(
+            ref(
+                database,
+                `greenhouses/${codigoInvernadero}/controles/${control}/activo`
+            ),
+
+            (snap) => {
+
+                const activo =
+                    snap.exists() &&
+                    snap.val() === true;
+
+
+                actualizarBotonControl(
+                    control,
+                    activo
                 );
 
-            } catch (error) {
-
-                console.error(`Error cambiando ${control}:`, error);
-                alert("No se ha podido cambiar el estado. Comprueba tu rol o tu conexión.");
-
             }
 
-        });
-
-        // Estado en vivo (por si el ESP32 u otra persona lo cambia)
-        onValue(
-            ref(database, `greenhouses/${codigoInvernadero}/controles/${control}/activo`),
-            (snap) => {
-                const activo = snap.exists() && snap.val() === true;
-                actualizarBotonControl(control, activo);
-            }
         );
 
     });
@@ -322,36 +526,103 @@ function configurarControles(miRol) {
 }
 
 
-function actualizarBotonControl(control, activo) {
+// =========================================================
+// ACTUALIZAR BOTÓN DE CONTROL
+// =========================================================
 
-    const boton = document.getElementById(`toggle${capitalizar(control)}`);
-    const estadoTexto = document.getElementById(`estado${capitalizar(control)}`);
+function actualizarBotonControl(
+    control,
+    activo
+) {
+
+    const boton =
+        document.getElementById(
+            `toggle${capitalizar(control)}`
+        );
+
+
+    const estadoTexto =
+        document.getElementById(
+            `estado${capitalizar(control)}`
+        );
+
 
     if (boton) {
-        boton.dataset.on = activo ? "true" : "false";
-        boton.textContent = activo ? "Desactivar" : "Activar";
+
+        boton.dataset.on =
+            activo
+                ? "true"
+                : "false";
+
+
+        boton.textContent =
+            activo
+                ? "Desactivar"
+                : "Activar";
+
     }
+
 
     if (estadoTexto) {
 
         const nombres = {
-            riego: ["Apagado", "Regando"],
-            luz: ["Apagada", "Encendida"],
-            ventilacion: ["Apagada", "En marcha"]
+
+            riego: [
+                "Apagado",
+                "Regando"
+            ],
+
+            luz: [
+                "Apagada",
+                "Encendida"
+            ],
+
+            ventilacion: [
+                "Apagada",
+                "En marcha"
+            ]
+
         };
 
-        const [apagadoTxt, encendidoTxt] = nombres[control] || ["Apagado", "Encendido"];
 
-        estadoTexto.textContent = activo ? encendidoTxt : apagadoTxt;
-        estadoTexto.classList.toggle("on", activo);
+        const [
+            apagadoTxt,
+            encendidoTxt
+        ] =
+            nombres[control] ||
+            [
+                "Apagado",
+                "Encendido"
+            ];
+
+
+        estadoTexto.textContent =
+            activo
+                ? encendidoTxt
+                : apagadoTxt;
+
+
+        estadoTexto.classList.toggle(
+            "on",
+            activo
+        );
 
     }
 
 }
 
 
+// =========================================================
+// CAPITALIZAR
+// =========================================================
+
 function capitalizar(texto) {
-    return texto.charAt(0).toUpperCase() + texto.slice(1);
+
+    return (
+        texto.charAt(0).toUpperCase() +
+        texto.slice(1)
+    );
+
 }
 
 
@@ -368,54 +639,63 @@ function cargarInformacionInvernadero() {
         );
 
 
-    onValue(infoRef, (snapshot) => {
+    onValue(
+        infoRef,
 
-        if (!snapshot.exists()) {
+        (snapshot) => {
 
-            console.warn(
-                "No existe información del invernadero:",
-                codigoInvernadero
+            if (!snapshot.exists()) {
+
+                console.warn(
+                    "No existe información del invernadero:",
+                    codigoInvernadero
+                );
+
+                return;
+
+            }
+
+
+            const info =
+                snapshot.val();
+
+
+            // =================================================
+            // NOMBRE
+            // =================================================
+
+            if (greenhouseName) {
+
+                greenhouseName.textContent =
+                    info.nombre ||
+                    "Mi invernadero";
+
+            }
+
+
+            // =================================================
+            // CÓDIGO
+            // =================================================
+
+            if (greenhouseCode) {
+
+                greenhouseCode.textContent =
+                    codigoInvernadero;
+
+            }
+
+        },
+
+        (error) => {
+
+            console.error(
+                "Error leyendo información del invernadero:",
+                error
             );
 
-            return;
         }
 
-
-        const info =
-            snapshot.val();
-
-
-        // -----------------------------------------
-        // NOMBRE
-        // -----------------------------------------
-
-        if (greenhouseName) {
-
-            greenhouseName.textContent =
-                info.nombre || "Mi invernadero";
-
-        }
-
-
-        // -----------------------------------------
-        // CÓDIGO
-        // -----------------------------------------
-
-        if (greenhouseCode) {
-
-            greenhouseCode.textContent =
-                codigoInvernadero;
-
-        }
-
-    }, (error) => {
-
-        console.error(
-            "Error leyendo información del invernadero:",
-            error
-        );
-
-    });
+    );
 
 }
 
@@ -433,36 +713,45 @@ function cargarEstadoSistema() {
         );
 
 
-    onValue(estadoRef, (snapshot) => {
+    onValue(
+        estadoRef,
 
-        if (!snapshot.exists()) {
+        (snapshot) => {
 
-            ponerSistemaOffline();
+            if (!snapshot.exists()) {
 
-            return;
-        }
+                ponerSistemaOffline();
+
+                return;
+
+            }
 
 
-        const ultimaConexion =
-            convertirTimestamp(
-                snapshot.val()
+            const ultimaConexion =
+                convertirTimestamp(
+                    snapshot.val()
+                );
+
+
+            comprobarEstadoSistema(
+                ultimaConexion
+            );
+
+        },
+
+        (error) => {
+
+            console.error(
+                "Error leyendo estado del sistema:",
+                error
             );
 
 
-        comprobarEstadoSistema(
-            ultimaConexion
-        );
+            ponerSistemaOffline();
 
-    }, (error) => {
+        }
 
-        console.error(
-            "Error leyendo estado del sistema:",
-            error
-        );
-
-        ponerSistemaOffline();
-
-    });
+    );
 
 }
 
@@ -471,18 +760,22 @@ function cargarEstadoSistema() {
 // COMPROBAR ESTADO DEL SISTEMA
 // =========================================================
 
-function comprobarEstadoSistema(ultimaConexion) {
+function comprobarEstadoSistema(
+    ultimaConexion
+) {
 
     if (!ultimaConexion) {
 
         ponerSistemaOffline();
 
         return;
+
     }
 
 
     const tiempoSinDatos =
-        Date.now() - ultimaConexion;
+        Date.now() -
+        ultimaConexion;
 
 
     if (
@@ -518,6 +811,7 @@ function ponerSistemaOnline() {
         "no-data"
     );
 
+
     systemStatus.classList.add(
         "online"
     );
@@ -549,6 +843,7 @@ function ponerSistemaOffline() {
         "no-data"
     );
 
+
     systemStatus.classList.add(
         "offline"
     );
@@ -577,59 +872,90 @@ function cargarSensores() {
         );
 
 
-    onValue(sensoresRef, (snapshot) => {
+    onValue(
+        sensoresRef,
 
-        if (!snapshot.exists()) {
+        (snapshot) => {
 
-            SENSORES.forEach((sensor) => {
+            if (!snapshot.exists()) {
 
-                ponerSensorOffline(sensor);
+                SENSORES.forEach(
+                    (sensor) => {
 
-            });
+                        ponerSensorOffline(
+                            sensor
+                        );
 
-            return;
-        }
+                    }
+                );
 
+                return;
 
-        const sensores =
-            snapshot.val();
-
-
-        SENSORES.forEach((sensor) => {
-
-            const datos =
-                sensores[sensor.campo];
+            }
 
 
-            actualizarSensor(
-                sensor,
-                datos
+            const sensores =
+                snapshot.val();
+
+
+            // =================================================
+            // ACTUALIZAR CADA SENSOR
+            // =================================================
+
+            SENSORES.forEach(
+                (sensor) => {
+
+                    const datos =
+                        sensores[
+                            sensor.campo
+                        ];
+
+
+                    actualizarSensor(
+                        sensor,
+                        datos,
+                        sensores
+                    );
+
+                }
             );
 
-        });
+        },
 
-    }, (error) => {
+        (error) => {
 
-        console.error(
-            "Error leyendo sensores:",
-            error
-        );
+            console.error(
+                "Error leyendo sensores:",
+                error
+            );
 
-        SENSORES.forEach((sensor) => {
 
-            ponerSensorOffline(sensor);
+            SENSORES.forEach(
+                (sensor) => {
 
-        });
+                    ponerSensorOffline(
+                        sensor
+                    );
 
-    });
+                }
+            );
+
+        }
+
+    );
 
 }
+
 
 // =========================================================
 // ACTUALIZAR SENSOR
 // =========================================================
 
-function actualizarSensor(sensor, datos, sensores = {}) {
+function actualizarSensor(
+    sensor,
+    datos,
+    sensores
+) {
 
     const elementoValor =
         document.getElementById(
@@ -673,7 +999,7 @@ function actualizarSensor(sensor, datos, sensores = {}) {
 
 
     // =====================================================
-    // COMPROBAR SI EXISTEN DATOS
+    // COMPROBAR DATOS
     // =====================================================
 
     if (
@@ -697,11 +1023,13 @@ function actualizarSensor(sensor, datos, sensores = {}) {
     let valor;
 
 
-    // Nueva estructura:
+    // Compatible con estructura:
     //
     // temperatura:
-    //     valor: 24
+    // {
+    //     valor: 24,
     //     ultimaConexion: 123456789
+    // }
 
     if (
         typeof datos === "object" &&
@@ -713,7 +1041,7 @@ function actualizarSensor(sensor, datos, sensores = {}) {
 
     }
 
-    // Estructura actual del ESP32:
+    // Compatible con estructura actual:
     //
     // temperatura: 24
 
@@ -726,13 +1054,15 @@ function actualizarSensor(sensor, datos, sensores = {}) {
 
 
     // =====================================================
-    // TIMESTAMP
+    // OBTENER TIMESTAMP
     // =====================================================
 
-    let timestamp;
+    let timestamp = null;
 
 
-    // Si el sensor tiene su propio timestamp
+    // -----------------------------------------------------
+    // 1. Timestamp individual del sensor
+    // -----------------------------------------------------
 
     if (
         typeof datos === "object" &&
@@ -747,10 +1077,15 @@ function actualizarSensor(sensor, datos, sensores = {}) {
     }
 
 
-    // Si no tiene timestamp propio,
-    // utilizamos el timestamp general de sensores
+    // -----------------------------------------------------
+    // 2. Timestamp general de sensores
+    // -----------------------------------------------------
 
-    if (!timestamp) {
+    if (
+        !timestamp &&
+        sensores &&
+        sensores.ultima_actualizacion !== undefined
+    ) {
 
         timestamp =
             convertirTimestamp(
@@ -760,9 +1095,9 @@ function actualizarSensor(sensor, datos, sensores = {}) {
     }
 
 
-    // =====================================================
-    // SIN TIMESTAMP
-    // =====================================================
+    // -----------------------------------------------------
+    // 3. Si no hay timestamp
+    // -----------------------------------------------------
 
     if (!timestamp) {
 
@@ -776,7 +1111,7 @@ function actualizarSensor(sensor, datos, sensores = {}) {
 
 
     // =====================================================
-    // COMPROBAR TIEMPO
+    // COMPROBAR ANTIGÜEDAD
     // =====================================================
 
     const tiempoSinDatos =
@@ -799,7 +1134,7 @@ function actualizarSensor(sensor, datos, sensores = {}) {
 
 
     // =====================================================
-    // SENSOR ONLINE
+    // MOSTRAR VALOR
     // =====================================================
 
     if (elementoValor) {
@@ -810,13 +1145,16 @@ function actualizarSensor(sensor, datos, sensores = {}) {
     }
 
 
-    // Estado
+    // =====================================================
+    // ESTADO ONLINE
+    // =====================================================
 
     if (estado) {
 
         estado.classList.remove(
             "offline"
         );
+
 
         estado.classList.add(
             "online"
@@ -825,13 +1163,12 @@ function actualizarSensor(sensor, datos, sensores = {}) {
     }
 
 
-    // Punto
-
     if (punto) {
 
         punto.classList.remove(
             "offline"
         );
+
 
         punto.classList.add(
             "online"
@@ -839,8 +1176,6 @@ function actualizarSensor(sensor, datos, sensores = {}) {
 
     }
 
-
-    // Texto
 
     if (textoEstado) {
 
@@ -850,7 +1185,9 @@ function actualizarSensor(sensor, datos, sensores = {}) {
     }
 
 
-    // Última actualización
+    // =====================================================
+    // ÚLTIMA ACTUALIZACIÓN
+    // =====================================================
 
     if (ultimaActualizacion) {
 
@@ -860,7 +1197,9 @@ function actualizarSensor(sensor, datos, sensores = {}) {
     }
 
 
-    // Guardar timestamp para la comprobación periódica
+    // =====================================================
+    // GUARDAR TIMESTAMP
+    // =====================================================
 
     tarjeta.dataset.ultimaConexion =
         timestamp;
@@ -872,7 +1211,9 @@ function actualizarSensor(sensor, datos, sensores = {}) {
 // SENSOR OFFLINE
 // =========================================================
 
-function ponerSensorOffline(sensor) {
+function ponerSensorOffline(
+    sensor
+) {
 
     const elementoValor =
         document.getElementById(
@@ -915,6 +1256,10 @@ function ponerSensorOffline(sensor) {
         );
 
 
+    // =====================================================
+    // VALOR
+    // =====================================================
+
     if (elementoValor) {
 
         elementoValor.textContent =
@@ -923,11 +1268,16 @@ function ponerSensorOffline(sensor) {
     }
 
 
+    // =====================================================
+    // ESTADO
+    // =====================================================
+
     if (estado) {
 
         estado.classList.remove(
             "online"
         );
+
 
         estado.classList.add(
             "offline"
@@ -941,6 +1291,7 @@ function ponerSensorOffline(sensor) {
         punto.classList.remove(
             "online"
         );
+
 
         punto.classList.add(
             "offline"
@@ -956,6 +1307,10 @@ function ponerSensorOffline(sensor) {
 
     }
 
+
+    // =====================================================
+    // ÚLTIMA ACTUALIZACIÓN
+    // =====================================================
 
     if (ultimaActualizacion) {
 
@@ -974,11 +1329,14 @@ function ponerSensorOffline(sensor) {
 // COMPROBAR SENSORES CADA 10 SEGUNDOS
 // =========================================================
 
-setInterval(() => {
+setInterval(
+    () => {
 
-    comprobarSensores();
+        comprobarSensores();
 
-}, 10000);
+    },
+    10000
+);
 
 
 // =========================================================
@@ -993,50 +1351,53 @@ function comprobarSensores() {
         );
 
 
-    tarjetas.forEach((tarjeta) => {
+    tarjetas.forEach(
+        (tarjeta) => {
 
-        const timestamp =
-            Number(
-                tarjeta.dataset.ultimaConexion
-            );
-
-
-        if (!timestamp) {
-            return;
-        }
-
-
-        const tiempoSinDatos =
-            Date.now() - timestamp;
-
-
-        if (
-            tiempoSinDatos >
-            TIEMPO_MAXIMO_SIN_DATOS
-        ) {
-
-            const sensorId =
-                tarjeta.dataset.sensor;
-
-
-            const sensor =
-                SENSORES.find(
-                    (item) =>
-                        item.id === sensorId
+            const timestamp =
+                Number(
+                    tarjeta.dataset.ultimaConexion
                 );
 
 
-            if (sensor) {
+            if (!timestamp) {
+                return;
+            }
 
-                ponerSensorOffline(
-                    sensor
-                );
+
+            const tiempoSinDatos =
+                Date.now() -
+                timestamp;
+
+
+            if (
+                tiempoSinDatos >
+                TIEMPO_MAXIMO_SIN_DATOS
+            ) {
+
+                const sensorId =
+                    tarjeta.dataset.sensor;
+
+
+                const sensor =
+                    SENSORES.find(
+                        (item) =>
+                            item.id === sensorId
+                    );
+
+
+                if (sensor) {
+
+                    ponerSensorOffline(
+                        sensor
+                    );
+
+                }
 
             }
 
         }
-
-    });
+    );
 
 }
 
@@ -1045,7 +1406,9 @@ function comprobarSensores() {
 // CONVERTIR TIMESTAMP
 // =========================================================
 
-function convertirTimestamp(timestamp) {
+function convertirTimestamp(
+    timestamp
+) {
 
     if (
         timestamp === undefined ||
@@ -1057,30 +1420,92 @@ function convertirTimestamp(timestamp) {
     }
 
 
-    // Timestamp numérico
+    // =====================================================
+    // NÚMERO
+    // =====================================================
 
     if (
-        typeof timestamp ===
-        "number"
+        typeof timestamp === "number"
     ) {
+
+        // Firebase normalmente nos dará
+        // milisegundos Unix.
+        //
+        // Pero por seguridad, si viene
+        // en segundos lo convertimos.
+
+        if (timestamp < 10000000000) {
+
+            return timestamp * 1000;
+
+        }
+
 
         return timestamp;
 
     }
 
 
-    // Fecha en formato texto
+    // =====================================================
+    // STRING
+    // =====================================================
 
     if (
-        typeof timestamp ===
-        "string"
+        typeof timestamp === "string"
     ) {
 
+        const texto =
+            timestamp.trim();
+
+
+        if (!texto) {
+            return null;
+        }
+
+
+        // -------------------------------------------------
+        // String numérico
+        // -------------------------------------------------
+
+        if (
+            /^[0-9]+(\.[0-9]+)?$/.test(
+                texto
+            )
+        ) {
+
+            const numero =
+                Number(texto);
+
+
+            if (!Number.isNaN(numero)) {
+
+                if (
+                    numero < 10000000000
+                ) {
+
+                    return numero * 1000;
+
+                }
+
+
+                return numero;
+
+            }
+
+        }
+
+
+        // -------------------------------------------------
+        // Fecha en formato texto
+        // -------------------------------------------------
+
         const fecha =
-            Date.parse(timestamp);
+            Date.parse(texto);
 
 
-        if (!Number.isNaN(fecha)) {
+        if (
+            !Number.isNaN(fecha)
+        ) {
 
             return fecha;
 
@@ -1098,13 +1523,18 @@ function convertirTimestamp(timestamp) {
 // TIEMPO TRANSCURRIDO
 // =========================================================
 
-function tiempoTranscurrido(timestamp) {
+function tiempoTranscurrido(
+    timestamp
+) {
 
     const diferencia =
-        Date.now() - timestamp;
+        Date.now() -
+        timestamp;
 
 
-    if (diferencia < 10000) {
+    if (
+        diferencia < 10000
+    ) {
 
         return "ahora mismo";
 
@@ -1117,7 +1547,9 @@ function tiempoTranscurrido(timestamp) {
         );
 
 
-    if (segundos < 60) {
+    if (
+        segundos < 60
+    ) {
 
         return `hace ${segundos} s`;
 
@@ -1130,7 +1562,9 @@ function tiempoTranscurrido(timestamp) {
         );
 
 
-    if (minutos < 60) {
+    if (
+        minutos < 60
+    ) {
 
         return `hace ${minutos} min`;
 
@@ -1180,6 +1614,10 @@ function cargarTema() {
 
 }
 
+
+// =========================================================
+// CAMBIAR TEMA
+// =========================================================
 
 themeButton?.addEventListener(
     "click",
