@@ -625,12 +625,11 @@ function cargarSensores() {
 
 }
 
-
 // =========================================================
 // ACTUALIZAR SENSOR
 // =========================================================
 
-function actualizarSensor(sensor, datos) {
+function actualizarSensor(sensor, datos, sensores = {}) {
 
     const elementoValor =
         document.getElementById(
@@ -673,45 +672,117 @@ function actualizarSensor(sensor, datos) {
         );
 
 
-    // No existen datos
+    // =====================================================
+    // COMPROBAR SI EXISTEN DATOS
+    // =====================================================
 
-    if (!datos) {
-
-        ponerSensorOffline(
-            sensor
-        );
-
-        return;
-    }
-
-
-    const valor =
-        datos.valor;
-
-
-    const ultimaConexion =
-        convertirTimestamp(
-            datos.ultimaConexion
-        );
-
-
-    // Sin timestamp
-
-    if (!ultimaConexion) {
+    if (
+        datos === undefined ||
+        datos === null
+    ) {
 
         ponerSensorOffline(
             sensor
         );
 
         return;
+
     }
 
+
+    // =====================================================
+    // OBTENER VALOR
+    // =====================================================
+
+    let valor;
+
+
+    // Nueva estructura:
+    //
+    // temperatura:
+    //     valor: 24
+    //     ultimaConexion: 123456789
+
+    if (
+        typeof datos === "object" &&
+        datos.valor !== undefined
+    ) {
+
+        valor =
+            datos.valor;
+
+    }
+
+    // Estructura actual del ESP32:
+    //
+    // temperatura: 24
+
+    else {
+
+        valor =
+            datos;
+
+    }
+
+
+    // =====================================================
+    // TIMESTAMP
+    // =====================================================
+
+    let timestamp;
+
+
+    // Si el sensor tiene su propio timestamp
+
+    if (
+        typeof datos === "object" &&
+        datos.ultimaConexion !== undefined
+    ) {
+
+        timestamp =
+            convertirTimestamp(
+                datos.ultimaConexion
+            );
+
+    }
+
+
+    // Si no tiene timestamp propio,
+    // utilizamos el timestamp general de sensores
+
+    if (!timestamp) {
+
+        timestamp =
+            convertirTimestamp(
+                sensores.ultima_actualizacion
+            );
+
+    }
+
+
+    // =====================================================
+    // SIN TIMESTAMP
+    // =====================================================
+
+    if (!timestamp) {
+
+        ponerSensorOffline(
+            sensor
+        );
+
+        return;
+
+    }
+
+
+    // =====================================================
+    // COMPROBAR TIEMPO
+    // =====================================================
 
     const tiempoSinDatos =
-        Date.now() - ultimaConexion;
+        Date.now() -
+        timestamp;
 
-
-    // Sensor Offline
 
     if (
         tiempoSinDatos >
@@ -723,6 +794,7 @@ function actualizarSensor(sensor, datos) {
         );
 
         return;
+
     }
 
 
@@ -738,6 +810,8 @@ function actualizarSensor(sensor, datos) {
     }
 
 
+    // Estado
+
     if (estado) {
 
         estado.classList.remove(
@@ -750,6 +824,8 @@ function actualizarSensor(sensor, datos) {
 
     }
 
+
+    // Punto
 
     if (punto) {
 
@@ -764,6 +840,8 @@ function actualizarSensor(sensor, datos) {
     }
 
 
+    // Texto
+
     if (textoEstado) {
 
         textoEstado.textContent =
@@ -772,19 +850,20 @@ function actualizarSensor(sensor, datos) {
     }
 
 
+    // Última actualización
+
     if (ultimaActualizacion) {
 
         ultimaActualizacion.textContent =
-            `Actualizado ${tiempoTranscurrido(ultimaConexion)}`;
+            `Actualizado ${tiempoTranscurrido(timestamp)}`;
 
     }
 
 
-    // Guardamos el timestamp en la tarjeta
-    // para poder comprobarlo periódicamente.
+    // Guardar timestamp para la comprobación periódica
 
     tarjeta.dataset.ultimaConexion =
-        ultimaConexion;
+        timestamp;
 
 }
 
